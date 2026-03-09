@@ -3,288 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rise of Hitler - Trial Game</title>
+  <title>History Activities</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 840px;
-      margin: 32px auto;
-      padding: 0 16px 40px;
-      line-height: 1.55;
-      background: #fafafa;
-    }
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-    h1 { margin: 0 0 6px; font-size: 30px; }
-    .subtitle { color: #555; margin-bottom: 14px; }
-    .note {
-      font-size: 14px;
-      color: #555;
-      background: #f4f4f4;
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 18px;
-    }
-    #scene-title { margin: 10px 0 8px; font-size: 24px; }
-    #text { white-space: pre-line; margin-bottom: 18px; }
-    .choices {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    button {
-      font-size: 16px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #bbb;
-      background: white;
-      cursor: pointer;
-      text-align: left;
-    }
-    button:hover { background: #f5f5f5; }
-    .topbar {
+      margin: 0;
+      padding: 0;
+      background: #f4f6f8;
       display: flex;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+      min-height: 100vh;
     }
-    .smallbtn {
-      width: auto;
-      font-size: 14px;
-      padding: 10px 12px;
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 40px 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      width: 90%;
+      max-width: 500px;
     }
-    .footer {
-      margin-top: 18px;
-      font-size: 13px;
-      color: #666;
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: 2rem;
     }
-    .pill {
-      display: inline-block;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #efefef;
-      margin-right: 6px;
+
+    p {
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    .menu-button {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      background: #2563eb;
+      color: white;
+      border-radius: 12px;
+      transition: 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .menu-button:hover {
+      background: #1d4ed8;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="topbar">
-      <div>
-        <h1>Rise of Hitler</h1>
-        <div class="subtitle">Trial choose-your-own-adventure history game</div>
-      </div>
-      <button class="smallbtn" onclick="goTo('start')">Restart</button>
-    </div>
+  <div class="container">
+    <h1>History Activities</h1>
+    <p>Select an activity to begin.</p>
 
-    <div class="note">
-      This is an educational simulation about decisions and conditions in Germany from 1919 to 1933.
-      It is designed to help students understand how Hitler rose to power. It does not endorse Nazi ideology.
-    </div>
-
-    <div>
-      <span class="pill" id="year-pill">Year</span>
-      <span class="pill" id="role-pill">Role</span>
-    </div>
-
-    <h2 id="scene-title"></h2>
-    <div id="text"></div>
-    <div class="choices" id="choices"></div>
-
-    <div class="footer">
-      Demo focus: Treaty of Versailles, Weimar weaknesses, Great Depression, Nazi propaganda, fear of communism, backroom politics.
-    </div>
+    <a class="menu-button" href="hitler-game/">Rise of Hitler Mystery</a>
+    <a class="menu-button" href="cold-war-game/">Cold War Decision Game</a>
   </div>
-
-  <script>
-    const scenes = {
-      start: {
-        year: "1919",
-        role: "You are a German citizen",
-        title: "Germany After World War I",
-        text: "Germany has just lost World War I.\nThe Treaty of Versailles blames Germany for the war, demands reparations, and limits Germany’s military.\n\nMany Germans feel humiliated, angry, and bitter.\n\nWhat matters most to you right now?",
-        choices: [
-          { text: "National pride - Germany has been humiliated", next: "versailles_pride" },
-          { text: "Economic survival - life is becoming difficult", next: "versailles_economy" },
-          { text: "Political stability - Germany needs order", next: "weimar_choice" }
-        ]
-      },
-
-      versailles_pride: {
-        year: "1919",
-        role: "Angry German voter",
-        title: "Resentment Grows",
-        text: "You hear speeches saying Germany was 'stabbed in the back' and treated unfairly.\nSome political groups begin blaming the Weimar leaders for accepting the Treaty.\n\nThis anger will later help extremist parties attract support.",
-        choices: [
-          { text: "Move forward to see what happens to the Weimar Republic", next: "weimar_choice" }
-        ]
-      },
-
-      versailles_economy: {
-        year: "1919",
-        role: "German worker",
-        title: "A Fragile Economy",
-        text: "Germany must pay reparations while rebuilding after the war.\nEconomic hardship makes ordinary people lose confidence in the new government.\n\nWhen a government seems weak and unable to protect livelihoods, extreme promises start to sound attractive.",
-        choices: [
-          { text: "Continue", next: "weimar_choice" }
-        ]
-      },
-
-      weimar_choice: {
-        year: "1923",
-        role: "German citizen",
-        title: "Crisis in the Weimar Republic",
-        text: "The new Weimar government faces uprisings from the left and right. In 1923, hyperinflation destroys savings.\nA loaf of bread becomes painfully expensive. People feel shock, fear, and humiliation.\n\nWho do you trust now?",
-        choices: [
-          { text: "Support democratic parties and hope recovery comes", next: "golden_years" },
-          { text: "Listen to extremist parties that promise strength", next: "beer_hall" },
-          { text: "Focus only on surviving the crisis", next: "golden_years" }
-        ]
-      },
-
-      beer_hall: {
-        year: "1923",
-        role: "Observer of radical politics",
-        title: "A Failed Coup - But a New Opportunity",
-        text: "Hitler and the Nazis attempt the Munich Beer Hall Putsch. It fails.\nHitler is imprisoned, but during this period he writes and rethinks strategy.\n\nHe decides that instead of seizing power by force, the Nazis should use legal means, propaganda, and elections.",
-        choices: [
-          { text: "See how Hitler changes tactics", next: "golden_years" }
-        ]
-      },
-
-      golden_years: {
-        year: "1924-1928",
-        role: "Voter in a calmer period",
-        title: "Temporary Recovery",
-        text: "For a few years, Germany becomes more stable. Foreign loans help the economy, and support for extremist parties remains limited.\n\nBut this stability depends heavily on American loans. Beneath the surface, the Republic is still fragile.",
-        choices: [
-          { text: "Then the Wall Street Crash happens...", next: "depression" }
-        ]
-      },
-
-      depression: {
-        year: "1929-1932",
-        role: "Unemployed German citizen",
-        title: "The Great Depression",
-        text: "The Wall Street Crash causes American loans to dry up. German businesses collapse. Unemployment soars.\n\nMany voters stop believing that moderate parties can solve the crisis.\nThe Nazis now campaign aggressively with simple messages:\n- jobs\n- unity\n- strong leadership\n- anti-communism\n\nWhat message pulls strongest on public fears?",
-        choices: [
-          { text: "Promises of jobs and national revival", next: "propaganda" },
-          { text: "Fear of communism and disorder", next: "communism_fear" },
-          { text: "Disappointment with weak coalition governments", next: "weimar_breakdown" }
-        ]
-      },
-
-      propaganda: {
-        year: "1930-1932",
-        role: "Voter exposed to Nazi propaganda",
-        title: "Hitler's Appeal Expands",
-        text: "Hitler appears disciplined, confident, and decisive. Nazi propaganda uses posters, rallies, symbols, slogans, and speeches to create a strong image.\n\nThe Nazis present Hitler as the man who can rescue Germany.",
-        choices: [
-          { text: "Continue", next: "elections" }
-        ]
-      },
-
-      communism_fear: {
-        year: "1930-1932",
-        role: "Middle-class voter / business elite",
-        title: "Fear Becomes Political Support",
-        text: "Communism frightens many industrialists, middle-class Germans, and conservative elites.\nEven people who do not fully support Hitler may begin to see him as a barrier against a communist revolution.\n\nFear pushes some elites closer to the Nazis.",
-        choices: [
-          { text: "Continue", next: "elections" }
-        ]
-      },
-
-      weimar_breakdown: {
-        year: "1930-1932",
-        role: "Frustrated voter",
-        title: "Democracy Looks Weak",
-        text: "Coalition governments keep collapsing. Presidents and chancellors increasingly rely on emergency powers instead of stable parliamentary support.\n\nThis makes democracy look ineffective and opens the door for leaders who claim that only strong rule can save the nation.",
-        choices: [
-          { text: "Continue", next: "elections" }
-        ]
-      },
-
-      elections: {
-        year: "1932",
-        role: "German voter",
-        title: "The Nazis Become a Major Force",
-        text: "The Nazis do not win an outright majority, but they become the largest party in the Reichstag.\nThis is crucial: Hitler does not take power simply because everyone supports him.\nHe rises because crisis, fear, propaganda, and political weakness make him too important to ignore.\n\nWhat happens next?",
-        choices: [
-          { text: "Conservative elites decide to work with Hitler", next: "backroom" },
-          { text: "Assume Hitler is elected by overwhelming support", next: "correction" }
-        ]
-      },
-
-      correction: {
-        year: "1932",
-        role: "History student",
-        title: "Careful - That Is Not Quite Right",
-        text: "Hitler was not swept into power by total national agreement.\nThe Nazis were the largest party, but they never won a full majority in free elections.\n\nHis final path to power depended on backroom political deals and the miscalculation of conservative elites who thought they could control him.",
-        choices: [
-          { text: "See the final political deal", next: "backroom" }
-        ]
-      },
-
-      backroom: {
-        year: "January 1933",
-        role: "Elite political observer",
-        title: "Backroom Politics",
-        text: "Conservative elites such as von Papen persuade President Hindenburg to appoint Hitler as Chancellor.\nThey believe Hitler can be controlled because only a few Nazis are initially given cabinet positions.\n\nThis is one of the great political miscalculations of modern history.",
-        choices: [
-          { text: "See the result", next: "end_success" },
-          { text: "Review the major reasons again", next: "summary" }
-        ]
-      },
-
-      summary: {
-        year: "1919-1933",
-        role: "Exam candidate",
-        title: "Why Did Hitler Rise to Power?",
-        text: "Key reasons:\n1. Anger over the Treaty of Versailles created bitterness and resentment.\n2. Weaknesses of the Weimar Republic made democracy seem ineffective.\n3. The Great Depression created mass unemployment and desperation.\n4. Nazi propaganda made Hitler appear strong and trustworthy.\n5. Fear of communism pushed elites and voters toward the Nazis.\n6. Backroom political deals led to Hitler’s appointment as Chancellor.\n\nThis means Hitler rose because of both popular support and elite miscalculation.",
-        choices: [
-          { text: "Go to the ending", next: "end_success" },
-          { text: "Restart the game", next: "start" }
-        ]
-      },
-
-      end_success: {
-        year: "January 1933",
-        role: "History student",
-        title: "Ending - Hitler Becomes Chancellor",
-        text: "Hitler is appointed Chancellor on 30 January 1933.\n\nHistorical takeaway:\nHis rise was not caused by one factor alone. It happened because long-term resentment met short-term crisis, democratic weakness, mass fear, persuasive propaganda, and political deal-making.\n\nThat combination opened the door.",
-        choices: [
-          { text: "Play again", next: "start" },
-          { text: "See the summary of reasons", next: "summary" }
-        ]
-      }
-    };
-
-    function goTo(sceneKey) {
-      const scene = scenes[sceneKey];
-      document.getElementById("scene-title").textContent = scene.title;
-      document.getElementById("text").textContent = scene.text;
-      document.getElementById("year-pill").textContent = "Year: " + scene.year;
-      document.getElementById("role-pill").textContent = "Role: " + scene.role;
-
-      const choicesDiv = document.getElementById("choices");
-      choicesDiv.innerHTML = "";
-      scene.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.text;
-        btn.onclick = () => goTo(choice.next);
-        choicesDiv.appendChild(btn);
-      });
-    }
-
-    goTo("start");
-  </script>
 </body>
 </html>
