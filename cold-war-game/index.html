@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histo-Bot 📜</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1928;
+    --card: #22213a;
+    --accent: #ff6b35;
+    --accent2: #ffd166;
+    --accent3: #06d6a0;
+    --text: #fffffe;
+    --muted: #a7a5c6;
+    --border: #2e2c4a;
+    --user-bubble: #2d2b50;
+    --bot-bubble: #1e3a5f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated background blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .blob1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob2 { width: 350px; height: 350px; background: #6a4cff; bottom: -100px; right: -80px; animation-delay: -4s; }
+  .blob3 { width: 250px; height: 250px; background: var(--accent3); top: 40%; left: 60%; animation-delay: -8s; }
+
+  @keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 20px) scale(1.08); }
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    background: rgba(26,25,40,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+    position: relative;
+  }
+
+  .bot-avatar {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(255,107,53,0.4);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(255,107,53,0.4); }
+    50% { box-shadow: 0 4px 30px rgba(255,107,53,0.7); }
+  }
+
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .header-text h1 span { color: var(--accent); }
+  .header-text p { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+
+  .mode-pills {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+  .pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Chat area */
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+    scroll-behavior: smooth;
+  }
+
+  #chat::-webkit-scrollbar { width: 4px; }
+  #chat::-webkit-scrollbar-track { background: transparent; }
+  #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg-row.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .msg-avatar.bot { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .msg-avatar.user { background: linear-gradient(135deg, #6a4cff, #a78bfa); }
+
+  .bubble {
+    max-width: 72%;
+    padding: 13px 16px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    position: relative;
+  }
+  .bubble.bot {
+    background: var(--bot-bubble);
+    border: 1px solid rgba(6,214,160,0.15);
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.user {
+    background: var(--user-bubble);
+    border: 1px solid rgba(106,76,255,0.2);
+    border-bottom-right-radius: 4px;
+  }
+
+  .bubble strong { color: var(--accent2); }
+  .bubble em { color: var(--accent3); font-style: normal; }
+  .bubble .tag {
+    display: inline-block;
+    background: rgba(255,107,53,0.15);
+    border: 1px solid rgba(255,107,53,0.3);
+    color: var(--accent);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Quiz option buttons */
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .quiz-btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .quiz-btn:hover:not(:disabled) { border-color: var(--accent2); background: rgba(255,209,102,0.07); }
+  .quiz-btn.correct { background: rgba(6,214,160,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .quiz-btn.wrong { background: rgba(255,107,53,0.12); border-color: var(--accent); color: var(--accent); }
+
+  /* Typing indicator */
+  .typing { display: flex; align-items: center; gap: 5px; padding: 14px 16px; }
+  .dot { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Input area */
+  footer {
+    padding: 16px 20px;
+    background: rgba(26,25,40,0.9);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  #userInput {
+    flex: 1;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+  #userInput:focus { border-color: var(--accent); }
+  #userInput::placeholder { color: var(--muted); }
+
+  #sendBtn {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), #ff8c42);
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    flex-shrink: 0;
+  }
+  #sendBtn:hover { transform: scale(1.07); box-shadow: 0 4px 16px rgba(255,107,53,0.5); }
+  #sendBtn:active { transform: scale(0.96); }
+
+  .quick-prompts {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .qp {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .qp:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* System message */
+  .sys-msg {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 4px 0;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<header>
+  <div class="bot-avatar">📜</div>
+  <div class="header-text">
+    <h1>Histo<span>-Bot</span></h1>
+    <p>Upper Sec History & Humanities • Fun Mode ON 🔥</p>
+  </div>
+  <div class="mode-pills">
+    <button class="pill active" onclick="setMode('chat')" id="pill-chat">💬 Chat</button>
+    <button class="pill" onclick="setMode('quiz')" id="pill-quiz">🎯 Quiz Me</button>
+  </div>
+</header>
+
+<div id="chat"></div>
+
+<footer>
+  <div class="quick-prompts" id="quickPrompts">
+    <button class="qp" onclick="quickSend('Explain the Cold War simply')">🌍 Cold War TL;DR</button>
+    <button class="qp" onclick="quickSend('What caused World War 1?')">💣 WWI causes</button>
+    <button class="qp" onclick="quickSend('How did decolonisation happen?')">🗺️ Decolonisation</button>
+    <button class="qp" onclick="quickSend('Quiz me on Southeast Asian history')">🎯 SEA History quiz</button>
+  </div>
+  <div class="input-row">
+    <textarea id="userInput" placeholder="Ask anything about History or Humanities…" rows="1"></textarea>
+    <button id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+</footer>
+
+<script>
+let mode = 'chat';
+let isWaiting = false;
+let conversationHistory = [];
+
+const SYSTEM_PROMPT = `You are Histo-Bot, a fun and casual study buddy for Upper Secondary students (ages 15-17) in Singapore studying History and Humanities.
+
+Your personality:
+- Chill, friendly, and encouraging. Like a cool older sibling who's great at History.
+- Use casual language but still accurate. Light humor is welcome.
+- Use relatable analogies and modern references to explain old events.
+- Sprinkle in relevant emojis occasionally (not every sentence).
+- Keep explanations concise but complete — avoid walls of text.
+- Never condescending, always hype up the student when they get things right.
+
+Rules:
+- Focus ONLY on History and Humanities topics (world history, Southeast Asian history, Singapore history, social studies, geography, source-based questions, etc.)
+- If asked something off-topic, gently redirect back to History/Humanities.
+- For quiz mode: ask ONE question at a time with 4 options labeled A, B, C, D. After the student answers, give feedback and explain. Format quiz questions clearly.
+- When explaining concepts, use a clear structure: quick summary → key points → why it matters.
+- Avoid excessive markdown. Use bold sparingly for key terms.
+
+Format your responses naturally. When giving a quiz question, structure it exactly like this:
+QUIZ_START
+[Question text]
+A) [option]
+B) [option]  
+C) [option]
+D) [option]
+CORRECT:[A/B/C/D]
+QUIZ_END`;
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('pill-chat').classList.toggle('active', m === 'chat');
+  document.getElementById('pill-quiz').classList.toggle('active', m === 'quiz');
+  if (m === 'quiz') {
+    sendToBot("Give me a quiz question on History or Humanities for Upper Secondary level.");
+  }
+}
+
+function addMessage(role, content, raw = false) {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `msg-avatar ${role}`;
+  avatar.textContent = role === 'bot' ? '📜' : '🧑';
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${role}`;
+
+  if (raw) {
+    bubble.innerHTML = content;
+  } else {
+    // Check for quiz format
+    if (role === 'bot' && content.includes('QUIZ_START')) {
+      bubble.innerHTML = formatQuiz(content);
+    } else {
+      bubble.innerHTML = formatText(content);
+    }
+  }
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+function formatText(text) {
+  // Remove quiz markers if any stray ones
+  text = text.replace(/QUIZ_START[\s\S]*?QUIZ_END/g, '');
+  // Bold **text**
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // Italic *text*
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // Newlines
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+function formatQuiz(text) {
+  const match = text.match(/QUIZ_START([\s\S]*?)QUIZ_END/);
+  if (!match) return formatText(text);
+
+  const inner = match[1].trim();
+  const correctMatch = inner.match(/CORRECT:([ABCD])/);
+  const correctAnswer = correctMatch ? correctMatch[1] : null;
+  
+  // Remove CORRECT line for display
+  const cleanInner = inner.replace(/CORRECT:[ABCD]\n?/, '').trim();
+  
+  const lines = cleanInner.split('\n').filter(l => l.trim());
+  const questionLines = [];
+  const options = [];
+  
+  for (const line of lines) {
+    if (/^[ABCD]\)/.test(line.trim())) {
+      options.push(line.trim());
+    } else {
+      questionLines.push(line);
+    }
+  }
+
+  const questionHTML = `<div class="tag">🎯 Quiz Time</div><p><strong>${questionLines.join('<br>')}</strong></p>`;
+  
+  const optionsHTML = options.map(opt => {
+    const letter = opt[0];
+    return `<button class="quiz-btn" onclick="checkAnswer(this, '${letter}', '${correctAnswer}')">${opt}</button>`;
+  }).join('');
+
+  return questionHTML + `<div class="quiz-options">${optionsHTML}</div>`;
+}
+
+function checkAnswer(btn, selected, correct) {
+  const allBtns = btn.closest('.quiz-options').querySelectorAll('.quiz-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const letter = b.textContent.trim()[0];
+    if (letter === correct) b.classList.add('correct');
+  });
+
+  if (selected === correct) {
+    btn.classList.add('correct');
+    addMessage('bot', `🎉 Nailed it! You picked **${selected}** — that's correct! ${getEncouragement()} Want another question or shall we dig into why that's the answer?`, false);
+  } else {
+    btn.classList.add('wrong');
+    addMessage('bot', `Not quite! The correct answer was **${correct}**. Don't sweat it — let me break down why. Ask me "explain the answer" and I got you 👍`, false);
+  }
+
+  conversationHistory.push({role: 'assistant', content: `Student answered ${selected}. Correct answer was ${correct}.`});
+}
+
+function getEncouragement() {
+  const phrases = ['You're on fire! 🔥', 'History buff confirmed! 📚', 'Big brain energy! 🧠', 'Historian in the making! 🏛️', 'Okay okay, I see you! 👀'];
+  return phrases[Math.floor(Math.random() * phrases.length)];
+}
+
+function addTyping() {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  row.id = 'typing-indicator';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar bot';
+  avatar.textContent = '📜';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble bot typing';
+  bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+async function sendToBot(userMessage) {
+  if (isWaiting) return;
+  isWaiting = true;
+
+  conversationHistory.push({ role: 'user', content: userMessage });
+
+  addTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+
+    const reply = data.content?.map(b => b.text || '').join('') || 'Hmm, something went wrong. Try again!';
+    conversationHistory.push({ role: 'assistant', content: reply });
+    addMessage('bot', reply);
+
+  } catch (err) {
+    removeTyping();
+    addMessage('bot', '⚠️ Couldn\'t connect right now. Check your connection and try again!', true);
+    conversationHistory.pop();
+  }
+
+  isWaiting = false;
+}
+
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isWaiting) return;
+
+  addMessage('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+
+  sendToBot(text);
+}
+
+function quickSend(text) {
+  addMessage('user', text);
+  sendToBot(text);
+}
+
+// Auto-resize textarea
+document.getElementById('userInput').addEventListener('input', function () {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+document.getElementById('userInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Welcome message
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    addMessage('bot', `<div class="tag">👋 Welcome</div>Yo! I'm <strong>Histo-Bot</strong>, your History & Humanities study buddy 📜🔥<br><br>I can <strong>explain concepts</strong> step-by-step or <strong>quiz you</strong> to test what you know. Just type your question or tap a quick prompt below.<br><br>What are we tackling today? 👇`, true);
+  }, 300);
+});
+</script>
+</body>
+</html>
