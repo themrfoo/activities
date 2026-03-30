@@ -1134,18 +1134,138 @@ if (!state.watchlist) state.watchlist = {};
 if (!state.currentTerm) state.currentTerm = 2;
 if (!state.currentWeek) state.currentWeek = 2;
 
-if (!state.classes.length) {
+if (!state.classes.find(c => c.name === '1HIA')) {
   state.classes.push({
     id: 1000000001, name: '1HIA', subject: 'History',
     students: [
-      'Lakshya','Enyue','Danif','Aqil','Qi Xian','Clayton','Javier',
-      'Cherbelle','Kingsley','Hongbo','Luth','Michael','Mani','Sree',
-      'Jayden','Ignatius','Lewis','Jia Xuan','Ying Xin','Caden',
-      'Dhaniyah','Scarlett','Eryna','Shafinah','Aomi'
+      'Clayton','Hongbo','Luth','Aomi','Yogesh',
+      'Qi Xian','Aqil','Javier','Ignatius','Eryna','Shafinah','Danif','Michael',
+      'Cherbelle','Sree','Lewis','Caden','Ariana','Scarlette',
+      'Lakshya','Enyue','Jayden','Kingsley','Jia Xuan','Ying Xin'
     ]
   });
-  save();
 }
+
+if (!state.classes.find(c => c.name === '1HIE')) {
+  state.classes.push({
+    id: 1000000004, name: '1HIE', subject: 'History',
+    students: [
+      'Zayden','Tharan','Van Khai','Talan','Jovi','Luffy',
+      'Reon','Ryan','Vanna','Angelina','Evan','Zheng An','Kristopher','Kaegan',
+      'Rachel','Arissa','Ian','Kayven','Criselda','Xin Yu','Rui Kai','Kevin',
+      'Jerine','Kate','Harrison','Shawn','Paige','Siting'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '1HIR')) {
+  state.classes.push({
+    id: 1000000005, name: '1HIR', subject: 'History',
+    students: [
+      'Nataniel','Kaizhe',
+      'Ravellio','Luong','Henry','Aaiden','Justin','Zhen Bin','Ruey Waye','Jialin',
+      'Lucas Yeo','Lukas Beh','Brendan','Zi Le','Charmaine','Elsa','Beatrix','Zhi Qing',
+      'Xinglin','Iain','Li Quan','Zhi Yu','Deborah','Alice','Rosette','Zi Xuan',
+      'Shanmitha','Aaralyn','Josella','Jia Ying','Jayden','Joshua','Zender','Roopesh',
+      'Kaylea','Regina','Khai Jie','Phoebe','Ling En','Cheng Zi','Elma','Royce'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '1HIX')) {
+  state.classes.push({
+    id: 1000000006, name: '1HIX', subject: 'History',
+    students: [
+      'Yixuan','Calista','Marissa','Yaagna',
+      'Bogyu','Richard','Hilitary','Zi Yu','Yan Ru','Joann','Isabella',
+      'Aden','Wei Xin','Kathleen','Jenevieve','Lucas','Aron','Minlang','Aqil',
+      'Claire','Crescentia','Anders','Wing Tin','Sachio','Zih Ciao','Mitchell','Nayef',
+      'Chloe','Janelle','Jun See','Leroy','Hema','Samantha'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '1A3')) {
+  state.classes.push({
+    id: 1000000009, name: '1A3', subject: 'History',
+    students: [
+      'Kieran','Nick','Alice','Zou Mo','Jared','Lewis Ng',
+      'Jia Xuan','Ying Xin','Isabel','Isabella','Roopesh','Kai Zhe','Elsa','Yi Xuan',
+      'Mia','Jiaying','Sophie','Tanesha','Ignatious','Lucas','Lewis Tan','Eason',
+      'Ray','Ravellio','Kaylynn','Deborah','Sree','Jia En','Afiq','Jayden',
+      'Rizqi','Zender','Venkatesha','Harith','Niran','Charmaine'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '3A')) {
+  state.classes.push({
+    id: 1000000002, name: '3A', subject: 'Social Studies',
+    students: [
+      'Syabil','Reyes','Irfaan',
+      'Javier','Franky','Wen Hao',
+      'Qalisyah','Eugenia','Jabar',
+      'Tiara','Kai En','Kevin',
+      'Shin Yong','Kevin','Winnie',
+      'Johnny','Alfeus','Alysha',
+      'Li Xuan','Pooja','Raziq',
+      'Isabelle','Shi Hui',
+      'Elfirul','Farooq',
+      'Vince','Danish',
+      'Zi Ying','Jiaxuan',
+      'Clara','Benisha'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '3C')) {
+  state.classes.push({
+    id: 1000000003, name: '3C', subject: 'Social Studies',
+    students: [
+      'Jasper','Joshua','Jayven','Christopher','Lucas Wu','Brendon',
+      'Enver','Yuan Ziyu','Matthew','Dyon','Jun Lin','Yao Hong','Javier','Seth',
+      'Yu Xiang','Logan','Kaveen','Jovial','Kayden','Lucas Wee','Jia An','Anson',
+      'Jovelle','Shu En','Andric','Cartier','Ocean','Yu Hong','Umara','Jane',
+      'Chloe','Myra','Irfaanah','Janelle','Kayla','Cynthia','Justine',
+      'Quinn','Xiang Lin','Louisa','Valencia'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '3SHT')) {
+  state.classes.push({
+    id: 1000000007, name: '3SHT', subject: 'Social Studies',
+    students: [
+      'Kiriel',
+      'Aisha','Ravis','Sonya','Hoang Quan','Tasnuva','Siew Yan',
+      'Kievan','Tristan','Nathan','Rianson','Veanna','Yue Ling',
+      'Maxine','Nadine','Matthew','Adhithi',
+      'Kai Qing','Renae','Xing Xuan','Yin Xuan'
+    ]
+  });
+}
+
+if (!state.classes.find(c => c.name === '3SHW')) {
+  state.classes.push({
+    id: 1000000008, name: '3SHW', subject: 'Social Studies',
+    students: [
+      'Paven','Kellynn','Henry','Haris','Traven','Ryan',
+      'Joshin','Sam','Clarice','Jun Yang','Ewan','Jayden',
+      'Joseph','Teagan','Jonathan','Haasyir',
+      'Andrew','Xavier','Tristan','Namo'
+    ]
+  });
+}
+
+// Sort: 1s before 3s, then alphabetically within each group
+state.classes.sort((a, b) => {
+  const aNum = parseInt(a.name[0]);
+  const bNum = parseInt(b.name[0]);
+  if (aNum !== bNum) return aNum - bNum;
+  return a.name.localeCompare(b.name);
+});
+
+save();
 renderHome();
 
 /* ---- PWA SETUP ---- */
