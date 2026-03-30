@@ -706,12 +706,15 @@ function renderSolList(){
   const el=document.getElementById('sol-list');
   el.innerHTML='';
   const students=cls.students;
-  const perCol=Math.ceil(students.length/3);
-  const col1=students.slice(0,perCol);
-  const col2=students.slice(perCol,perCol*2);
-  const col3=students.slice(perCol*2);
 
-  // Chip labels short for space
+  // Match the grid: col1 = indices 0,3,6,9..., col2 = 1,4,7,10..., col3 = 2,5,8,11...
+  const col1=[], col2=[], col3=[];
+  students.forEach((name,i)=>{
+    if(i%3===0) col1.push(name);
+    else if(i%3===1) col2.push(name);
+    else col3.push(name);
+  });
+
   const chips=[
     {key:'absent',label:'Abs',cls:'absent'},
     {key:'late',label:'Late',cls:'late'},
