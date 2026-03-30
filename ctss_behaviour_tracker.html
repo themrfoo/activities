@@ -282,9 +282,9 @@ select option{background:var(--surface);color:var(--text)}
 <!-- START OF LESSON -->
 <div id="screen-sol" class="screen">
   <div class="header">
-    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
     <div style="flex:1">
-      <div class="header-title" id="sol-class-title">Start of Lesson</div>
+      <div class="header-title" id="sol-class-title">Check-in</div>
       <div class="header-sub" id="sol-lesson-label"></div>
     </div>
   </div>
@@ -292,9 +292,8 @@ select option{background:var(--surface);color:var(--text)}
     <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Tap to mark any issues. Tap again to deselect.</div>
     <div id="sol-list"></div>
   </div>
-  <div style="padding:12px 14px;border-top:0.5px solid var(--border);flex-shrink:0;display:flex;gap:10px">
-    <button class="sol-done-btn" style="flex:3;margin-top:0" onclick="confirmSol()">Done — Start Lesson</button>
-    <button class="btn-ghost" style="flex:1;padding:15px;font-size:15px" onclick="skipSol()">Skip</button>
+  <div style="padding:12px 14px;border-top:0.5px solid var(--border);flex-shrink:0">
+    <button class="sol-done-btn" style="margin-top:0" onclick="confirmSol()">Done</button>
   </div>
 </div>
 
@@ -306,6 +305,7 @@ select option{background:var(--surface);color:var(--text)}
       <div class="header-title" id="class-title">Class</div>
       <div class="header-sub" id="class-subtitle"></div>
     </div>
+    <button class="btn-ghost" onclick="openSol()" style="color:var(--green-text);border-color:var(--green);background:var(--green-bg)">Check-in</button>
     <button class="btn-ghost" onclick="showLog()">Log</button>
   </div>
   <div class="lesson-banner" id="lesson-banner" onclick="openLessonPicker(true)">
@@ -677,15 +677,20 @@ function confirmLesson(){
   closeAllPanels();
   currentLesson={term:pickerTerm,week:pickerWeek,lesson:pickerLesson};
   if(pickerIsChange){
-    // Just update banner and stay on student grid
     document.getElementById('lesson-banner-text').textContent=lessonLabel(pickerTerm,pickerWeek,pickerLesson);
     renderStudentGrid();
     return;
   }
-  // Go to start of lesson
+  // Go straight to student grid — Check-in is available from the header
+  goToStudentGrid();
+}
+
+function openSol(){
+  if(!currentLesson){openLessonPicker(false);return}
   const cls=state.classes.find(c=>c.id===currentClassId);
   document.getElementById('sol-class-title').textContent=cls.name;
-  document.getElementById('sol-lesson-label').textContent=lessonLabel(pickerTerm,pickerWeek,pickerLesson);
+  document.getElementById('sol-lesson-label').textContent=lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson);
+  solSelections={};
   renderSolList();
   showScreen('screen-sol');
 }
@@ -811,7 +816,8 @@ function confirmSol(){
   save();
   checkSolThresholds(currentClassId);
   save();
-  goToStudentGrid();
+  showScreen('screen-students');
+  renderStudentGrid();
 }
 
 function skipSol(){
