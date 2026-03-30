@@ -768,8 +768,9 @@ function renderStudentGrid() {
           const srcIdx = cls2.students.indexOf(dragSrc.dataset.name);
           const tgtIdx = cls2.students.indexOf(target.dataset.name);
           if (srcIdx !== -1 && tgtIdx !== -1) {
-            cls2.students.splice(srcIdx, 1);
-            cls2.students.splice(tgtIdx, 0, dragSrc.dataset.name);
+            const tmp = cls2.students[srcIdx];
+            cls2.students[srcIdx] = cls2.students[tgtIdx];
+            cls2.students[tgtIdx] = tmp;
             save();
             renderStudentGrid();
           }
