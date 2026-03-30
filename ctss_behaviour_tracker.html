@@ -144,20 +144,41 @@
     cursor: pointer; text-align: center; min-height: 72px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     position: relative; transition: transform 0.1s; gap: 4px;
+    user-select: none; -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
   .student-btn:active { transform: scale(0.93); }
-  .student-btn.flagged { border-color: var(--red); border-width: 1.5px; }
+  .student-btn.dragging {
+    opacity: 0.4; transform: scale(0.95);
+  }
+  .student-btn.drag-over {
+    border-color: var(--blue); border-width: 2px;
+    background: var(--blue-bg);
+  }
+  .student-btn.drag-ready {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transform: scale(1.06);
+    z-index: 5; position: relative;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
   .student-btn.on-watch { border-color: var(--orange); border-width: 1.5px; background: var(--orange-bg); }
   .student-btn.on-watch.flagged { border-color: var(--red); background: var(--red-bg); }
   .student-btn-name { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.3; }
   .offence-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 4px; }
-  .ob {
-    font-size: 10px; font-weight: 600; border-radius: 99px; padding: 1px 5px; min-width: 16px; text-align: center;
-  }
-  .ob.disruptive { background: var(--red); color: #fff; }
-  .ob.offtask { background: var(--amber); color: #fff; }
-  .ob.notworking { background: var(--blue); color: #fff; }
-  .ob.pld { background: var(--purple); color: #fff; }
+  .ob { font-size: 10px; font-weight: 600; border-radius: 99px; padding: 1px 5px; min-width: 16px; text-align: center; }
+  .ob.c-red    { background: var(--red);    color: #fff; }
+  .ob.c-amber  { background: var(--amber);  color: #fff; }
+  .ob.c-blue   { background: var(--blue);   color: #fff; }
+  .ob.c-purple { background: var(--purple); color: #fff; }
+  .ob.c-orange { background: var(--orange); color: #fff; }
+  .ob.c-gray   { background: var(--text2);  color: #fff; }
+  .ob.ob-watch { opacity: 0.45; outline: 1.5px solid currentColor; outline-offset: -2px; }
+  .log-dot.c-red    { background: var(--red); }
+  .log-dot.c-amber  { background: var(--amber); }
+  .log-dot.c-blue   { background: var(--blue); }
+  .log-dot.c-purple { background: var(--purple); }
+  .log-dot.c-orange { background: var(--orange); }
+  .log-dot.c-gray   { background: var(--text2); }
   .watch-tag {
     font-size: 10px; font-weight: 600; color: var(--orange-text);
     background: transparent; border-radius: 99px; padding: 1px 6px;
@@ -185,10 +206,17 @@
     font-size: 14px; font-weight: 600; font-family: var(--font); cursor: pointer; text-align: center; transition: transform 0.1s;
   }
   .beh-btn:active { transform: scale(0.95); }
-  .beh-btn.disruptive { background: var(--red-bg); color: var(--red-text); border-color: var(--red); }
-  .beh-btn.offtask { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber); }
-  .beh-btn.notworking { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue); }
-  .beh-btn.pld { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple); }
+  .b-device   { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple); }
+  .b-late     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
+  .b-attire   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
+  .b-rude     { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
+  .b-vulgar   { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
+  .b-sleep    { background: var(--surface2);  color: var(--text2);       border-color: var(--border2); }
+  .b-talk     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
+  .b-nowork   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
+  .b-disrupt  { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
+  .b-nomats   { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
+  .b-slow     { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
   .cancel-btn {
     width: 100%; margin-top: 10px; padding: 15px; border-radius: var(--radius-sm);
     border: 0.5px solid var(--border2); font-size: 15px; font-family: var(--font);
@@ -201,6 +229,20 @@
     color: var(--blue-text); background: var(--blue-bg); cursor: pointer;
   }
   .history-btn:active { opacity: 0.7; }
+  .panel-logged-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .panel-logged-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: var(--radius-sm);
+    background: var(--surface2); margin-bottom: 5px;
+  }
+  .panel-logged-type { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+  .panel-logged-time { font-size: 12px; color: var(--text3); }
+  .panel-logged-del {
+    font-size: 13px; font-weight: 600; color: var(--red-text);
+    background: var(--red-bg); border: 0.5px solid var(--red);
+    border-radius: var(--radius-sm); padding: 4px 10px;
+    cursor: pointer; font-family: var(--font);
+  }
 
   /* LOG */
   .section-title {
@@ -222,18 +264,16 @@
   .carried-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 5px; }
   .pill { font-size: 12px; font-weight: 600; border-radius: 99px; padding: 3px 10px; }
-  .pill.disruptive { background: var(--red-bg); color: var(--red-text); }
-  .pill.offtask { background: var(--amber-bg); color: var(--amber-text); }
-  .pill.notworking { background: var(--blue-bg); color: var(--blue-text); }
-  .pill.pld { background: var(--purple-bg); color: var(--purple-text); }
-  .pill.strikes { background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); }
+  .pill.c-red    { background: var(--red-bg);    color: var(--red-text); }
+  .pill.c-amber  { background: var(--amber-bg);  color: var(--amber-text); }
+  .pill.c-blue   { background: var(--blue-bg);   color: var(--blue-text); }
+  .pill.c-purple { background: var(--purple-bg); color: var(--purple-text); }
+  .pill.c-orange { background: var(--orange-bg); color: var(--orange-text); }
+  .pill.c-gray   { background: var(--surface2);  color: var(--text2); }
+  .pill.strikes  { background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); }
   .log-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
   .log-item:last-child { border-bottom: none; }
   .log-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .log-dot.disruptive { background: var(--red); }
-  .log-dot.offtask { background: var(--amber); }
-  .log-dot.notworking { background: var(--blue); }
-  .log-dot.pld { background: var(--purple); }
   .log-text { flex: 1; font-size: 14px; color: var(--text); line-height: 1.4; }
   .log-text span { color: var(--text2); font-size: 13px; }
   .log-time { font-size: 12px; color: var(--text3); white-space: nowrap; }
@@ -279,6 +319,13 @@
   .inline-row .form-input { flex: 1; }
   .inline-add { padding: 13px 16px; font-size: 15px; font-weight: 600; font-family: var(--font); color: var(--text); background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
   .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+  .reset-card { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 16px; }
+  .reset-card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .reset-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+  .reset-btn-week { width: 100%; padding: 13px; font-size: 14px; font-weight: 600; font-family: var(--font); border-radius: var(--radius-sm); cursor: pointer; background: var(--amber-bg); color: var(--amber-text); border: 0.5px solid var(--amber); }
+  .reset-btn-week:active { opacity: 0.7; }
+  .reset-btn-all { width: 100%; padding: 13px; font-size: 14px; font-weight: 600; font-family: var(--font); border-radius: var(--radius-sm); cursor: pointer; background: var(--red-bg); color: var(--red-text); border: 0.5px solid var(--red); }
+  .reset-btn-all:active { opacity: 0.7; }
 
   .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: 99px; z-index: 20; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; font-family: var(--font); }
   .toast.show { opacity: 1; }
@@ -362,6 +409,7 @@
     <div class="setup-tabs">
       <button class="setup-tab active" id="tab-classes" onclick="switchTab('classes')">Classes</button>
       <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
+      <button class="setup-tab" id="tab-reset" onclick="switchTab('reset')">Reset</button>
     </div>
     <div class="scroll-area">
       <div id="setup-classes">
@@ -378,6 +426,19 @@
           <button class="inline-add" onclick="addStudent()">Add</button>
         </div>
         <div id="student-list"></div>
+      </div>
+      <div id="setup-reset" style="display:none">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6">Use these to clear data. These actions cannot be undone.</div>
+        <div class="reset-card">
+          <div class="reset-card-title">Reset this week</div>
+          <div class="reset-card-desc">Clears all incidents logged in the current week (T<span id="reset-term"></span> W<span id="reset-week"></span>) across all classes. Watchlist and student data are kept.</div>
+          <button class="reset-btn-week" onclick="resetWeek()">Clear this week's incidents</button>
+        </div>
+        <div class="reset-card" style="margin-top:12px">
+          <div class="reset-card-title">Reset all data</div>
+          <div class="reset-card-desc">Deletes every incident, watchlist entry, and class. Starts completely fresh. Student names and class setup will also be wiped.</div>
+          <button class="reset-btn-all" onclick="resetAll()">Delete everything</button>
+        </div>
       </div>
     </div>
   </div>
@@ -422,6 +483,7 @@
     </div>
   </div>
   <button class="picker-confirm" id="picker-confirm" onclick="confirmLesson()" disabled>Confirm</button>
+  <button class="cancel-btn" onclick="cancelLessonPicker()" style="margin-top:8px">Cancel</button>
 </div>
 
 <!-- BEHAVIOUR PANEL -->
@@ -429,11 +491,19 @@
   <div class="panel-handle"></div>
   <div class="panel-student" id="panel-name"></div>
   <div class="panel-watchinfo" id="panel-watchinfo" style="display:none"></div>
+  <div id="panel-logged" style="display:none;margin-bottom:12px"></div>
   <div class="beh-grid">
-    <button class="beh-btn disruptive" onclick="logBehaviour('Disruptive')">Disruptive</button>
-    <button class="beh-btn offtask" onclick="logBehaviour('Off-task')">Off-task</button>
-    <button class="beh-btn notworking" onclick="logBehaviour('Not working')">Not working</button>
-    <button class="beh-btn pld" onclick="logBehaviour('PLD misuse')">PLD misuse</button>
+    <button class="beh-btn b-rude" onclick="logBehaviour('Rude')">Rude</button>
+    <button class="beh-btn b-vulgar" onclick="logBehaviour('Vulgarity')">Vulgarity</button>
+    <button class="beh-btn b-disrupt" onclick="logBehaviour('Disruptive')">Disruptive</button>
+    <button class="beh-btn b-talk" onclick="logBehaviour('Talking')">Talking</button>
+    <button class="beh-btn b-late" onclick="logBehaviour('Late')">Late</button>
+    <button class="beh-btn b-nowork" onclick="logBehaviour('No Work')">No Work</button>
+    <button class="beh-btn b-attire" onclick="logBehaviour('Attire')">Attire</button>
+    <button class="beh-btn b-device" onclick="logBehaviour('Device')">Device</button>
+    <button class="beh-btn b-nomats" onclick="logBehaviour('No Materials')">No Materials</button>
+    <button class="beh-btn b-slow" onclick="logBehaviour('Slow Start')">Slow Start</button>
+    <button class="beh-btn b-sleep" onclick="logBehaviour('Sleeping')">Sleeping</button>
   </div>
   <button class="cancel-btn" onclick="closeAllPanels()">Cancel</button>
   <button class="history-btn" onclick="openStudentHistory()">View full history</button>
@@ -465,10 +535,13 @@ function weekInc(classId, student) {
   return state.incidents.filter(i => i.classId === classId && i.student === student && i.term === state.currentTerm && i.week === state.currentWeek);
 }
 function behClass(t) {
-  if (t === 'Disruptive') return 'disruptive';
-  if (t === 'Off-task') return 'offtask';
-  if (t === 'Not working') return 'notworking';
-  return 'pld';
+  if (t === 'Disruptive' || t === 'Rude' || t === 'Vulgarity') return 'c-red';
+  if (t === 'Talking' || t === 'Late') return 'c-amber';
+  if (t === 'No Work' || t === 'Attire') return 'c-blue';
+  if (t === 'Device') return 'c-purple';
+  if (t === 'No Materials' || t === 'Slow Start') return 'c-orange';
+  if (t === 'Sleeping') return 'c-gray';
+  return 'c-gray';
 }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(msg) {
@@ -493,11 +566,17 @@ function doNextWeek(nextT, nextW) {
     Object.entries(byStudent).forEach(([student, types]) => {
       if (types.length >= 3) {
         const key = wKey(cls.id, student);
-        const entry = state.watchlist[key] || { classId: cls.id, student, strikes: 0, carriedOffences: {} };
+        const entry = state.watchlist[key] || { classId: cls.id, student, strikes: 0, typeStrikes: {}, carriedOffences: {} };
+        if (!entry.typeStrikes) entry.typeStrikes = {};
         entry.strikes += 1;
-        const tally = {};
-        types.forEach(t => { tally[t] = (tally[t]||0)+1; });
-        entry.carriedOffences = tally;
+        // Count offences this week
+        const weekTally = {};
+        types.forEach(t => { weekTally[t] = (weekTally[t]||0)+1; });
+        // For each type that appeared this week, increment its cumulative strike count
+        Object.keys(weekTally).forEach(t => {
+          entry.typeStrikes[t] = (entry.typeStrikes[t]||0) + 1;
+        });
+        entry.carriedOffences = weekTally;
         state.watchlist[key] = entry;
       }
     });
@@ -600,7 +679,16 @@ function closeAllPanels() {
   selectedStudent = null;
 }
 
+function cancelLessonPicker() {
+  closeAllPanels();
+  // If no lesson set yet (came from home), go back to home
+  if (!currentLesson) showScreen('screen-home');
+}
+
 /* STUDENTS */
+let dragSrc = null, dragLongTimer = null, isDragging = false;
+let touchStartX = 0, touchStartY = 0, touchMoved = false;
+
 function renderStudentGrid() {
   const grid = document.getElementById('student-grid');
   grid.innerHTML = '';
@@ -617,22 +705,83 @@ function renderStudentGrid() {
     if (inc.length > 0) btnClass += ' flagged';
     else if (onWatch) btnClass += ' on-watch';
 
-    // Tally by offence type
     const tally = {};
     inc.forEach(i => { tally[i.type] = (tally[i.type]||0)+1; });
-    const badgeOrder = ['Disruptive','Off-task','Not working','PLD misuse'];
-    const badges = badgeOrder
-      .filter(t => tally[t])
-      .map(t => `<span class="ob ${behClass(t)}">${tally[t]}</span>`)
-      .join('');
+    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
+    const weekBadges = badgeOrder.filter(t => tally[t]).map(t => `<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
+    const typeStrikes = (watch && watch.typeStrikes) || {};
+    const watchBadges = badgeOrder.filter(t => typeStrikes[t]).map(t => `<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
+    const allBadges = watchBadges + weekBadges;
 
     const btn = document.createElement('div');
     btn.className = btnClass;
+    btn.dataset.name = name;
     btn.innerHTML = `
       <div class="student-btn-name">${esc(name)}</div>
-      ${badges ? `<div class="offence-badges">${badges}</div>` : ''}
-      ${onWatch ? `<span class="watch-tag">×${watch.strikes}w</span>` : ''}`;
-    btn.onclick = () => openPanel(name);
+      ${allBadges ? `<div class="offence-badges">${allBadges}</div>` : ''}`;
+
+    btn.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchMoved = false;
+      isDragging = false;
+      dragLongTimer = setTimeout(() => {
+        if (!touchMoved) {
+          isDragging = true;
+          dragSrc = btn;
+          btn.classList.add('drag-ready');
+          navigator.vibrate && navigator.vibrate(40);
+        }
+      }, 450);
+    }, {passive: true});
+
+    btn.addEventListener('touchmove', e => {
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      // If moved more than 8px before long press fires, it's a scroll
+      if (dx > 8 || dy > 8) {
+        touchMoved = true;
+        clearTimeout(dragLongTimer);
+      }
+      if (!isDragging) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const target = el && el.closest('.student-btn');
+      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
+      if (target && target !== dragSrc) target.classList.add('drag-over');
+    }, {passive: false});
+
+    btn.addEventListener('touchend', e => {
+      clearTimeout(dragLongTimer);
+      const wasDragging = isDragging;
+      isDragging = false;
+      btn.classList.remove('drag-ready');
+      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
+
+      if (wasDragging) {
+        const touch = e.changedTouches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        const target = el && el.closest('.student-btn');
+        if (target && target !== dragSrc) {
+          const cls2 = state.classes.find(c => c.id === currentClassId);
+          const srcIdx = cls2.students.indexOf(dragSrc.dataset.name);
+          const tgtIdx = cls2.students.indexOf(target.dataset.name);
+          if (srcIdx !== -1 && tgtIdx !== -1) {
+            cls2.students.splice(srcIdx, 1);
+            cls2.students.splice(tgtIdx, 0, dragSrc.dataset.name);
+            save();
+            renderStudentGrid();
+          }
+        }
+        dragSrc = null;
+        return;
+      }
+
+      // Only open panel if finger didn't scroll
+      if (!touchMoved) openPanel(name);
+    });
+
     grid.appendChild(btn);
   });
 }
@@ -642,15 +791,51 @@ function openPanel(name) {
   if (!currentLesson) { openLessonPicker(false); return; }
   selectedStudent = name;
   document.getElementById('panel-name').textContent = name;
+
+  // Watchinfo
   const watch = getWatch(currentClassId, name);
   const info = document.getElementById('panel-watchinfo');
   if (watch && watch.strikes > 0) {
-    const carried = Object.entries(watch.carriedOffences).map(([t,c]) => `${t} ×${c}`).join(' · ');
-    info.textContent = `Watchlist — ${watch.strikes} wk${watch.strikes>1?'s':''} flagged · ${carried}`;
+    const typeStrikes = watch.typeStrikes || {};
+    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
+    const parts = badgeOrder.filter(t => typeStrikes[t])
+      .map(t => `${t} ×${typeStrikes[t]} wk${typeStrikes[t]>1?'s':''}`).join(' · ');
+    info.innerHTML = `Watchlist · ${watch.strikes} week${watch.strikes>1?'s':''} flagged<br><span style="opacity:0.8">${parts}</span>`;
     info.style.display = 'block';
   } else { info.style.display = 'none'; }
+
+  // Show this week's logged incidents with delete option
+  renderPanelLogged(name);
+
   document.getElementById('beh-panel').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
+}
+
+function renderPanelLogged(name) {
+  const inc = weekInc(currentClassId, name);
+  const el = document.getElementById('panel-logged');
+  if (!inc.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  let html = `<div class="panel-logged-title">Logged this week — tap to remove</div>`;
+  inc.forEach(i => {
+    html += `<div class="panel-logged-item">
+      <div class="log-dot ${behClass(i.type)}" style="flex-shrink:0"></div>
+      <div class="panel-logged-type">${i.type}</div>
+      <div class="panel-logged-time">${i.time}</div>
+      <button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function deletePanelIncident(id) {
+  state.incidents = state.incidents.filter(i => i.id !== id);
+  save();
+  renderStudentGrid();
+  renderPanelLogged(selectedStudent);
+  // If no more incidents, hide the logged section
+  const inc = weekInc(currentClassId, selectedStudent);
+  if (!inc.length) document.getElementById('panel-logged').style.display = 'none';
 }
 
 function logBehaviour(type) {
@@ -914,9 +1099,28 @@ function removeStudent(classId, name) {
 function switchTab(tab) {
   document.getElementById('setup-classes').style.display = tab === 'classes' ? 'block' : 'none';
   document.getElementById('setup-students').style.display = tab === 'students' ? 'block' : 'none';
+  document.getElementById('setup-reset').style.display = tab === 'reset' ? 'block' : 'none';
   document.getElementById('tab-classes').className = 'setup-tab' + (tab==='classes'?' active':'');
   document.getElementById('tab-students').className = 'setup-tab' + (tab==='students'?' active':'');
+  document.getElementById('tab-reset').className = 'setup-tab' + (tab==='reset'?' active':'');
   if (tab === 'students') updateClassSelect();
+  if (tab === 'reset') {
+    document.getElementById('reset-term').textContent = state.currentTerm;
+    document.getElementById('reset-week').textContent = state.currentWeek;
+  }
+}
+
+function resetWeek() {
+  if (!confirm(`Clear ALL incidents for T${state.currentTerm} W${state.currentWeek} across every class?\n\nWatchlist and student data will be kept.`)) return;
+  state.incidents = state.incidents.filter(i => !(i.term === state.currentTerm && i.week === state.currentWeek));
+  save(); renderHome(); toast('This week cleared');
+}
+
+function resetAll() {
+  if (!confirm('Delete ALL data — incidents, watchlist, and all classes?\n\nThis cannot be undone.')) return;
+  if (!confirm('Are you sure? Everything will be wiped.')) return;
+  localStorage.removeItem(STORE);
+  location.reload();
 }
 
 document.getElementById('new-student').addEventListener('keydown', e => { if(e.key==='Enter') addStudent(); });
