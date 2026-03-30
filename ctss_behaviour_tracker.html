@@ -12,445 +12,394 @@
 <link id="apple-touch-icon" rel="apple-touch-icon"/>
 <title>Class Behaviour Tracker</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #F5F4F0; --surface: #FFFFFF; --surface2: #EEECEA;
-    --text: #1A1917; --text2: #6B6960; --text3: #A09E96;
-    --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.14);
-    --red: #D94F3D; --red-bg: #FDF0EE; --red-text: #A8301F;
-    --amber: #C47B1A; --amber-bg: #FDF5E6; --amber-text: #8F540C;
-    --blue: #2A6ED4; --blue-bg: #EEF3FD; --blue-text: #1A4E9E;
-    --purple: #6B4FBB; --purple-bg: #F2EEFB; --purple-text: #4A3186;
-    --orange: #C45D1A; --orange-bg: #FDF1E6; --orange-text: #8F400C;
-    --green: #1E7E34; --green-bg: #EAF5ED; --green-text: #155724;
-    --radius: 14px; --radius-sm: 9px;
-    --font: 'DM Sans', system-ui, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121210; --surface: #1E1D1A; --surface2: #2A2926;
-      --text: #F0EEE8; --text2: #9E9C94; --text3: #6B6960;
-      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.13);
-      --red-bg: #2A1410; --red-text: #F5907E;
-      --amber-bg: #261A08; --amber-text: #F0B060;
-      --blue-bg: #0E1B30; --blue-text: #7AABF5;
-      --purple-bg: #1A1228; --purple-text: #B09AE8;
-      --orange-bg: #2A1608; --orange-text: #F0A060;
-      --green-bg: #0C1F10; --green-text: #6FCF8A;
-    }
-  }
-  html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); overflow: hidden; }
-  #app { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-  .screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .screen.active { display: flex; }
-  .header {
-    padding: 16px 16px 12px; display: flex; align-items: center; gap: 8px;
-    background: var(--bg); border-bottom: 0.5px solid var(--border); flex-shrink: 0;
-  }
-  .header-title { font-size: 18px; font-weight: 600; flex: 1; color: var(--text); }
-  .header-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
-  .btn-ghost {
-    background: var(--surface); border: 0.5px solid var(--border2);
-    border-radius: var(--radius-sm); padding: 8px 12px;
-    font-size: 13px; font-weight: 500; color: var(--text);
-    font-family: var(--font); cursor: pointer; white-space: nowrap;
-  }
-  .btn-ghost:active { opacity: 0.7; transform: scale(0.97); }
-  .btn-danger { color: var(--red-text); border-color: var(--red); background: var(--red-bg); }
-  .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F4F0;--surface:#FFF;--surface2:#EEECEA;
+  --text:#1A1917;--text2:#6B6960;--text3:#A09E96;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.14);
+  --red:#D94F3D;--red-bg:#FDF0EE;--red-text:#A8301F;
+  --amber:#C47B1A;--amber-bg:#FDF5E6;--amber-text:#8F540C;
+  --blue:#2A6ED4;--blue-bg:#EEF3FD;--blue-text:#1A4E9E;
+  --purple:#6B4FBB;--purple-bg:#F2EEFB;--purple-text:#4A3186;
+  --orange:#C45D1A;--orange-bg:#FDF1E6;--orange-text:#8F400C;
+  --green:#1E7E34;--green-bg:#EAF5ED;--green-text:#155724;
+  --teal:#0F7B6C;--teal-bg:#E6F5F3;--teal-text:#0A5C50;
+  --radius:14px;--radius-sm:9px;
+  --font:'DM Sans',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#121210;--surface:#1E1D1A;--surface2:#2A2926;
+  --text:#F0EEE8;--text2:#9E9C94;--text3:#6B6960;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
+  --red-bg:#2A1410;--red-text:#F5907E;
+  --amber-bg:#261A08;--amber-text:#F0B060;
+  --blue-bg:#0E1B30;--blue-text:#7AABF5;
+  --purple-bg:#1A1228;--purple-text:#B09AE8;
+  --orange-bg:#2A1608;--orange-text:#F0A060;
+  --green-bg:#0C1F10;--green-text:#6FCF8A;
+  --teal-bg:#0A1F1C;--teal-text:#4ECDC4;
+}}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+.header{padding:16px 16px 12px;display:flex;align-items:center;gap:8px;background:var(--bg);border-bottom:0.5px solid var(--border);flex-shrink:0}
+.header-title{font-size:18px;font-weight:600;flex:1;color:var(--text)}
+.header-sub{font-size:13px;color:var(--text2);margin-top:1px}
+.btn-ghost{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-weight:500;color:var(--text);font-family:var(--font);cursor:pointer;white-space:nowrap}
+.btn-ghost:active{opacity:.7;transform:scale(.97)}
+.btn-danger{color:var(--red-text);border-color:var(--red);background:var(--red-bg)}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:15px;line-height:1.6}
+.empty strong{display:block;font-size:17px;color:var(--text);margin-bottom:6px}
+.divider{height:0.5px;background:var(--border);margin:14px 0}
 
-  /* HOME BANNER */
-  .home-banner {
-    margin: 10px 14px 4px; padding: 10px 14px;
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-  }
-  .home-banner-label { font-size: 13px; color: var(--text2); }
-  .home-banner-label strong { color: var(--text); font-weight: 600; }
-  .next-week-btn {
-    font-size: 13px; font-weight: 600; color: var(--blue-text);
-    background: var(--blue-bg); border: 0.5px solid var(--blue);
-    border-radius: var(--radius-sm); padding: 6px 12px;
-    font-family: var(--font); cursor: pointer;
-  }
-  .next-week-btn:active { opacity: 0.7; }
+/* HOME */
+.home-banner{margin:10px 14px 4px;padding:10px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.home-banner-label{font-size:13px;color:var(--text2)}
+.home-banner-label strong{color:var(--text);font-weight:600}
+.next-week-btn{font-size:13px;font-weight:600;color:var(--blue-text);background:var(--blue-bg);border:0.5px solid var(--blue);border-radius:var(--radius-sm);padding:6px 12px;font-family:var(--font);cursor:pointer}
+.next-week-btn:active{opacity:.7}
+.class-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.class-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 14px;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s}
+.class-card:active{transform:scale(.96)}
+.class-card-name{font-size:17px;font-weight:600;color:var(--text)}
+.class-card-sub{font-size:12px;color:var(--text2);margin-top:3px}
+.class-badge{display:inline-block;margin-top:10px;font-size:11px;font-weight:600;border-radius:99px;padding:2px 9px}
+.class-badge.incident{background:var(--red-bg);color:var(--red-text)}
+.class-badge.watch{background:var(--orange-bg);color:var(--orange-text)}
+.class-badge.none{background:var(--surface2);color:var(--text3)}
 
-  /* CLASS GRID */
-  .class-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .class-card {
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius); padding: 16px 14px; cursor: pointer; min-height: 96px;
-    display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.1s;
-  }
-  .class-card:active { transform: scale(0.96); }
-  .class-card-name { font-size: 17px; font-weight: 600; color: var(--text); }
-  .class-card-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
-  .class-badge { display: inline-block; margin-top: 10px; font-size: 11px; font-weight: 600; border-radius: 99px; padding: 2px 9px; }
-  .class-badge.incident { background: var(--red-bg); color: var(--red-text); }
-  .class-badge.watch { background: var(--orange-bg); color: var(--orange-text); }
-  .class-badge.none { background: var(--surface2); color: var(--text3); }
-  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 15px; line-height: 1.6; }
-  .empty strong { display: block; font-size: 17px; color: var(--text); margin-bottom: 6px; }
+/* BACKDROP + PANELS */
+.backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:10}
+.backdrop.open{display:block}
+.bottom-panel{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:14px 16px 34px;z-index:12;max-height:88vh;overflow-y:auto}
+.bottom-panel.open{display:block}
+.panel-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 16px}
+.panel-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;text-align:center}
 
-  /* LESSON PICKER PANEL */
-  .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10; }
-  .backdrop.open { display: block; }
-  .lesson-picker {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 0.5px solid var(--border2);
-    border-radius: 20px 20px 0 0; padding: 14px 16px 34px; z-index: 12;
-  }
-  .lesson-picker.open { display: block; }
-  .picker-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 99px; margin: 0 auto 16px; }
-  .picker-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; text-align: center; }
-  .picker-row { margin-bottom: 14px; }
-  .picker-row-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .picker-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    padding: 10px 16px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border2); font-size: 15px; font-weight: 500;
-    font-family: var(--font); cursor: pointer; color: var(--text2); background: var(--surface2);
-    transition: all 0.1s;
-  }
-  .chip:active { transform: scale(0.95); }
-  .chip.selected { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue); font-weight: 600; }
-  .picker-confirm {
-    width: 100%; margin-top: 6px; padding: 16px; border-radius: var(--radius-sm);
-    font-size: 16px; font-weight: 600; font-family: var(--font);
-    color: #fff; background: var(--blue); border: none; cursor: pointer;
-  }
-  .picker-confirm:active { opacity: 0.8; }
-  .picker-confirm:disabled { background: var(--surface2); color: var(--text3); cursor: default; }
+/* LESSON PICKER */
+.picker-row{margin-bottom:14px}
+.picker-row-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.picker-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 16px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:15px;font-weight:500;font-family:var(--font);cursor:pointer;color:var(--text2);background:var(--surface2);transition:all .1s}
+.chip:active{transform:scale(.95)}
+.chip.selected{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue);font-weight:600}
+.picker-confirm{width:100%;margin-top:6px;padding:16px;border-radius:var(--radius-sm);font-size:16px;font-weight:600;font-family:var(--font);color:#fff;background:var(--blue);border:none;cursor:pointer}
+.picker-confirm:active{opacity:.8}
+.picker-confirm:disabled{background:var(--surface2);color:var(--text3);cursor:default}
 
-  /* LESSON BANNER (inside class screen) */
-  .lesson-banner {
-    margin: 10px 14px 4px; padding: 10px 14px;
-    background: var(--green-bg); border: 0.5px solid var(--green);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-    cursor: pointer;
-  }
-  .lesson-banner:active { opacity: 0.8; }
-  .lesson-banner-text { font-size: 13px; font-weight: 600; color: var(--green-text); }
-  .lesson-banner-change { font-size: 12px; color: var(--green-text); opacity: 0.7; }
+/* LESSON BANNER */
+.lesson-banner{margin:10px 14px 4px;padding:10px 14px;background:var(--green-bg);border:0.5px solid var(--green);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;cursor:pointer}
+.lesson-banner:active{opacity:.8}
+.lesson-banner-text{font-size:13px;font-weight:600;color:var(--green-text)}
+.lesson-banner-change{font-size:12px;color:var(--green-text);opacity:.7}
 
-  /* STUDENTS */
-  .student-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-  .student-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 12px 6px 10px;
-    cursor: pointer; text-align: center; min-height: 72px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; transition: transform 0.1s; gap: 4px;
-    user-select: none; -webkit-user-select: none;
-    -webkit-touch-callout: none;
-  }
-  .student-btn:active { transform: scale(0.93); }
-  .student-btn.dragging {
-    opacity: 0.4; transform: scale(0.95);
-  }
-  .student-btn.drag-over {
-    border-color: var(--blue); border-width: 2px;
-    background: var(--blue-bg);
-  }
-  .student-btn.drag-ready {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    transform: scale(1.06);
-    z-index: 5; position: relative;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .student-btn.on-watch { border-color: var(--orange); border-width: 1.5px; background: var(--orange-bg); }
-  .student-btn.on-watch.flagged { border-color: var(--red); background: var(--red-bg); }
-  .student-btn-name { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.3; }
-  .offence-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 4px; }
-  .ob { font-size: 10px; font-weight: 600; border-radius: 99px; padding: 1px 5px; min-width: 16px; text-align: center; }
-  .ob.c-red    { background: var(--red);    color: #fff; }
-  .ob.c-amber  { background: var(--amber);  color: #fff; }
-  .ob.c-blue   { background: var(--blue);   color: #fff; }
-  .ob.c-purple { background: var(--purple); color: #fff; }
-  .ob.c-orange { background: var(--orange); color: #fff; }
-  .ob.c-gray   { background: var(--text2);  color: #fff; }
-  .ob.ob-watch { opacity: 0.45; outline: 1.5px solid currentColor; outline-offset: -2px; }
-  .log-dot.c-red    { background: var(--red); }
-  .log-dot.c-amber  { background: var(--amber); }
-  .log-dot.c-blue   { background: var(--blue); }
-  .log-dot.c-purple { background: var(--purple); }
-  .log-dot.c-orange { background: var(--orange); }
-  .log-dot.c-gray   { background: var(--text2); }
-  .watch-tag {
-    font-size: 10px; font-weight: 600; color: var(--orange-text);
-    background: transparent; border-radius: 99px; padding: 1px 6px;
-    border: 0.5px solid var(--orange);
-  }
-  .student-btn.flagged .watch-tag { color: var(--red-text); border-color: var(--red); }
+/* START OF LESSON */
+.sol-student-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.sol-student-row:last-child{border-bottom:none}
+.sol-student-row.absent-row{opacity:.5}
+.sol-name{flex:1;font-size:15px;font-weight:500;color:var(--text)}
+.sol-chips{display:flex;gap:5px;flex-wrap:wrap}
+.sol-chip{font-size:11px;font-weight:600;border-radius:99px;padding:4px 9px;border:1px solid;cursor:pointer;font-family:var(--font);transition:all .1s}
+.sol-chip:active{transform:scale(.93)}
+.sol-chip.absent{border-color:var(--text3);color:var(--text3);background:transparent}
+.sol-chip.absent.active{background:var(--text2);color:#fff;border-color:var(--text2)}
+.sol-chip.late{border-color:var(--amber);color:var(--amber-text);background:transparent}
+.sol-chip.late.active{background:var(--amber);color:#fff}
+.sol-chip.attire{border-color:var(--blue);color:var(--blue-text);background:transparent}
+.sol-chip.attire.active{background:var(--blue);color:#fff}
+.sol-chip.nomats{border-color:var(--orange);color:var(--orange-text);background:transparent}
+.sol-chip.nomats.active{background:var(--orange);color:#fff}
+.sol-chip.slowstart{border-color:var(--teal);color:var(--teal-text);background:transparent}
+.sol-chip.slowstart.active{background:var(--teal);color:#fff}
+.sol-reason-input{width:100%;margin-top:5px;padding:6px 10px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
+.sol-done-btn{width:100%;padding:15px;border-radius:var(--radius-sm);font-size:16px;font-weight:600;font-family:var(--font);color:#fff;background:var(--green);border:none;cursor:pointer;margin-top:14px}
+.sol-done-btn:active{opacity:.8}
 
-  /* BEHAVIOUR PANEL */
-  .beh-panel {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 0.5px solid var(--border2);
-    border-radius: 20px 20px 0 0; padding: 14px 14px 30px; z-index: 11;
-  }
-  .beh-panel.open { display: block; }
-  .panel-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 99px; margin: 0 auto 14px; }
-  .panel-student { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .panel-watchinfo {
-    font-size: 12px; color: var(--orange-text); margin-bottom: 12px;
-    background: var(--orange-bg); border-radius: var(--radius-sm);
-    padding: 7px 10px; border: 0.5px solid var(--orange);
-  }
-  .beh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .beh-btn {
-    padding: 18px 10px; border-radius: var(--radius); border: 1px solid;
-    font-size: 14px; font-weight: 600; font-family: var(--font); cursor: pointer; text-align: center; transition: transform 0.1s;
-  }
-  .beh-btn:active { transform: scale(0.95); }
-  .b-device   { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple); }
-  .b-late     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
-  .b-attire   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
-  .b-rude     { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-vulgar   { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-sleep    { background: var(--surface2);  color: var(--text2);       border-color: var(--border2); }
-  .b-talk     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
-  .b-nowork   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
-  .b-disrupt  { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-nomats   { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
-  .b-slow     { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
-  .cancel-btn {
-    width: 100%; margin-top: 10px; padding: 15px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border2); font-size: 15px; font-family: var(--font);
-    color: var(--text2); background: transparent; cursor: pointer;
-  }
-  .cancel-btn:active { opacity: 0.6; }
-  .history-btn {
-    width: 100%; margin-top: 8px; padding: 13px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border); font-size: 14px; font-weight: 500; font-family: var(--font);
-    color: var(--blue-text); background: var(--blue-bg); cursor: pointer;
-  }
-  .history-btn:active { opacity: 0.7; }
-  .panel-logged-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .panel-logged-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: var(--radius-sm);
-    background: var(--surface2); margin-bottom: 5px;
-  }
-  .panel-logged-type { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
-  .panel-logged-time { font-size: 12px; color: var(--text3); }
-  .panel-logged-del {
-    font-size: 13px; font-weight: 600; color: var(--red-text);
-    background: var(--red-bg); border: 0.5px solid var(--red);
-    border-radius: var(--radius-sm); padding: 4px 10px;
-    cursor: pointer; font-family: var(--font);
-  }
+/* STUDENTS */
+.student-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.student-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 6px 10px;cursor:pointer;text-align:center;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:transform .1s;gap:4px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.student-btn:active{transform:scale(.93)}
+.student-btn.flagged{border-color:var(--red);border-width:1.5px}
+.student-btn.on-watch{border-color:var(--orange);border-width:1.5px;background:var(--orange-bg)}
+.student-btn.on-watch.flagged{border-color:var(--red);background:var(--red-bg)}
+.student-btn.absent{opacity:.4;border-style:dashed}
+.student-btn.drag-ready{box-shadow:0 4px 16px rgba(0,0,0,.18);transform:scale(1.06);z-index:5;position:relative}
+.student-btn.drag-over{border-color:var(--blue);border-width:2px;background:var(--blue-bg)}
+.student-btn-name{font-size:15px;font-weight:500;color:var(--text);line-height:1.3}
+.student-alert{font-size:11px;font-weight:700;color:var(--red-text)}
+.note-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);position:absolute;top:6px;left:6px}
+.sol-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);position:absolute;top:6px;right:6px}
+.offence-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:4px}
+.ob{font-size:10px;font-weight:600;border-radius:99px;padding:1px 5px;min-width:16px;text-align:center}
+.ob.c-red{background:var(--red);color:#fff}
+.ob.c-amber{background:var(--amber);color:#fff}
+.ob.c-blue{background:var(--blue);color:#fff}
+.ob.c-purple{background:var(--purple);color:#fff}
+.ob.c-orange{background:var(--orange);color:#fff}
+.ob.c-teal{background:var(--teal);color:#fff}
+.ob.c-gray{background:var(--text2);color:#fff}
+.ob.ob-watch{opacity:.45;outline:1.5px solid currentColor;outline-offset:-2px}
+.log-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.log-dot.c-red{background:var(--red)}
+.log-dot.c-amber{background:var(--amber)}
+.log-dot.c-blue{background:var(--blue)}
+.log-dot.c-purple{background:var(--purple)}
+.log-dot.c-orange{background:var(--orange)}
+.log-dot.c-teal{background:var(--teal)}
+.log-dot.c-gray{background:var(--text2)}
 
-  /* LOG */
-  .section-title {
-    font-size: 12px; font-weight: 600; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.06em; padding: 0 2px; margin: 18px 0 8px;
-  }
-  .section-title:first-child { margin-top: 0; }
-  .summary-row {
-    display: flex; align-items: center;
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 7px; gap: 8px;
-  }
-  .summary-row.over3 { border-color: var(--red); }
-  .summary-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
-  .summary-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .summary-count { font-size: 13px; font-weight: 600; background: var(--red-bg); color: var(--red-text); border-radius: 99px; padding: 2px 10px; }
-  .strikes-pill { font-size: 11px; font-weight: 600; background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
-  .carried-card { background: var(--orange-bg); border: 0.5px solid var(--orange); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 7px; }
-  .carried-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .pill-row { display: flex; flex-wrap: wrap; gap: 5px; }
-  .pill { font-size: 12px; font-weight: 600; border-radius: 99px; padding: 3px 10px; }
-  .pill.c-red    { background: var(--red-bg);    color: var(--red-text); }
-  .pill.c-amber  { background: var(--amber-bg);  color: var(--amber-text); }
-  .pill.c-blue   { background: var(--blue-bg);   color: var(--blue-text); }
-  .pill.c-purple { background: var(--purple-bg); color: var(--purple-text); }
-  .pill.c-orange { background: var(--orange-bg); color: var(--orange-text); }
-  .pill.c-gray   { background: var(--surface2);  color: var(--text2); }
-  .pill.strikes  { background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); }
-  .log-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-  .log-item:last-child { border-bottom: none; }
-  .log-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .log-text { flex: 1; font-size: 14px; color: var(--text); line-height: 1.4; }
-  .log-text span { color: var(--text2); font-size: 13px; }
-  .log-time { font-size: 12px; color: var(--text3); white-space: nowrap; }
-  .log-del { font-size: 16px; color: var(--text3); cursor: pointer; padding: 4px 6px; }
-  .lesson-group-header {
-    font-size: 13px; font-weight: 600; color: var(--text2);
-    padding: 10px 0 6px; margin-top: 6px;
-  }
+/* BEHAVIOUR PANEL */
+.panel-student{font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
+.panel-watchinfo{font-size:12px;color:var(--orange-text);margin-bottom:12px;background:var(--orange-bg);border-radius:var(--radius-sm);padding:7px 10px;border:0.5px solid var(--orange)}
+.beh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.beh-btn{padding:16px 10px;border-radius:var(--radius);border:1px solid;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;text-align:center;transition:transform .1s}
+.beh-btn:active{transform:scale(.95)}
+.b-rude{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-vulgar{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-disrupt{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-talk{background:var(--amber-bg);color:var(--amber-text);border-color:var(--amber)}
+.b-nowork{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue)}
+.b-device{background:var(--purple-bg);color:var(--purple-text);border-color:var(--purple)}
+.b-sleep{background:var(--surface2);color:var(--text2);border-color:var(--border2)}
+.cancel-btn{width:100%;margin-top:10px;padding:15px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:15px;font-family:var(--font);color:var(--text2);background:transparent;cursor:pointer}
+.cancel-btn:active{opacity:.6}
+.history-btn{width:100%;margin-top:8px;padding:13px;border-radius:var(--radius-sm);border:0.5px solid var(--border);font-size:14px;font-weight:500;font-family:var(--font);color:var(--blue-text);background:var(--blue-bg);cursor:pointer}
+.history-btn:active{opacity:.7}
+.panel-logged-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.panel-logged-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2);margin-bottom:5px}
+.panel-logged-type{flex:1;font-size:13px;font-weight:500;color:var(--text)}
+.panel-logged-time{font-size:12px;color:var(--text3)}
+.panel-logged-del{font-size:13px;font-weight:600;color:var(--red-text);background:var(--red-bg);border:0.5px solid var(--red);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;font-family:var(--font)}
+.note-area{width:100%;padding:10px;font-size:14px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none;resize:none;margin-top:6px;min-height:70px}
+.note-save-btn{width:100%;margin-top:6px;padding:11px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:var(--font);color:var(--blue-text);background:var(--blue-bg);border:0.5px solid var(--blue);cursor:pointer}
 
-  /* WATCHLIST */
-  .watch-item { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px; }
-  .watch-item-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .watch-item-class { font-size: 12px; color: var(--text2); margin-top: 2px; margin-bottom: 10px; }
+/* LOG */
+.section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:0 2px;margin:18px 0 8px}
+.section-title:first-child{margin-top:0}
+.summary-row{display:flex;align-items:center;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:7px;gap:8px}
+.summary-row.over3{border-color:var(--red)}
+.summary-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.summary-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.summary-count{font-size:13px;font-weight:600;background:var(--red-bg);color:var(--red-text);border-radius:99px;padding:2px 10px}
+.strikes-pill{font-size:11px;font-weight:600;background:var(--orange-bg);color:var(--orange-text);border:0.5px solid var(--orange);border-radius:99px;padding:2px 8px;white-space:nowrap}
+.carried-card{background:var(--orange-bg);border:0.5px solid var(--orange);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:7px}
+.carried-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.pill-row{display:flex;flex-wrap:wrap;gap:5px}
+.pill{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px}
+.pill.c-red{background:var(--red-bg);color:var(--red-text)}
+.pill.c-amber{background:var(--amber-bg);color:var(--amber-text)}
+.pill.c-blue{background:var(--blue-bg);color:var(--blue-text)}
+.pill.c-purple{background:var(--purple-bg);color:var(--purple-text)}
+.pill.c-orange{background:var(--orange-bg);color:var(--orange-text)}
+.pill.c-teal{background:var(--teal-bg);color:var(--teal-text)}
+.pill.c-gray{background:var(--surface2);color:var(--text2)}
+.pill.strikes{background:var(--orange-bg);color:var(--orange-text);border:0.5px solid var(--orange)}
+.log-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:0.5px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-text{flex:1;font-size:14px;color:var(--text);line-height:1.4}
+.log-text span{color:var(--text2);font-size:13px}
+.log-time{font-size:12px;color:var(--text3);white-space:nowrap}
+.log-del{font-size:16px;color:var(--text3);cursor:pointer;padding:4px 6px}
+.lesson-group-header{font-size:13px;font-weight:600;color:var(--text2);padding:10px 0 6px;margin-top:6px}
+.note-block{background:var(--blue-bg);border:0.5px solid var(--blue);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:5px;font-size:13px;color:var(--blue-text);line-height:1.5}
+.note-block-label{font-size:11px;font-weight:600;color:var(--blue-text);opacity:.7;margin-bottom:3px}
+.absent-block{background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:5px;font-size:13px;color:var(--text2)}
 
-  /* STUDENT HISTORY */
-  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-  .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 10px; text-align: center; }
-  .stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
-  .stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .history-block { margin-bottom: 16px; }
-  .history-block-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 7px; padding: 0 2px; }
-  .history-block-title.current { color: var(--blue-text); }
-  .history-inc-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 5px; }
-  .history-type { flex: 1; font-size: 14px; color: var(--text); }
-  .history-meta { font-size: 12px; color: var(--text3); text-align: right; line-height: 1.5; }
+/* WATCHLIST */
+.watch-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px}
+.watch-item-name{font-size:15px;font-weight:600;color:var(--text)}
+.watch-item-class{font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:10px}
+.rehab-btn{font-size:12px;font-weight:600;color:var(--green-text);background:var(--green-bg);border:0.5px solid var(--green);border-radius:99px;padding:4px 12px;cursor:pointer;font-family:var(--font);margin-top:10px;display:inline-block}
 
-  /* SETUP */
-  .setup-tabs { display: flex; gap: 6px; padding: 14px 14px 0; flex-shrink: 0; }
-  .setup-tab { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text2); background: transparent; cursor: pointer; }
-  .setup-tab.active { background: var(--surface); color: var(--text); border-color: var(--border2); }
-  .form-group { margin-bottom: 10px; }
-  .form-input { width: 100%; padding: 13px 14px; font-size: 15px; font-family: var(--font); color: var(--text); background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); outline: none; }
-  .form-input:focus { border-color: var(--blue); }
-  .form-submit { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; font-family: var(--font); color: var(--text); background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; }
-  .form-submit:active { opacity: 0.7; }
-  .setup-list-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-  .setup-list-item:last-child { border-bottom: none; }
-  .setup-list-text { font-size: 14px; color: var(--text); }
-  .setup-list-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .list-del { font-size: 16px; color: var(--text3); cursor: pointer; padding: 4px 8px; }
-  .class-select { width: 100%; padding: 13px 14px; font-size: 15px; font-family: var(--font); color: var(--text); background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); margin-bottom: 10px; outline: none; }
-  .inline-row { display: flex; gap: 8px; }
-  .inline-row .form-input { flex: 1; }
-  .inline-add { padding: 13px 16px; font-size: 15px; font-weight: 600; font-family: var(--font); color: var(--text); background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
-  .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
-  .reset-card { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 16px; }
-  .reset-card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .reset-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
-  .reset-btn-week { width: 100%; padding: 13px; font-size: 14px; font-weight: 600; font-family: var(--font); border-radius: var(--radius-sm); cursor: pointer; background: var(--amber-bg); color: var(--amber-text); border: 0.5px solid var(--amber); }
-  .reset-btn-week:active { opacity: 0.7; }
-  .reset-btn-all { width: 100%; padding: 13px; font-size: 14px; font-weight: 600; font-family: var(--font); border-radius: var(--radius-sm); cursor: pointer; background: var(--red-bg); color: var(--red-text); border: 0.5px solid var(--red); }
-  .reset-btn-all:active { opacity: 0.7; }
+/* STUDENT HISTORY */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center}
+.stat-num{font-size:22px;font-weight:600;color:var(--text)}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px}
+.history-block{margin-bottom:16px}
+.history-block-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:7px;padding:0 2px}
+.history-block-title.current{color:var(--blue-text)}
+.history-inc-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px}
+.history-type{flex:1;font-size:14px;color:var(--text)}
+.history-meta{font-size:12px;color:var(--text3);text-align:right;line-height:1.5}
+.rehab-btn-history{width:100%;margin-top:14px;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:var(--font);color:var(--green-text);background:var(--green-bg);border:0.5px solid var(--green);cursor:pointer}
 
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: 99px; z-index: 20; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; font-family: var(--font); }
-  .toast.show { opacity: 1; }
-  select option { background: var(--surface); color: var(--text); }
+/* SETUP */
+.setup-tabs{display:flex;gap:6px;padding:14px 14px 0;flex-shrink:0}
+.setup-tab{flex:1;padding:9px 4px;border-radius:var(--radius-sm);border:0.5px solid var(--border);font-size:13px;font-weight:500;font-family:var(--font);color:var(--text2);background:transparent;cursor:pointer}
+.setup-tab.active{background:var(--surface);color:var(--text);border-color:var(--border2)}
+.form-group{margin-bottom:10px}
+.form-input{width:100%;padding:13px 14px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
+.form-input:focus{border-color:var(--blue)}
+.form-submit{width:100%;padding:14px;font-size:15px;font-weight:600;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer}
+.form-submit:active{opacity:.7}
+.setup-list-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.setup-list-item:last-child{border-bottom:none}
+.setup-list-text{font-size:14px;color:var(--text)}
+.setup-list-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.list-del{font-size:16px;color:var(--text3);cursor:pointer;padding:4px 8px}
+.class-select{width:100%;padding:13px 14px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);margin-bottom:10px;outline:none}
+.inline-row{display:flex;gap:8px}
+.inline-row .form-input{flex:1}
+.inline-add{padding:13px 16px;font-size:15px;font-weight:600;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap}
+.reset-card{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px}
+.reset-card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.reset-card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px}
+.reset-btn{width:100%;padding:13px;font-size:14px;font-weight:600;font-family:var(--font);border-radius:var(--radius-sm);cursor:pointer}
+.reset-btn.amber{background:var(--amber-bg);color:var(--amber-text);border:0.5px solid var(--amber)}
+.reset-btn.red{background:var(--red-bg);color:var(--red-text);border:0.5px solid var(--red)}
+.reset-btn.blue{background:var(--blue-bg);color:var(--blue-text);border:0.5px solid var(--blue)}
+.reset-btn:active{opacity:.7}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:14px;font-weight:500;padding:10px 18px;border-radius:99px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;font-family:var(--font)}
+.toast.show{opacity:1}
+select option{background:var(--surface);color:var(--text)}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- HOME -->
-  <div id="screen-home" class="screen active">
-    <div class="header">
-      <div style="flex:1"><div class="header-title">Classes</div></div>
-      <button class="btn-ghost" onclick="showScreen('screen-watchlist')">Watchlist</button>
-      <button class="btn-ghost" onclick="showScreen('screen-setup')">Setup</button>
-    </div>
-    <div class="home-banner">
-      <div class="home-banner-label">Term <strong id="home-term">2</strong> · Week <strong id="home-week">2</strong></div>
-      <button class="next-week-btn" onclick="confirmNextWeek()">Next Week</button>
-    </div>
-    <div class="scroll-area">
-      <div class="class-grid" id="class-grid"></div>
-      <div id="home-empty" class="empty" style="display:none"><strong>No classes yet</strong>Tap Setup to add your classes and students.</div>
-    </div>
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="header">
+    <div style="flex:1"><div class="header-title">Classes</div></div>
+    <button class="btn-ghost" onclick="showScreen('screen-watchlist')">Watchlist</button>
+    <button class="btn-ghost" onclick="showScreen('screen-setup')">Setup</button>
   </div>
-
-  <!-- STUDENTS -->
-  <div id="screen-students" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
-      <div style="flex:1">
-        <div class="header-title" id="class-title">Class</div>
-        <div class="header-sub" id="class-subtitle"></div>
-      </div>
-      <button class="btn-ghost" onclick="showLog()">Log</button>
-    </div>
-    <div class="lesson-banner" id="lesson-banner" onclick="openLessonPicker(false)">
-      <div class="lesson-banner-text" id="lesson-banner-text">Tap to set lesson</div>
-      <div class="lesson-banner-change">Change</div>
-    </div>
-    <div class="scroll-area"><div class="student-grid" id="student-grid"></div></div>
+  <div class="home-banner">
+    <div class="home-banner-label">Term <strong id="home-term">2</strong> · Week <strong id="home-week">2</strong></div>
+    <button class="next-week-btn" onclick="confirmNextWeek()">Next Week</button>
   </div>
-
-  <!-- LOG -->
-  <div id="screen-log" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
-      <div class="header-title">Incident Log</div>
-      <button class="btn-ghost btn-danger" onclick="clearClassLog()">Clear</button>
-    </div>
-    <div class="scroll-area" id="log-content"></div>
+  <div class="scroll-area">
+    <div class="class-grid" id="class-grid"></div>
+    <div id="home-empty" class="empty" style="display:none"><strong>No classes yet</strong>Tap Setup to add classes and students.</div>
   </div>
-
-  <!-- WATCHLIST -->
-  <div id="screen-watchlist" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
-      <div class="header-title">Watchlist</div>
-    </div>
-    <div class="scroll-area" id="watchlist-content"></div>
-  </div>
-
-  <!-- STUDENT HISTORY -->
-  <div id="screen-student-history" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
-      <div style="flex:1">
-        <div class="header-title" id="history-student-name"></div>
-        <div class="header-sub" id="history-class-name"></div>
-      </div>
-    </div>
-    <div class="scroll-area" id="history-content"></div>
-  </div>
-
-  <!-- SETUP -->
-  <div id="screen-setup" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Done</button>
-      <div class="header-title">Setup</div>
-    </div>
-    <div class="setup-tabs">
-      <button class="setup-tab active" id="tab-classes" onclick="switchTab('classes')">Classes</button>
-      <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
-      <button class="setup-tab" id="tab-reset" onclick="switchTab('reset')">Reset</button>
-    </div>
-    <div class="scroll-area">
-      <div id="setup-classes">
-        <div class="form-group"><input class="form-input" id="new-class-name" placeholder="Class name e.g. 3E1" maxlength="20"/></div>
-        <div class="form-group"><input class="form-input" id="new-class-subject" placeholder="Subject e.g. Social Studies" maxlength="40"/></div>
-        <button class="form-submit" onclick="addClass()">Add class</button>
-        <div class="divider"></div>
-        <div id="class-list"></div>
-      </div>
-      <div id="setup-students" style="display:none">
-        <select class="class-select" id="class-select" onchange="renderStudentList()"></select>
-        <div class="inline-row form-group">
-          <input class="form-input" id="new-student" placeholder="Student name" maxlength="40"/>
-          <button class="inline-add" onclick="addStudent()">Add</button>
-        </div>
-        <div id="student-list"></div>
-      </div>
-      <div id="setup-reset" style="display:none">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6">Use these to clear data. These actions cannot be undone.</div>
-        <div class="reset-card">
-          <div class="reset-card-title">Reset this week</div>
-          <div class="reset-card-desc">Clears all incidents logged in the current week (T<span id="reset-term"></span> W<span id="reset-week"></span>) across all classes. Watchlist and student data are kept.</div>
-          <button class="reset-btn-week" onclick="resetWeek()">Clear this week's incidents</button>
-        </div>
-        <div class="reset-card" style="margin-top:12px">
-          <div class="reset-card-title">Reset all data</div>
-          <div class="reset-card-desc">Deletes every incident, watchlist entry, and class. Starts completely fresh. Student names and class setup will also be wiped.</div>
-          <button class="reset-btn-all" onclick="resetAll()">Delete everything</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- LESSON PICKER -->
+<!-- START OF LESSON -->
+<div id="screen-sol" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="sol-class-title">Start of Lesson</div>
+      <div class="header-sub" id="sol-lesson-label"></div>
+    </div>
+    <button class="btn-ghost" onclick="skipSol()">Skip</button>
+  </div>
+  <div class="scroll-area">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Tap to mark any issues. Tap again to deselect. Absent students can have a reason added.</div>
+    <div id="sol-list"></div>
+    <button class="sol-done-btn" onclick="confirmSol()">Done — Start Lesson</button>
+  </div>
+</div>
+
+<!-- STUDENTS -->
+<div id="screen-students" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="class-title">Class</div>
+      <div class="header-sub" id="class-subtitle"></div>
+    </div>
+    <button class="btn-ghost" onclick="showLog()">Log</button>
+  </div>
+  <div class="lesson-banner" id="lesson-banner" onclick="openLessonPicker(true)">
+    <div class="lesson-banner-text" id="lesson-banner-text">Tap to set lesson</div>
+    <div class="lesson-banner-change">Change</div>
+  </div>
+  <div class="scroll-area"><div class="student-grid" id="student-grid"></div></div>
+</div>
+
+<!-- LOG -->
+<div id="screen-log" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
+    <div class="header-title">Incident Log</div>
+    <button class="btn-ghost btn-danger" onclick="clearClassLog()">Clear</button>
+  </div>
+  <div class="scroll-area" id="log-content"></div>
+</div>
+
+<!-- WATCHLIST -->
+<div id="screen-watchlist" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div class="header-title">Watchlist</div>
+  </div>
+  <div class="scroll-area" id="watchlist-content"></div>
+</div>
+
+<!-- STUDENT HISTORY -->
+<div id="screen-student-history" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="history-student-name"></div>
+      <div class="header-sub" id="history-class-name"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="history-content"></div>
+</div>
+
+<!-- SETUP -->
+<div id="screen-setup" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Done</button>
+    <div class="header-title">Setup</div>
+  </div>
+  <div class="setup-tabs">
+    <button class="setup-tab active" id="tab-classes" onclick="switchTab('classes')">Classes</button>
+    <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
+    <button class="setup-tab" id="tab-reset" onclick="switchTab('reset')">Reset</button>
+  </div>
+  <div class="scroll-area">
+    <div id="setup-classes">
+      <div class="form-group"><input class="form-input" id="new-class-name" placeholder="Class name e.g. 3E1" maxlength="20"/></div>
+      <div class="form-group"><input class="form-input" id="new-class-subject" placeholder="Subject e.g. Social Studies" maxlength="40"/></div>
+      <button class="form-submit" onclick="addClass()">Add class</button>
+      <div class="divider"></div>
+      <div id="class-list"></div>
+    </div>
+    <div id="setup-students" style="display:none">
+      <select class="class-select" id="class-select" onchange="renderStudentList()"></select>
+      <div class="inline-row form-group">
+        <input class="form-input" id="new-student" placeholder="Student name" maxlength="40"/>
+        <button class="inline-add" onclick="addStudent()">Add</button>
+      </div>
+      <div id="student-list"></div>
+    </div>
+    <div id="setup-reset" style="display:none">
+      <div class="reset-card">
+        <div class="reset-card-title">Clear this week</div>
+        <div class="reset-card-desc">Removes all incidents for T<span id="reset-term"></span> W<span id="reset-week"></span>. Classes and student names kept.</div>
+        <button class="reset-btn amber" onclick="resetWeek()">Clear this week's incidents</button>
+      </div>
+      <div class="reset-card">
+        <div class="reset-card-title">Clear all incidents</div>
+        <div class="reset-card-desc">Removes all incidents and watchlist data. Classes and student names are kept.</div>
+        <button class="reset-btn blue" onclick="resetIncidents()">Clear incidents, keep classes</button>
+      </div>
+      <div class="reset-card">
+        <div class="reset-card-title">Delete everything</div>
+        <div class="reset-card-desc">Wipes all data including classes and students. Cannot be undone.</div>
+        <button class="reset-btn red" onclick="resetAll()">Delete everything</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #app -->
+
+<!-- BACKDROP -->
 <div class="backdrop" id="backdrop" onclick="closeAllPanels()"></div>
 
-<div class="lesson-picker" id="lesson-picker">
-  <div class="picker-handle"></div>
-  <div class="picker-title">Set lesson</div>
+<!-- LESSON PICKER PANEL -->
+<div class="bottom-panel" id="lesson-picker">
+  <div class="panel-handle"></div>
+  <div class="panel-title">Set lesson</div>
   <div class="picker-row">
     <div class="picker-row-label">Term</div>
     <div class="picker-chips" id="chips-term">
@@ -483,26 +432,28 @@
     </div>
   </div>
   <button class="picker-confirm" id="picker-confirm" onclick="confirmLesson()" disabled>Confirm</button>
-  <button class="cancel-btn" onclick="cancelLessonPicker()" style="margin-top:8px">Cancel</button>
+  <button class="cancel-btn" onclick="cancelPicker()">Cancel</button>
 </div>
 
 <!-- BEHAVIOUR PANEL -->
-<div class="beh-panel" id="beh-panel">
+<div class="bottom-panel" id="beh-panel">
   <div class="panel-handle"></div>
   <div class="panel-student" id="panel-name"></div>
   <div class="panel-watchinfo" id="panel-watchinfo" style="display:none"></div>
   <div id="panel-logged" style="display:none;margin-bottom:12px"></div>
+  <div id="panel-note-section" style="margin-bottom:12px">
+    <div class="panel-logged-title">Weekly note</div>
+    <textarea class="note-area" id="panel-note-text" placeholder="Add a note for this student this week…" rows="3"></textarea>
+    <button class="note-save-btn" onclick="saveNote()">Save note</button>
+  </div>
+  <div class="panel-logged-title" style="margin-bottom:8px">Log behaviour</div>
   <div class="beh-grid">
     <button class="beh-btn b-rude" onclick="logBehaviour('Rude')">Rude</button>
     <button class="beh-btn b-vulgar" onclick="logBehaviour('Vulgarity')">Vulgarity</button>
     <button class="beh-btn b-disrupt" onclick="logBehaviour('Disruptive')">Disruptive</button>
     <button class="beh-btn b-talk" onclick="logBehaviour('Talking')">Talking</button>
-    <button class="beh-btn b-late" onclick="logBehaviour('Late')">Late</button>
     <button class="beh-btn b-nowork" onclick="logBehaviour('No Work')">No Work</button>
-    <button class="beh-btn b-attire" onclick="logBehaviour('Attire')">Attire</button>
     <button class="beh-btn b-device" onclick="logBehaviour('Device')">Device</button>
-    <button class="beh-btn b-nomats" onclick="logBehaviour('No Materials')">No Materials</button>
-    <button class="beh-btn b-slow" onclick="logBehaviour('Slow Start')">Slow Start</button>
     <button class="beh-btn b-sleep" onclick="logBehaviour('Sleeping')">Sleeping</button>
   </div>
   <button class="cancel-btn" onclick="closeAllPanels()">Cancel</button>
@@ -512,401 +463,558 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE = 'ctss_v4';
+const STORE = 'ctss_v5';
 let state = {
-  classes: [], incidents: [], watchlist: {},
-  currentTerm: 2, currentWeek: 2
+  classes:[], incidents:[], watchlist:{}, notes:{}, solData:{},
+  currentTerm:2, currentWeek:2
 };
-// session-only lesson context (not persisted)
-let currentClassId = null;
-let selectedStudent = null;
-let pickerTerm = null, pickerWeek = null, pickerLesson = null;
-let currentLesson = null; // { term, week, lesson } for current class session
-let pickerIsGlobal = false; // true = called from Next Week, false = per-class
+let currentClassId=null, selectedStudent=null, currentLesson=null;
+let pickerTerm=null, pickerWeek=null, pickerLesson=null, pickerIsChange=false;
+let solSelections={}; // { studentName: { absent,late,attire,nomats,slowstart, reason } }
+let dragSrc=null, dragLongTimer=null, isDragging=false;
+let touchStartX=0, touchStartY=0, touchMoved=false;
 
-function lessonKey(t, w, l) { return `T${t}W${w}L${l}`; }
-function lessonLabel(t, w, l) { return `T${t} · W${w} · L${l}`; }
+// SOL offence types
+const SOL_TYPES = ['Absent','Late','Attire','No Materials','Slow Start'];
+// Behaviour offence types (during lesson)
+const BEH_TYPES = ['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping'];
+// All types for watchlist threshold check
+const ALL_TYPES = [...SOL_TYPES.filter(t=>t!=='Absent'), ...BEH_TYPES];
 
-function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
-function load() { try { const d = localStorage.getItem(STORE); if(d) { const p = JSON.parse(d); state = {...state, ...p}; } } catch(e){} }
-function wKey(classId, student) { return classId + '|' + student; }
-function getWatch(classId, student) { return state.watchlist[wKey(classId, student)] || null; }
-function weekInc(classId, student) {
-  return state.incidents.filter(i => i.classId === classId && i.student === student && i.term === state.currentTerm && i.week === state.currentWeek);
+function lessonLabel(t,w,l){return `T${t} · W${w} · L${l}`}
+function twKey(t,w){return `T${t}W${w}`}
+function noteKey(classId,student,t,w){return `${classId}|${student}|T${t}W${w}`}
+function wKey(classId,student){return `${classId}|${student}`}
+
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){}}
+function load(){try{const d=localStorage.getItem(STORE);if(d){const p=JSON.parse(d);state={...state,...p}}}catch(e){}}
+
+function getWatch(classId,student){return state.watchlist[wKey(classId,student)]||null}
+
+function weekIncidents(classId,student){
+  return state.incidents.filter(i=>i.classId===classId&&i.student===student&&i.term===state.currentTerm&&i.week===state.currentWeek);
 }
-function behClass(t) {
-  if (t === 'Disruptive' || t === 'Rude' || t === 'Vulgarity') return 'c-red';
-  if (t === 'Talking' || t === 'Late') return 'c-amber';
-  if (t === 'No Work' || t === 'Attire') return 'c-blue';
-  if (t === 'Device') return 'c-purple';
-  if (t === 'No Materials' || t === 'Slow Start') return 'c-orange';
-  if (t === 'Sleeping') return 'c-gray';
+
+function behClass(t){
+  if(t==='Rude'||t==='Vulgarity'||t==='Disruptive') return 'c-red';
+  if(t==='Talking'||t==='Late') return 'c-amber';
+  if(t==='No Work'||t==='Attire') return 'c-blue';
+  if(t==='Device') return 'c-purple';
+  if(t==='No Materials') return 'c-orange';
+  if(t==='Slow Start') return 'c-teal';
+  if(t==='Sleeping') return 'c-gray';
   return 'c-gray';
 }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 1800);
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
 }
 
-/* NEXT WEEK */
-function confirmNextWeek() {
-  const nextW = state.currentWeek >= 10 ? 1 : state.currentWeek + 1;
-  const nextT = state.currentWeek >= 10 ? state.currentTerm + 1 : state.currentTerm;
-  if (!confirm(`Advance to T${nextT} W${nextW}?\n\nStudents with 3+ incidents this week will be added to the watchlist.`)) return;
-  doNextWeek(nextT, nextW);
+/* ---- WATCHLIST THRESHOLD ----
+   BEHAVIOUR: 3 of same type within current week → processed on Next Week
+   SOL ENTRY CHECKS: 3 cumulative occurrences of same type across all lessons → immediate
+   Also shows ! on student card if 5+ total incidents this week. */
+
+const SOL_TRACKABLE = ['Late','Attire','No Materials','Slow Start'];
+
+function checkWeekThreshold(classId, student){
+  // Only behaviour types count for weekly threshold
+  const inc = weekIncidents(classId, student).filter(i=>!i.isSol);
+  const typeCounts = {};
+  inc.forEach(i=>{typeCounts[i.type]=(typeCounts[i.type]||0)+1});
+  const hitThreshold = Object.values(typeCounts).some(c=>c>=3);
+  const allInc = weekIncidents(classId, student);
+  const over5 = allInc.length >= 5;
+  return {hitThreshold, over5, typeCounts};
 }
 
-function doNextWeek(nextT, nextW) {
-  state.classes.forEach(cls => {
-    const byStudent = {};
-    state.incidents.filter(i => i.classId === cls.id && i.term === state.currentTerm && i.week === state.currentWeek)
-      .forEach(i => { if (!byStudent[i.student]) byStudent[i.student] = []; byStudent[i.student].push(i.type); });
-    Object.entries(byStudent).forEach(([student, types]) => {
-      if (types.length >= 3) {
-        const key = wKey(cls.id, student);
-        const entry = state.watchlist[key] || { classId: cls.id, student, strikes: 0, typeStrikes: {}, carriedOffences: {} };
-        if (!entry.typeStrikes) entry.typeStrikes = {};
-        entry.strikes += 1;
-        // Count offences this week
-        const weekTally = {};
-        types.forEach(t => { weekTally[t] = (weekTally[t]||0)+1; });
-        // For each type that appeared this week, increment its cumulative strike count
-        Object.keys(weekTally).forEach(t => {
-          entry.typeStrikes[t] = (entry.typeStrikes[t]||0) + 1;
-        });
-        entry.carriedOffences = weekTally;
-        state.watchlist[key] = entry;
+// Called immediately after SOL is confirmed — checks cumulative SOL type counts
+function checkSolThresholds(classId){
+  const cls = state.classes.find(c=>c.id===classId);
+  if(!cls) return;
+  cls.students.forEach(student=>{
+    SOL_TRACKABLE.forEach(type=>{
+      // Count all occurrences of this type for this student across all lessons
+      const count = state.incidents.filter(i=>i.classId===classId&&i.student===student&&i.type===type&&i.isSol).length;
+      if(count>0 && count%3===0){
+        // Every 3 occurrences = +1 strike for this type
+        const key=wKey(classId,student);
+        const entry=state.watchlist[key]||{classId,student,strikes:0,typeStrikes:{},solTypeCount:{},carriedOffences:{}};
+        if(!entry.typeStrikes) entry.typeStrikes={};
+        if(!entry.solTypeCount) entry.solTypeCount={};
+        // Only add a strike if this specific count milestone hasn't been recorded yet
+        const prevCount = entry.solTypeCount[type]||0;
+        if(count > prevCount){
+          entry.strikes+=1;
+          entry.typeStrikes[type]=(entry.typeStrikes[type]||0)+1;
+          entry.solTypeCount[type]=count;
+          // Update carriedOffences to include this
+          entry.carriedOffences[type]=count;
+          state.watchlist[key]=entry;
+          toast(`${student} — ${type} flagged (×${count})`);
+        }
       }
     });
   });
-  state.currentTerm = nextT;
-  state.currentWeek = nextW;
+}
+
+/* ---- NEXT WEEK ---- */
+function confirmNextWeek(){
+  const nextW = state.currentWeek>=10 ? 1 : state.currentWeek+1;
+  const nextT = state.currentWeek>=10 ? state.currentTerm+1 : state.currentTerm;
+  if(!confirm(`Advance to T${nextT} W${nextW}?\n\nStudents with 3+ of the same offence type this week will be added to the watchlist.`)) return;
+  doNextWeek(nextT,nextW);
+}
+
+function doNextWeek(nextT,nextW){
+  state.classes.forEach(cls=>{
+    const byStudent={};
+    // Only non-SOL incidents count toward weekly behaviour threshold
+    state.incidents.filter(i=>i.classId===cls.id&&i.term===state.currentTerm&&i.week===state.currentWeek&&!i.isSol)
+      .forEach(i=>{if(!byStudent[i.student])byStudent[i.student]=[];byStudent[i.student].push(i.type)});
+    Object.entries(byStudent).forEach(([student,types])=>{
+      const typeCounts={};
+      types.forEach(t=>{typeCounts[t]=(typeCounts[t]||0)+1});
+      const triggered=Object.entries(typeCounts).filter(([t,c])=>c>=3);
+      if(triggered.length>0){
+        const key=wKey(cls.id,student);
+        const entry=state.watchlist[key]||{classId:cls.id,student,strikes:0,typeStrikes:{},solTypeCount:{},carriedOffences:{}};
+        if(!entry.typeStrikes) entry.typeStrikes={};
+        if(!entry.solTypeCount) entry.solTypeCount={};
+        entry.strikes+=1;
+        triggered.forEach(([t])=>{entry.typeStrikes[t]=(entry.typeStrikes[t]||0)+1});
+        // Merge into carriedOffences
+        triggered.forEach(([t,c])=>{entry.carriedOffences[t]=c});
+        state.watchlist[key]=entry;
+      }
+    });
+  });
+  state.currentTerm=nextT;
+  state.currentWeek=nextW;
   save();
   renderHome();
   toast(`Now T${nextT} W${nextW}`);
 }
 
-/* SCREENS */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+/* ---- SCREENS ---- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'screen-home') renderHome();
-  if (id === 'screen-setup') { renderClassList(); updateClassSelect(); renderStudentList(); }
-  if (id === 'screen-watchlist') renderWatchlist();
+  if(id==='screen-home') renderHome();
+  if(id==='screen-setup'){renderClassList();updateClassSelect();renderStudentList()}
+  if(id==='screen-watchlist') renderWatchlist();
 }
 
-/* HOME */
-function renderHome() {
-  document.getElementById('home-term').textContent = state.currentTerm;
-  document.getElementById('home-week').textContent = state.currentWeek;
-  const grid = document.getElementById('class-grid');
-  const empty = document.getElementById('home-empty');
-  grid.innerHTML = '';
-  if (!state.classes.length) { empty.style.display = 'block'; grid.style.display = 'none'; return; }
-  empty.style.display = 'none'; grid.style.display = 'grid';
-  state.classes.forEach(cls => {
-    const n = state.incidents.filter(i => i.classId === cls.id && i.term === state.currentTerm && i.week === state.currentWeek).length;
-    const wCount = Object.values(state.watchlist).filter(w => w.classId === cls.id && w.strikes > 0).length;
-    let badge = n > 0
-      ? `<span class="class-badge incident">${n} incident${n>1?'s':''}</span>`
-      : wCount > 0 ? `<span class="class-badge watch">${wCount} on watchlist</span>`
-      : `<span class="class-badge none">${cls.students.length} students</span>`;
-    const d = document.createElement('div');
-    d.className = 'class-card';
-    d.innerHTML = `<div><div class="class-card-name">${esc(cls.name)}</div><div class="class-card-sub">${esc(cls.subject)}</div></div>${badge}`;
-    d.onclick = () => openClass(cls.id);
+/* ---- HOME ---- */
+function renderHome(){
+  document.getElementById('home-term').textContent=state.currentTerm;
+  document.getElementById('home-week').textContent=state.currentWeek;
+  const grid=document.getElementById('class-grid');
+  const empty=document.getElementById('home-empty');
+  grid.innerHTML='';
+  if(!state.classes.length){empty.style.display='block';grid.style.display='none';return}
+  empty.style.display='none';grid.style.display='grid';
+  state.classes.forEach(cls=>{
+    const n=state.incidents.filter(i=>i.classId===cls.id&&i.term===state.currentTerm&&i.week===state.currentWeek).length;
+    const wCount=Object.values(state.watchlist).filter(w=>w.classId===cls.id&&w.strikes>0).length;
+    let badge=n>0?`<span class="class-badge incident">${n} incident${n>1?'s':''}</span>`:
+      wCount>0?`<span class="class-badge watch">${wCount} on watchlist</span>`:
+      `<span class="class-badge none">${cls.students.length} students</span>`;
+    const d=document.createElement('div');
+    d.className='class-card';
+    d.innerHTML=`<div><div class="class-card-name">${esc(cls.name)}</div><div class="class-card-sub">${esc(cls.subject)}</div></div>${badge}`;
+    d.onclick=()=>openClass(cls.id);
     grid.appendChild(d);
   });
 }
 
-/* OPEN CLASS — show lesson picker first */
-function openClass(id) {
-  currentClassId = id;
-  currentLesson = null;
+/* ---- OPEN CLASS → LESSON PICKER ---- */
+function openClass(id){
+  currentClassId=id;
+  currentLesson=null;
+  solSelections={};
+  pickerIsChange=false;
   openLessonPicker(false);
 }
 
-/* LESSON PICKER */
-function openLessonPicker(isGlobal) {
-  pickerIsGlobal = isGlobal;
-  // Pre-select current global term/week
-  pickerTerm = state.currentTerm;
-  pickerWeek = state.currentWeek;
-  pickerLesson = currentLesson ? currentLesson.lesson : null;
+/* ---- LESSON PICKER ---- */
+function openLessonPicker(isChange){
+  pickerIsChange=isChange;
+  pickerTerm=state.currentTerm;
+  pickerWeek=state.currentWeek;
+  pickerLesson=currentLesson?currentLesson.lesson:null;
   syncChips();
   document.getElementById('backdrop').classList.add('open');
   document.getElementById('lesson-picker').classList.add('open');
 }
 
-function syncChips() {
-  ['term','week','lesson'].forEach(type => {
-    const val = type === 'term' ? pickerTerm : type === 'week' ? pickerWeek : pickerLesson;
-    document.querySelectorAll(`#chips-${type} .chip`).forEach(c => {
-      const n = parseInt(c.textContent.replace(/[TWL]/,''));
-      c.classList.toggle('selected', n === val);
+function syncChips(){
+  ['term','week','lesson'].forEach(type=>{
+    const val=type==='term'?pickerTerm:type==='week'?pickerWeek:pickerLesson;
+    document.querySelectorAll(`#chips-${type} .chip`).forEach(c=>{
+      const n=parseInt(c.textContent.replace(/[TWL]/,''));
+      c.classList.toggle('selected',n===val);
     });
   });
-  const ready = pickerTerm && pickerWeek && pickerLesson;
-  document.getElementById('picker-confirm').disabled = !ready;
+  document.getElementById('picker-confirm').disabled=!(pickerTerm&&pickerWeek&&pickerLesson);
 }
 
-function selectChip(type, val) {
-  if (type === 'term') pickerTerm = val;
-  else if (type === 'week') pickerWeek = val;
-  else pickerLesson = val;
+function selectChip(type,val){
+  if(type==='term') pickerTerm=val;
+  else if(type==='week') pickerWeek=val;
+  else pickerLesson=val;
   syncChips();
 }
 
-function confirmLesson() {
-  if (!pickerTerm || !pickerWeek || !pickerLesson) return;
+function confirmLesson(){
+  if(!pickerTerm||!pickerWeek||!pickerLesson) return;
   closeAllPanels();
-  currentLesson = { term: pickerTerm, week: pickerWeek, lesson: pickerLesson };
-  document.getElementById('lesson-banner-text').textContent = lessonLabel(pickerTerm, pickerWeek, pickerLesson);
-  const cls = state.classes.find(c => c.id === currentClassId);
-  document.getElementById('class-title').textContent = cls.name;
-  document.getElementById('class-subtitle').textContent = cls.subject;
-  renderStudentGrid();
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-students').classList.add('active');
-}
-
-function closeAllPanels() {
-  document.getElementById('backdrop').classList.remove('open');
-  document.getElementById('lesson-picker').classList.remove('open');
-  document.getElementById('beh-panel').classList.remove('open');
-  selectedStudent = null;
-}
-
-function cancelLessonPicker() {
-  closeAllPanels();
-  // If no lesson set yet (came from home), go back to home
-  if (!currentLesson) showScreen('screen-home');
-}
-
-/* STUDENTS */
-let dragSrc = null, dragLongTimer = null, isDragging = false;
-let touchStartX = 0, touchStartY = 0, touchMoved = false;
-
-function renderStudentGrid() {
-  const grid = document.getElementById('student-grid');
-  grid.innerHTML = '';
-  const cls = state.classes.find(c => c.id === currentClassId);
-  if (!cls || !cls.students.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><strong>No students</strong>Go to Setup → Students.</div>';
+  currentLesson={term:pickerTerm,week:pickerWeek,lesson:pickerLesson};
+  if(pickerIsChange){
+    // Just update banner and stay on student grid
+    document.getElementById('lesson-banner-text').textContent=lessonLabel(pickerTerm,pickerWeek,pickerLesson);
+    renderStudentGrid();
     return;
   }
-  cls.students.forEach(name => {
-    const inc = weekInc(currentClassId, name);
-    const watch = getWatch(currentClassId, name);
-    const onWatch = watch && watch.strikes > 0;
-    let btnClass = 'student-btn';
-    if (inc.length > 0) btnClass += ' flagged';
-    else if (onWatch) btnClass += ' on-watch';
+  // Go to start of lesson
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('sol-class-title').textContent=cls.name;
+  document.getElementById('sol-lesson-label').textContent=lessonLabel(pickerTerm,pickerWeek,pickerLesson);
+  renderSolList();
+  showScreen('screen-sol');
+}
 
-    const tally = {};
-    inc.forEach(i => { tally[i.type] = (tally[i.type]||0)+1; });
-    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
-    const weekBadges = badgeOrder.filter(t => tally[t]).map(t => `<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
-    const typeStrikes = (watch && watch.typeStrikes) || {};
-    const watchBadges = badgeOrder.filter(t => typeStrikes[t]).map(t => `<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
-    const allBadges = watchBadges + weekBadges;
+function cancelPicker(){
+  closeAllPanels();
+  if(!currentLesson) showScreen('screen-home');
+}
 
-    const btn = document.createElement('div');
-    btn.className = btnClass;
-    btn.dataset.name = name;
-    btn.innerHTML = `
-      <div class="student-btn-name">${esc(name)}</div>
-      ${allBadges ? `<div class="offence-badges">${allBadges}</div>` : ''}`;
+/* ---- START OF LESSON ---- */
+function renderSolList(){
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  const el=document.getElementById('sol-list');
+  el.innerHTML='';
+  cls.students.forEach(name=>{
+    if(!solSelections[name]) solSelections[name]={absent:false,late:false,attire:false,nomats:false,slowstart:false,reason:''};
+    const s=solSelections[name];
+    const row=document.createElement('div');
+    row.className='sol-student-row'+(s.absent?' absent-row':'');
+    row.id=`sol-row-${CSS.escape(name)}`;
+    row.innerHTML=`<div class="sol-name">${esc(name)}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <div class="sol-chips">
+          <button class="sol-chip absent${s.absent?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','absent')">Absent</button>
+          <button class="sol-chip late${s.late?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','late')">Late</button>
+          <button class="sol-chip attire${s.attire?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','attire')">Attire</button>
+          <button class="sol-chip nomats${s.nomats?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','nomats')">No Mats</button>
+          <button class="sol-chip slowstart${s.slowstart?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','slowstart')">Slow Start</button>
+        </div>
+        ${s.absent?`<input class="sol-reason-input" placeholder="Reason (optional)" value="${esc(s.reason)}" oninput="solReason('${name.replace(/'/g,"\\'")}',this.value)" />`:''} 
+      </div>`;
+    el.appendChild(row);
+  });
+}
 
-    btn.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchMoved = false;
-      isDragging = false;
-      dragLongTimer = setTimeout(() => {
-        if (!touchMoved) {
-          isDragging = true;
-          dragSrc = btn;
-          btn.classList.add('drag-ready');
-          navigator.vibrate && navigator.vibrate(40);
-        }
-      }, 450);
-    }, {passive: true});
+function toggleSol(name,type){
+  if(!solSelections[name]) solSelections[name]={absent:false,late:false,attire:false,nomats:false,slowstart:false,reason:''};
+  solSelections[name][type]=!solSelections[name][type];
+  // If marking absent, clear other flags
+  if(type==='absent'&&solSelections[name].absent){
+    solSelections[name].late=false;solSelections[name].attire=false;
+    solSelections[name].nomats=false;solSelections[name].slowstart=false;
+  }
+  renderSolList();
+}
 
-    btn.addEventListener('touchmove', e => {
-      const dx = Math.abs(e.touches[0].clientX - touchStartX);
-      const dy = Math.abs(e.touches[0].clientY - touchStartY);
-      // If moved more than 8px before long press fires, it's a scroll
-      if (dx > 8 || dy > 8) {
-        touchMoved = true;
-        clearTimeout(dragLongTimer);
-      }
-      if (!isDragging) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const el = document.elementFromPoint(touch.clientX, touch.clientY);
-      const target = el && el.closest('.student-btn');
-      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
-      if (target && target !== dragSrc) target.classList.add('drag-over');
-    }, {passive: false});
+function solReason(name,val){
+  if(solSelections[name]) solSelections[name].reason=val;
+}
 
-    btn.addEventListener('touchend', e => {
-      clearTimeout(dragLongTimer);
-      const wasDragging = isDragging;
-      isDragging = false;
-      btn.classList.remove('drag-ready');
-      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
-
-      if (wasDragging) {
-        const touch = e.changedTouches[0];
-        const el = document.elementFromPoint(touch.clientX, touch.clientY);
-        const target = el && el.closest('.student-btn');
-        if (target && target !== dragSrc) {
-          const cls2 = state.classes.find(c => c.id === currentClassId);
-          const srcIdx = cls2.students.indexOf(dragSrc.dataset.name);
-          const tgtIdx = cls2.students.indexOf(target.dataset.name);
-          if (srcIdx !== -1 && tgtIdx !== -1) {
-            const tmp = cls2.students[srcIdx];
-            cls2.students[srcIdx] = cls2.students[tgtIdx];
-            cls2.students[tgtIdx] = tmp;
-            save();
-            renderStudentGrid();
-          }
-        }
-        dragSrc = null;
-        return;
-      }
-
-      // Only open panel if finger didn't scroll
-      if (!touchMoved) openPanel(name);
+function confirmSol(){
+  const now=new Date();
+  const time=now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+  const date=now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'});
+  // Log SOL incidents
+  Object.entries(solSelections).forEach(([student,s])=>{
+    const types=[];
+    if(s.late) types.push('Late');
+    if(s.attire) types.push('Attire');
+    if(s.nomats) types.push('No Materials');
+    if(s.slowstart) types.push('Slow Start');
+    // Absent stored separately
+    if(s.absent){
+      const solKey=`sol|${currentClassId}|${student}|${lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson)}`;
+      state.solData[solKey]={student,reason:s.reason,date,time,term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,classId:currentClassId};
+    }
+    types.forEach(type=>{
+      state.incidents.push({
+        id:Date.now()+Math.random(),classId:currentClassId,student,type,
+        term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+        time,date,isSol:true
+      });
     });
+  });
+  save();
+  checkSolThresholds(currentClassId);
+  save();
+  goToStudentGrid();
+}
 
+function skipSol(){
+  goToStudentGrid();
+}
+
+function goToStudentGrid(){
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('class-title').textContent=cls.name;
+  document.getElementById('class-subtitle').textContent=cls.subject;
+  document.getElementById('lesson-banner-text').textContent=lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson);
+  renderStudentGrid();
+  showScreen('screen-students');
+}
+
+/* ---- STUDENT GRID ---- */
+function isAbsent(name){
+  if(!currentLesson) return false;
+  const solKey=`sol|${currentClassId}|${name}|${lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson)}`;
+  return !!state.solData[solKey];
+}
+
+function renderStudentGrid(){
+  const grid=document.getElementById('student-grid');
+  grid.innerHTML='';
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  if(!cls||!cls.students.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1"><strong>No students</strong>Go to Setup → Students.</div>';
+    return;
+  }
+  const badgeOrder=['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping','Late','Attire','No Materials','Slow Start'];
+  cls.students.forEach(name=>{
+    const watch=getWatch(currentClassId,name);
+    const onWatch=watch&&watch.strikes>0;
+    const absent=isAbsent(name);
+    const {hitThreshold,over5}=checkWeekThreshold(currentClassId,name);
+
+    let btnClass='student-btn';
+    if(absent) btnClass+=' absent';
+    else if(inc.length>0) btnClass+=' flagged';
+    else if(onWatch) btnClass+=' on-watch';
+
+    const tally={};
+    inc.forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
+    // This week's behaviour badges (non-SOL)
+    const behBadgeOrder=['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping'];
+    const weekBadges=behBadgeOrder.filter(t=>tally[t]).map(t=>`<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
+    // Cumulative SOL badges (all-time count across lessons)
+    const solCounts={};
+    SOL_TRACKABLE.forEach(type=>{
+      const n=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===type&&i.isSol).length;
+      if(n>0) solCounts[type]=n;
+    });
+    const solBadges=SOL_TRACKABLE.filter(t=>solCounts[t]).map(t=>`<span class="ob ${behClass(t)}">${solCounts[t]}</span>`).join('');
+    // Faded watchlist badges (strike counts per type)
+    const typeStrikes=(watch&&watch.typeStrikes)||{};
+    const watchBadges=[...behBadgeOrder,...SOL_TRACKABLE].filter(t=>typeStrikes[t]).map(t=>`<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
+
+    // Note dot
+    const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
+    const hasNote=!!(state.notes[nKey]&&state.notes[nKey].trim());
+
+    // SOL dot (has sol flags this lesson)
+    const hasSol=currentLesson&&Object.entries(solSelections).some(([s,v])=>s===name&&(v.late||v.attire||v.nomats||v.slowstart));
+
+    const btn=document.createElement('div');
+    btn.className=btnClass;
+    btn.dataset.name=name;
+    btn.innerHTML=`
+      ${hasNote?'<span class="note-dot"></span>':''}
+      ${hasSol?'<span class="sol-dot"></span>':''}
+      <div class="student-btn-name">${esc(name)}</div>
+      ${over5?`<div class="student-alert">!</div>`:''}
+      ${(watchBadges||weekBadges||solBadges)?`<div class="offence-badges">${watchBadges}${weekBadges}${solBadges}</div>`:''}`;
+
+    btn.addEventListener('touchstart',e=>{
+      touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
+      touchMoved=false;isDragging=false;
+      dragLongTimer=setTimeout(()=>{
+        if(!touchMoved){isDragging=true;dragSrc=btn;btn.classList.add('drag-ready');navigator.vibrate&&navigator.vibrate(40)}
+      },450);
+    },{passive:true});
+    btn.addEventListener('touchmove',e=>{
+      const dx=Math.abs(e.touches[0].clientX-touchStartX);
+      const dy=Math.abs(e.touches[0].clientY-touchStartY);
+      if(dx>8||dy>8){touchMoved=true;clearTimeout(dragLongTimer)}
+      if(!isDragging) return;
+      e.preventDefault();
+      const el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);
+      const target=el&&el.closest('.student-btn');
+      grid.querySelectorAll('.student-btn').forEach(b=>b.classList.remove('drag-over'));
+      if(target&&target!==dragSrc) target.classList.add('drag-over');
+    },{passive:false});
+    btn.addEventListener('touchend',e=>{
+      clearTimeout(dragLongTimer);
+      const wasDragging=isDragging;isDragging=false;
+      btn.classList.remove('drag-ready');
+      grid.querySelectorAll('.student-btn').forEach(b=>b.classList.remove('drag-over'));
+      if(wasDragging){
+        const el=document.elementFromPoint(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
+        const target=el&&el.closest('.student-btn');
+        if(target&&target!==dragSrc){
+          const cls2=state.classes.find(c=>c.id===currentClassId);
+          const si=cls2.students.indexOf(dragSrc.dataset.name);
+          const ti=cls2.students.indexOf(target.dataset.name);
+          if(si!==-1&&ti!==-1){const tmp=cls2.students[si];cls2.students[si]=cls2.students[ti];cls2.students[ti]=tmp;save();renderStudentGrid()}
+        }
+        dragSrc=null;return;
+      }
+      if(!touchMoved) openPanel(name);
+    });
     grid.appendChild(btn);
   });
 }
 
-/* BEHAVIOUR PANEL */
-function openPanel(name) {
-  if (!currentLesson) { openLessonPicker(false); return; }
-  selectedStudent = name;
-  document.getElementById('panel-name').textContent = name;
+/* ---- BEHAVIOUR PANEL ---- */
+function openPanel(name){
+  if(!currentLesson){openLessonPicker(false);return}
+  selectedStudent=name;
+  document.getElementById('panel-name').textContent=name;
 
   // Watchinfo
-  const watch = getWatch(currentClassId, name);
-  const info = document.getElementById('panel-watchinfo');
-  if (watch && watch.strikes > 0) {
-    const typeStrikes = watch.typeStrikes || {};
-    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
-    const parts = badgeOrder.filter(t => typeStrikes[t])
-      .map(t => `${t} ×${typeStrikes[t]} wk${typeStrikes[t]>1?'s':''}`).join(' · ');
-    info.innerHTML = `Watchlist · ${watch.strikes} week${watch.strikes>1?'s':''} flagged<br><span style="opacity:0.8">${parts}</span>`;
-    info.style.display = 'block';
-  } else { info.style.display = 'none'; }
+  const watch=getWatch(currentClassId,name);
+  const info=document.getElementById('panel-watchinfo');
+  if(watch&&watch.strikes>0){
+    const ts=watch.typeStrikes||{};
+    const parts=Object.entries(ts).map(([t,c])=>`${t} ×${c}wk`).join(' · ');
+    info.innerHTML=`Watchlist · ${watch.strikes} week${watch.strikes>1?'s':''} flagged<br><span style="opacity:.8">${parts}</span>`;
+    info.style.display='block';
+  } else {info.style.display='none'}
 
-  // Show this week's logged incidents with delete option
+  // Logged incidents
   renderPanelLogged(name);
+
+  // Note
+  const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
+  document.getElementById('panel-note-text').value=state.notes[nKey]||'';
 
   document.getElementById('beh-panel').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
 }
 
-function renderPanelLogged(name) {
-  const inc = weekInc(currentClassId, name);
-  const el = document.getElementById('panel-logged');
-  if (!inc.length) { el.style.display = 'none'; return; }
-  el.style.display = 'block';
-  let html = `<div class="panel-logged-title">Logged this week — tap to remove</div>`;
-  inc.forEach(i => {
-    html += `<div class="panel-logged-item">
-      <div class="log-dot ${behClass(i.type)}" style="flex-shrink:0"></div>
-      <div class="panel-logged-type">${i.type}</div>
+function renderPanelLogged(name){
+  const inc=weekIncidents(currentClassId,name);
+  const el=document.getElementById('panel-logged');
+  if(!inc.length){el.style.display='none';return}
+  el.style.display='block';
+  let html=`<div class="panel-logged-title">Logged this week — tap to remove</div>`;
+  inc.forEach(i=>{
+    html+=`<div class="panel-logged-item">
+      <div class="log-dot ${behClass(i.type)}"></div>
+      <div class="panel-logged-type">${i.type}${i.isSol?' <span style="font-size:10px;opacity:.6">(entry)</span>':''}</div>
       <div class="panel-logged-time">${i.time}</div>
       <button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button>
     </div>`;
   });
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
-function deletePanelIncident(id) {
-  state.incidents = state.incidents.filter(i => i.id !== id);
-  save();
-  renderStudentGrid();
-  renderPanelLogged(selectedStudent);
-  // If no more incidents, hide the logged section
-  const inc = weekInc(currentClassId, selectedStudent);
-  if (!inc.length) document.getElementById('panel-logged').style.display = 'none';
+function deletePanelIncident(id){
+  state.incidents=state.incidents.filter(i=>i.id!==id);
+  save();renderStudentGrid();renderPanelLogged(selectedStudent);
 }
 
-function logBehaviour(type) {
-  const now = new Date();
-  const student = selectedStudent;
+function saveNote(){
+  const nKey=noteKey(currentClassId,selectedStudent,state.currentTerm,state.currentWeek);
+  const val=document.getElementById('panel-note-text').value.trim();
+  if(val) state.notes[nKey]=val; else delete state.notes[nKey];
+  save();renderStudentGrid();toast('Note saved');
+}
+
+function logBehaviour(type){
+  const now=new Date();
+  const student=selectedStudent;
   state.incidents.push({
-    id: Date.now(),
-    classId: currentClassId,
-    student,
-    type,
-    term: currentLesson.term,
-    week: currentLesson.week,
-    lesson: currentLesson.lesson,
-    time: now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'}),
-    date: now.toLocaleDateString('en-SG', {day:'2-digit', month:'short'})
+    id:Date.now(),classId:currentClassId,student,type,
+    term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+    time:now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}),
+    date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'})
   });
-  save(); closeAllPanels(); renderStudentGrid();
-  const count = weekInc(currentClassId, student).length;
-  toast(student + ' — ' + type + (count >= 3 ? ' ⚠ 3+ this week' : ''));
+  save();closeAllPanels();renderStudentGrid();
+  const {hitThreshold,over5}=checkWeekThreshold(currentClassId,student);
+  const suffix=over5?' ⚠ 5+ total!':hitThreshold?' ⚠ 3x same type!':'';
+  toast(student+' — '+type+suffix);
 }
 
-/* LOG */
-function showLog() {
-  const incidents = state.incidents.filter(i => i.classId === currentClassId && i.term === state.currentTerm && i.week === state.currentWeek);
-  const el = document.getElementById('log-content');
-  let html = '';
+function closeAllPanels(){
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('lesson-picker').classList.remove('open');
+  document.getElementById('beh-panel').classList.remove('open');
+  selectedStudent=null;
+}
 
-  // Carried over
-  const watchEntries = Object.values(state.watchlist).filter(w => w.classId === currentClassId && w.strikes > 0);
-  if (watchEntries.length) {
-    html += '<div class="section-title">Carried over</div>';
-    watchEntries.forEach(w => {
-      const pills = Object.entries(w.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-      html += `<div class="carried-card"><div class="carried-name">${esc(w.student)}</div>
-        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes} wk${w.strikes>1?'s':''} flagged</span></div></div>`;
+/* ---- LOG ---- */
+function showLog(){
+  const incidents=state.incidents.filter(i=>i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek);
+  const el=document.getElementById('log-content');
+  let html='';
+
+  // Carried
+  const watchEntries=Object.values(state.watchlist).filter(w=>w.classId===currentClassId&&w.strikes>0);
+  if(watchEntries.length){
+    html+='<div class="section-title">Carried over</div>';
+    watchEntries.forEach(w=>{
+      const pills=Object.entries(w.carriedOffences).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+      html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div>
+        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes} wk${w.strikes>1?'s':''}</span></div></div>`;
     });
   }
 
-  if (!incidents.length) {
-    html += '<div class="empty" style="padding:2rem 0"><strong>All clear this week</strong>No new incidents logged.</div>';
+  // Absent students this lesson
+  if(currentLesson){
+    const absentList=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===currentLesson.term&&s.week===currentLesson.week&&s.lesson===currentLesson.lesson);
+    if(absentList.length){
+      html+='<div class="section-title" style="margin-top:18px">Absent</div>';
+      absentList.forEach(s=>{
+        html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — ${esc(s.reason)}`:''}</div>`;
+      });
+    }
+  }
+
+  if(!incidents.length){
+    html+='<div class="empty" style="padding:2rem 0"><strong>All clear this week</strong>No incidents logged.</div>';
   } else {
     // Summary
-    const byStudent = {};
-    incidents.forEach(i => { if (!byStudent[i.student]) byStudent[i.student] = []; byStudent[i.student].push(i); });
-    const sorted = Object.entries(byStudent).sort((a,b) => b[1].length - a[1].length);
-    html += '<div class="section-title" style="margin-top:18px">This week — summary</div>';
-    sorted.forEach(([name, inc]) => {
-      const tally = {};
-      inc.forEach(i => { tally[i.type] = (tally[i.type]||0)+1; });
-      const breakdown = Object.entries(tally).map(([t,c]) => `${t} ×${c}`).join(' · ');
-      const watch = getWatch(currentClassId, name);
-      html += `<div class="summary-row ${inc.length>=3?'over3':''}">
+    const byStudent={};
+    incidents.forEach(i=>{if(!byStudent[i.student])byStudent[i.student]=[];byStudent[i.student].push(i)});
+    const sorted=Object.entries(byStudent).sort((a,b)=>b[1].length-a[1].length);
+    html+='<div class="section-title" style="margin-top:18px">This week — summary</div>';
+    sorted.forEach(([name,inc])=>{
+      const tally={};inc.forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
+      const breakdown=Object.entries(tally).map(([t,c])=>`${t} ×${c}`).join(' · ');
+      const watch=getWatch(currentClassId,name);
+      const {hitThreshold}=checkWeekThreshold(currentClassId,name);
+      html+=`<div class="summary-row ${hitThreshold?'over3':''}">
         <div style="flex:1"><div class="summary-name">${esc(name)}</div><div class="summary-sub">${breakdown}</div></div>
         <span class="summary-count">${inc.length}</span>
-        ${watch && watch.strikes > 0 ? `<span class="strikes-pill">×${watch.strikes}w</span>` : ''}
+        ${watch&&watch.strikes>0?`<span class="strikes-pill">×${watch.strikes}w</span>`:''}
       </div>`;
     });
 
     // By lesson
-    const byLesson = {};
-    incidents.forEach(i => {
-      const k = `T${i.term}W${i.week}L${i.lesson}`;
-      if (!byLesson[k]) byLesson[k] = { label: lessonLabel(i.term, i.week, i.lesson), items: [] };
+    const byLesson={};
+    incidents.forEach(i=>{
+      const k=`T${i.term}W${i.week}L${i.lesson}`;
+      if(!byLesson[k])byLesson[k]={label:lessonLabel(i.term,i.week,i.lesson),items:[]};
       byLesson[k].items.push(i);
     });
-    html += '<div class="section-title" style="margin-top:20px">By lesson</div>';
-    Object.values(byLesson).forEach(group => {
-      html += `<div class="lesson-group-header">${group.label}</div>`;
-      group.items.slice().reverse().forEach(i => {
-        html += `<div class="log-item">
+    html+='<div class="section-title" style="margin-top:20px">By lesson</div>';
+    Object.values(byLesson).forEach(group=>{
+      html+=`<div class="lesson-group-header">${group.label}</div>`;
+      group.items.slice().reverse().forEach(i=>{
+        html+=`<div class="log-item">
           <div class="log-dot ${behClass(i.type)}"></div>
           <div class="log-text"><strong>${esc(i.student)}</strong> <span>— ${i.type}</span></div>
           <div class="log-time">${i.time}</div>
@@ -915,443 +1023,408 @@ function showLog() {
       });
     });
   }
-  el.innerHTML = html;
+
+  // Notes this week
+  const weekNotes=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|`)&&k.endsWith(`T${state.currentTerm}W${state.currentWeek}`));
+  if(weekNotes.length){
+    html+='<div class="section-title" style="margin-top:20px">Notes this week</div>';
+    weekNotes.forEach(([k,note])=>{
+      const student=k.split('|')[1];
+      html+=`<div class="note-block"><div class="note-block-label">${esc(student)}</div>${esc(note)}</div>`;
+    });
+  }
+
+  el.innerHTML=html;
   showScreen('screen-log');
 }
 
-function deleteIncident(id) {
-  state.incidents = state.incidents.filter(i => i.id !== id);
-  save(); showLog(); renderStudentGrid();
+function deleteIncident(id){
+  state.incidents=state.incidents.filter(i=>i.id!==id);
+  save();showLog();renderStudentGrid();
 }
 
-function clearClassLog() {
-  if (!confirm('Clear this week\'s incidents for this class?')) return;
-  state.incidents = state.incidents.filter(i => !(i.classId === currentClassId && i.term === state.currentTerm && i.week === state.currentWeek));
-  save(); showLog(); renderStudentGrid();
+function clearClassLog(){
+  if(!confirm('Clear this week\'s incidents for this class?')) return;
+  state.incidents=state.incidents.filter(i=>!(i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek));
+  save();showLog();renderStudentGrid();
 }
 
-/* WATCHLIST */
-function renderWatchlist() {
-  const el = document.getElementById('watchlist-content');
-  const entries = Object.values(state.watchlist).filter(w => w.strikes > 0);
-  if (!entries.length) {
-    el.innerHTML = '<div class="empty"><strong>Watchlist is empty</strong>Students with 3+ incidents in a week appear here after you advance to the next week.</div>';
+/* ---- WATCHLIST ---- */
+function renderWatchlist(){
+  const el=document.getElementById('watchlist-content');
+  const entries=Object.values(state.watchlist).filter(w=>w.strikes>0);
+  if(!entries.length){
+    el.innerHTML='<div class="empty"><strong>Watchlist is empty</strong>Students with 3 of the same offence type in a week appear here after Next Week.</div>';
     return;
   }
-  const byClass = {};
-  entries.forEach(w => { if (!byClass[w.classId]) byClass[w.classId] = []; byClass[w.classId].push(w); });
-  let html = '';
-  Object.entries(byClass).forEach(([cid, ws]) => {
-    const cls = state.classes.find(c => c.id == cid);
-    html += `<div class="section-title">${cls ? esc(cls.name) + ' — ' + esc(cls.subject) : 'Unknown'}</div>`;
-    ws.sort((a,b) => b.strikes - a.strikes).forEach(w => {
-      const pills = Object.entries(w.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-      html += `<div class="watch-item">
+  const byClass={};
+  entries.forEach(w=>{if(!byClass[w.classId])byClass[w.classId]=[];byClass[w.classId].push(w)});
+  let html='';
+  Object.entries(byClass).forEach(([cid,ws])=>{
+    const cls=state.classes.find(c=>c.id==cid);
+    html+=`<div class="section-title">${cls?esc(cls.name)+' — '+esc(cls.subject):'Unknown'}</div>`;
+    ws.sort((a,b)=>b.strikes-a.strikes).forEach(w=>{
+      const pills=Object.entries(w.carriedOffences).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+      html+=`<div class="watch-item">
         <div class="watch-item-name">${esc(w.student)}</div>
         <div class="watch-item-class">Flagged ${w.strikes} week${w.strikes>1?'s':''} total</div>
-        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes} flag${w.strikes>1?'s':''}</span></div>
+        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes}</span></div>
+        <button class="rehab-btn" onclick="rehabilitate('${cid}','${w.student.replace(/'/g,"\\'")}')">Rehabilitate</button>
       </div>`;
     });
   });
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
-/* STUDENT HISTORY */
-function openStudentHistory() {
-  const name = selectedStudent;
+function rehabilitate(classId,student){
+  if(!confirm(`Reset ${student}'s watchlist strikes to zero?\n\nTheir incident history will be kept.`)) return;
+  const key=wKey(classId,student);
+  if(state.watchlist[key]){
+    state.watchlist[key].strikes=0;
+    state.watchlist[key].typeStrikes={};
+    state.watchlist[key].carriedOffences={};
+  }
+  save();renderWatchlist();renderStudentGrid();toast(student+' rehabilitated');
+}
+
+/* ---- STUDENT HISTORY ---- */
+function openStudentHistory(){
+  const name=selectedStudent;
   closeAllPanels();
-  const cls = state.classes.find(c => c.id === currentClassId);
-  document.getElementById('history-student-name').textContent = name;
-  document.getElementById('history-class-name').textContent = cls ? cls.name + ' · ' + cls.subject : '';
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('history-student-name').textContent=name;
+  document.getElementById('history-class-name').textContent=cls?cls.name+' · '+cls.subject:'';
 
-  const all = state.incidents.filter(i => i.classId === currentClassId && i.student === name);
-  const watch = getWatch(currentClassId, name);
-  const el = document.getElementById('history-content');
+  const all=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name);
+  const watch=getWatch(currentClassId,name);
+  const el=document.getElementById('history-content');
 
-  if (!all.length && (!watch || !watch.strikes)) {
-    el.innerHTML = '<div class="empty"><strong>No history yet</strong>No incidents have been logged for this student.</div>';
-    showScreen('screen-student-history'); return;
+  if(!all.length&&(!watch||!watch.strikes)){
+    el.innerHTML='<div class="empty"><strong>No history yet</strong>No incidents logged for this student.</div>';
+    showScreen('screen-student-history');return;
   }
 
-  const typeTally = {};
-  all.forEach(i => { typeTally[i.type] = (typeTally[i.type]||0)+1; });
-  if (watch) Object.entries(watch.carriedOffences).forEach(([t,c]) => { typeTally[t] = (typeTally[t]||0)+c; });
-  const topType = Object.entries(typeTally).sort((a,b)=>b[1]-a[1])[0];
-  const totalAll = all.length + (watch ? Object.values(watch.carriedOffences).reduce((a,b)=>a+b,0) : 0);
+  const typeTally={};
+  all.forEach(i=>{typeTally[i.type]=(typeTally[i.type]||0)+1});
+  if(watch) Object.entries(watch.carriedOffences||{}).forEach(([t,c])=>{typeTally[t]=(typeTally[t]||0)+c});
+  const topType=Object.entries(typeTally).sort((a,b)=>b[1]-a[1])[0];
+  const totalAll=all.length+((watch&&watch.carriedOffences)?Object.values(watch.carriedOffences).reduce((a,b)=>a+b,0):0);
 
-  let html = `<div class="stat-row">
+  let html=`<div class="stat-row">
     <div class="stat-card"><div class="stat-num">${totalAll}</div><div class="stat-label">Total incidents</div></div>
-    <div class="stat-card"><div class="stat-num">${watch ? watch.strikes : 0}</div><div class="stat-label">Weeks flagged</div></div>
-    <div class="stat-card"><div class="stat-num" style="font-size:14px">${topType ? topType[0].split(' ')[0] : '—'}</div><div class="stat-label">Most common</div></div>
+    <div class="stat-card"><div class="stat-num">${watch?watch.strikes:0}</div><div class="stat-label">Weeks flagged</div></div>
+    <div class="stat-card"><div class="stat-num" style="font-size:14px">${topType?topType[0].split(' ')[0]:'—'}</div><div class="stat-label">Most common</div></div>
   </div>`;
 
-  if (watch && watch.strikes > 0) {
-    const pills = Object.entries(watch.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-    html += `<div class="section-title">Watchlist — carried offences</div>
-      <div class="carried-card"><div class="pill-row">${pills}<span class="pill strikes">×${watch.strikes} wk${watch.strikes>1?'s':''} flagged</span></div></div>`;
+  if(watch&&watch.strikes>0){
+    const pills=Object.entries(watch.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+    html+=`<div class="section-title">Watchlist — carried</div>
+      <div class="carried-card"><div class="pill-row">${pills}<span class="pill strikes">×${watch.strikes} wk${watch.strikes>1?'s':''}</span></div></div>`;
   }
 
-  // Group by Term > Week > Lesson
-  const grouped = {};
-  all.forEach(i => {
-    const tk = `T${i.term}`;
-    const wk = `T${i.term}W${i.week}`;
-    const lk = `T${i.term}W${i.week}L${i.lesson}`;
-    if (!grouped[tk]) grouped[tk] = {};
-    if (!grouped[tk][wk]) grouped[tk][wk] = {};
-    if (!grouped[tk][wk][lk]) grouped[tk][wk][lk] = [];
+  // Group by term > week > lesson
+  const grouped={};
+  all.forEach(i=>{
+    const tk=`T${i.term}`;const wk=`${tk}W${i.week}`;const lk=`${wk}L${i.lesson}`;
+    if(!grouped[tk]) grouped[tk]={};
+    if(!grouped[tk][wk]) grouped[tk][wk]={};
+    if(!grouped[tk][wk][lk]) grouped[tk][wk][lk]=[];
     grouped[tk][wk][lk].push(i);
   });
 
-  Object.keys(grouped).sort().reverse().forEach(tk => {
-    const termNum = tk.replace('T','');
-    html += `<div class="section-title" style="margin-top:20px">Term ${termNum}</div>`;
-    Object.keys(grouped[tk]).sort().reverse().forEach(wk => {
-      const weekNum = wk.replace(/T\dW/,'');
-      const isCurrent = parseInt(termNum) === state.currentTerm && parseInt(weekNum) === state.currentWeek;
-      html += `<div class="history-block">`;
-      html += `<div class="history-block-title ${isCurrent?'current':''}">Week ${weekNum}${isCurrent?' (current)':''}</div>`;
-      Object.keys(grouped[tk][wk]).sort().forEach(lk => {
-        const lessonNum = lk.replace(/T\dW\d+L/,'');
-        const inc = grouped[tk][wk][lk];
-        html += `<div style="font-size:12px;color:var(--text3);margin:6px 0 4px;padding:0 2px">Lesson ${lessonNum} · ${inc.length} incident${inc.length>1?'s':''}</div>`;
-        inc.forEach(i => {
-          html += `<div class="history-inc-row">
+  // Also pull notes
+  const allNotes=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|${name}|`));
+
+  Object.keys(grouped).sort().reverse().forEach(tk=>{
+    const termNum=tk.replace('T','');
+    html+=`<div class="section-title" style="margin-top:20px">Term ${termNum}</div>`;
+    Object.keys(grouped[tk]).sort().reverse().forEach(wk=>{
+      const weekNum=wk.replace(/T\dW/,'');
+      const isCurrent=parseInt(termNum)===state.currentTerm&&parseInt(weekNum)===state.currentWeek;
+      html+=`<div class="history-block">`;
+      html+=`<div class="history-block-title ${isCurrent?'current':''}">Week ${weekNum}${isCurrent?' (current)':''}</div>`;
+
+      // Note for this week
+      const nKey=noteKey(currentClassId,name,termNum,weekNum);
+      if(state.notes[nKey]){
+        html+=`<div class="note-block"><div class="note-block-label">Note</div>${esc(state.notes[nKey])}</div>`;
+      }
+
+      Object.keys(grouped[tk][wk]).sort().forEach(lk=>{
+        const lessonNum=lk.replace(/T\dW\d+L/,'');
+        const inc=grouped[tk][wk][lk];
+        html+=`<div style="font-size:12px;color:var(--text3);margin:6px 0 4px;padding:0 2px">Lesson ${lessonNum} · ${inc.length} incident${inc.length>1?'s':''}</div>`;
+        inc.forEach(i=>{
+          html+=`<div class="history-inc-row">
             <div class="log-dot ${behClass(i.type)}"></div>
-            <div class="history-type">${i.type}</div>
+            <div class="history-type">${i.type}${i.isSol?' <span style="font-size:11px;opacity:.6">(entry)</span>':''}</div>
             <div class="history-meta">${i.date}<br>${i.time}</div>
           </div>`;
         });
       });
-      html += `</div>`;
+      html+=`</div>`;
     });
   });
 
-  el.innerHTML = html;
+  // Rehabilitate button
+  if(watch&&watch.strikes>0){
+    html+=`<button class="rehab-btn-history" onclick="rehabilitateFromHistory('${currentClassId}','${name.replace(/'/g,"\\'")}')">Rehabilitate this student</button>`;
+  }
+
+  el.innerHTML=html;
   showScreen('screen-student-history');
 }
 
-/* SETUP */
-function addClass() {
-  const name = document.getElementById('new-class-name').value.trim();
-  const subject = document.getElementById('new-class-subject').value.trim();
-  if (!name) return;
-  state.classes.push({ id: Date.now(), name, subject, students: [] });
-  document.getElementById('new-class-name').value = '';
-  document.getElementById('new-class-subject').value = '';
-  save(); renderClassList(); updateClassSelect(); toast('Class added');
+function rehabilitateFromHistory(classId,student){
+  if(!confirm(`Reset ${student}'s watchlist strikes to zero?\n\nIncident history will be kept.`)) return;
+  const key=wKey(classId,student);
+  if(state.watchlist[key]){state.watchlist[key].strikes=0;state.watchlist[key].typeStrikes={};state.watchlist[key].carriedOffences={}}
+  save();renderStudentGrid();toast(student+' rehabilitated');
+  showScreen('screen-students');
 }
-function renderClassList() {
-  const el = document.getElementById('class-list');
-  el.innerHTML = '';
-  if (!state.classes.length) { el.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:8px 0">No classes added yet.</div>'; return; }
-  state.classes.forEach(cls => {
-    const d = document.createElement('div');
-    d.className = 'setup-list-item';
-    d.innerHTML = `<div style="flex:1"><div class="setup-list-text">${esc(cls.name)}</div>
-      <div class="setup-list-sub">${esc(cls.subject)} · ${cls.students.length} students</div></div>
+
+/* ---- SETUP ---- */
+function addClass(){
+  const name=document.getElementById('new-class-name').value.trim();
+  const subject=document.getElementById('new-class-subject').value.trim();
+  if(!name) return;
+  state.classes.push({id:Date.now(),name,subject,students:[]});
+  document.getElementById('new-class-name').value='';
+  document.getElementById('new-class-subject').value='';
+  save();renderClassList();updateClassSelect();toast('Class added');
+}
+
+function renderClassList(){
+  const el=document.getElementById('class-list');
+  el.innerHTML='';
+  if(!state.classes.length){el.innerHTML='<div style="color:var(--text3);font-size:14px;padding:8px 0">No classes yet.</div>';return}
+  state.classes.forEach(cls=>{
+    const d=document.createElement('div');d.className='setup-list-item';
+    d.innerHTML=`<div style="flex:1"><div class="setup-list-text">${esc(cls.name)}</div><div class="setup-list-sub">${esc(cls.subject)} · ${cls.students.length} students</div></div>
       <div class="list-del" onclick="deleteClass(${cls.id})">✕</div>`;
     el.appendChild(d);
   });
 }
-function deleteClass(id) {
-  if (!confirm('Delete this class and all its data?')) return;
-  state.classes = state.classes.filter(c => c.id !== id);
-  state.incidents = state.incidents.filter(i => i.classId !== id);
-  Object.keys(state.watchlist).forEach(k => { if (state.watchlist[k].classId === id) delete state.watchlist[k]; });
-  save(); renderClassList(); updateClassSelect();
+
+function deleteClass(id){
+  if(!confirm('Delete this class and all its data?')) return;
+  state.classes=state.classes.filter(c=>c.id!==id);
+  state.incidents=state.incidents.filter(i=>i.classId!==id);
+  Object.keys(state.watchlist).forEach(k=>{if(state.watchlist[k].classId===id)delete state.watchlist[k]});
+  save();renderClassList();updateClassSelect();
 }
-function updateClassSelect() {
-  const sel = document.getElementById('class-select');
-  sel.innerHTML = state.classes.length
-    ? state.classes.map(c => `<option value="${c.id}">${esc(c.name)} — ${esc(c.subject)}</option>`).join('')
-    : '<option value="">No classes yet</option>';
+
+function updateClassSelect(){
+  const sel=document.getElementById('class-select');
+  sel.innerHTML=state.classes.length?state.classes.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.subject)}</option>`).join(''):'<option value="">No classes yet</option>';
   renderStudentList();
 }
-function addStudent() {
-  const name = document.getElementById('new-student').value.trim();
-  const classId = parseInt(document.getElementById('class-select').value);
-  if (!name || !classId) return;
-  const cls = state.classes.find(c => c.id === classId);
-  if (cls && !cls.students.includes(name)) {
-    cls.students.push(name); save();
-    document.getElementById('new-student').value = '';
-    renderStudentList(); renderClassList(); toast(name + ' added');
-  }
+
+function addStudent(){
+  const name=document.getElementById('new-student').value.trim();
+  const classId=parseInt(document.getElementById('class-select').value);
+  if(!name||!classId) return;
+  const cls=state.classes.find(c=>c.id===classId);
+  if(cls&&!cls.students.includes(name)){cls.students.push(name);save();document.getElementById('new-student').value='';renderStudentList();renderClassList();toast(name+' added')}
 }
-function renderStudentList() {
-  const el = document.getElementById('student-list');
-  const classId = parseInt(document.getElementById('class-select').value);
-  const cls = state.classes.find(c => c.id === classId);
-  el.innerHTML = '';
-  if (!cls || !cls.students.length) { el.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:8px 0">No students yet.</div>'; return; }
-  cls.students.forEach(name => {
-    const d = document.createElement('div');
-    d.className = 'setup-list-item';
-    d.innerHTML = `<div class="setup-list-text" style="flex:1">${esc(name)}</div>
+
+function renderStudentList(){
+  const el=document.getElementById('student-list');
+  const classId=parseInt(document.getElementById('class-select').value);
+  const cls=state.classes.find(c=>c.id===classId);
+  el.innerHTML='';
+  if(!cls||!cls.students.length){el.innerHTML='<div style="color:var(--text3);font-size:14px;padding:8px 0">No students yet.</div>';return}
+  cls.students.forEach(name=>{
+    const d=document.createElement('div');d.className='setup-list-item';
+    d.innerHTML=`<div class="setup-list-text" style="flex:1">${esc(name)}</div>
       <div class="list-del" onclick="removeStudent(${cls.id},'${name.replace(/'/g,"\\'")}')">✕</div>`;
     el.appendChild(d);
   });
 }
-function removeStudent(classId, name) {
-  const cls = state.classes.find(c => c.id === classId);
-  if (cls) { cls.students = cls.students.filter(s => s !== name); save(); renderStudentList(); renderClassList(); }
+
+function removeStudent(classId,name){
+  const cls=state.classes.find(c=>c.id===classId);
+  if(cls){cls.students=cls.students.filter(s=>s!==name);save();renderStudentList();renderClassList()}
 }
-function switchTab(tab) {
-  document.getElementById('setup-classes').style.display = tab === 'classes' ? 'block' : 'none';
-  document.getElementById('setup-students').style.display = tab === 'students' ? 'block' : 'none';
-  document.getElementById('setup-reset').style.display = tab === 'reset' ? 'block' : 'none';
-  document.getElementById('tab-classes').className = 'setup-tab' + (tab==='classes'?' active':'');
-  document.getElementById('tab-students').className = 'setup-tab' + (tab==='students'?' active':'');
-  document.getElementById('tab-reset').className = 'setup-tab' + (tab==='reset'?' active':'');
-  if (tab === 'students') updateClassSelect();
-  if (tab === 'reset') {
-    document.getElementById('reset-term').textContent = state.currentTerm;
-    document.getElementById('reset-week').textContent = state.currentWeek;
+
+function switchTab(tab){
+  ['classes','students','reset'].forEach(t=>{
+    document.getElementById(`setup-${t}`).style.display=t===tab?'block':'none';
+    document.getElementById(`tab-${t}`).className='setup-tab'+(t===tab?' active':'');
+  });
+  if(tab==='students') updateClassSelect();
+  if(tab==='reset'){
+    document.getElementById('reset-term').textContent=state.currentTerm;
+    document.getElementById('reset-week').textContent=state.currentWeek;
   }
 }
 
-function resetWeek() {
-  if (!confirm(`Clear ALL incidents for T${state.currentTerm} W${state.currentWeek} across every class?\n\nWatchlist and student data will be kept.`)) return;
-  state.incidents = state.incidents.filter(i => !(i.term === state.currentTerm && i.week === state.currentWeek));
-  save(); renderHome(); toast('This week cleared');
+function resetWeek(){
+  if(!confirm(`Clear all incidents for T${state.currentTerm} W${state.currentWeek} across all classes?`)) return;
+  state.incidents=state.incidents.filter(i=>!(i.term===state.currentTerm&&i.week===state.currentWeek));
+  Object.keys(state.solData).forEach(k=>{if(state.solData[k].term===state.currentTerm&&state.solData[k].week===state.currentWeek)delete state.solData[k]});
+  save();renderHome();toast('This week cleared');
 }
 
-function resetAll() {
-  if (!confirm('Delete ALL data — incidents, watchlist, and all classes?\n\nThis cannot be undone.')) return;
-  if (!confirm('Are you sure? Everything will be wiped.')) return;
-  localStorage.removeItem(STORE);
-  location.reload();
+function resetIncidents(){
+  if(!confirm('Clear ALL incidents and watchlist data?\n\nClasses and student names will be kept.')) return;
+  state.incidents=[];state.watchlist={};state.solData={};state.notes={};
+  save();renderHome();toast('All incidents cleared');
 }
 
-document.getElementById('new-student').addEventListener('keydown', e => { if(e.key==='Enter') addStudent(); });
-document.getElementById('new-class-name').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('new-class-subject').focus(); });
-document.getElementById('new-class-subject').addEventListener('keydown', e => { if(e.key==='Enter') addClass(); });
+function resetAll(){
+  if(!confirm('Delete ALL data including classes and students?')) return;
+  if(!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  localStorage.removeItem(STORE);location.reload();
+}
 
-/* INIT */
+/* ---- KEYBOARD ---- */
+document.getElementById('new-student').addEventListener('keydown',e=>{if(e.key==='Enter')addStudent()});
+document.getElementById('new-class-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-class-subject').focus()});
+document.getElementById('new-class-subject').addEventListener('keydown',e=>{if(e.key==='Enter')addClass()});
+
+/* ---- INIT ---- */
 load();
-if (!state.watchlist) state.watchlist = {};
-if (!state.currentTerm) state.currentTerm = 2;
-if (!state.currentWeek) state.currentWeek = 2;
+if(!state.watchlist) state.watchlist={};
+if(!state.notes) state.notes={};
+if(!state.solData) state.solData={};
+if(!state.currentTerm) state.currentTerm=2;
+if(!state.currentWeek) state.currentWeek=2;
 
-if (!state.classes.find(c => c.name === '1HIA')) {
-  state.classes.push({
-    id: 1000000001, name: '1HIA', subject: 'History',
-    students: [
-      'Clayton','Hongbo','Luth','Aomi','Yogesh',
-      'Qi Xian','Aqil','Javier','Ignatius','Eryna','Shafinah','Danif','Michael',
-      'Cherbelle','Sree','Lewis','Caden','Ariana','Scarlette',
-      'Lakshya','Enyue','Jayden','Kingsley','Jia Xuan','Ying Xin'
-    ]
-  });
-}
+if(!state.classes.find(c=>c.name==='1HIA')){state.classes.push({id:1000000001,name:'1HIA',subject:'History',students:[
+  'Clayton','Hongbo','Aomi',
+  'Yogesh','Luth','Qi Xian',
+  'Aqil','Javier','Ignatius',
+  'Eryna','Shafinah','Danif',
+  'Michael','Cherbelle','Sree',
+  'Lewis','Caden','Ariana',
+  'Scarlette','Lakshya','Enyue',
+  'Jayden','Kingsley','Jia Xuan',
+  'Ying Xin'
+]})}
+if(!state.classes.find(c=>c.name==='1HIE')){state.classes.push({id:1000000004,name:'1HIE',subject:'History',students:[
+  'Zayden','Van Khai','Jovi',
+  'Tharan','Talan','Luffy',
+  'Reon','Vanna','Evan',
+  'Ryan','Angelina','Zheng An','Kristopher','Kaegan',
+  'Rachel','Ian','Criselda',
+  'Arissa','Kayven','Xin Yu','Rui Kai','Kevin',
+  'Jerine','Harrison','Paige',
+  'Kate','Shawn','Siting'
+]})}
+if(!state.classes.find(c=>c.name==='1HIR')){state.classes.push({id:1000000005,name:'1HIR',subject:'History',students:[
+  'Nataniel','Kaizhe',
+  'Ravellio','Henry','Justin','Ruey Waye',
+  'Luong','Aaiden','Zhen Bin','Jialin',
+  'Lucas Yeo','Brendan','Charmaine','Beatrix',
+  'Lukas Beh','Zi Le','Elsa','Zhi Qing',
+  'Xinglin','Li Quan','Deborah','Rosette',
+  'Iain','Zhi Yu','Alice','Zi Xuan',
+  'Shanmitha','Josella','Jayden','Zender',
+  'Aaralyn','Jia Ying','Joshua','Roopesh',
+  'Kaylea','Khai Jie','Ling En','Elma',
+  'Regina','Phoebe','Cheng Zi','Royce'
+]})}
+if(!state.classes.find(c=>c.name==='1HIX')){state.classes.push({id:1000000006,name:'1HIX',subject:'History',students:[
+  'Yixuan','Calista','Marissa','Yaagna',
+  'Bogyu','Hilitary','Yan Ru','Isabella',
+  'Richard','Zi Yu','Joann',
+  'Aden','Kathleen','Lucas','Minlang',
+  'Wei Xin','Jenevieve','Aron','Aqil',
+  'Claire','Anders','Sachio','Mitchell',
+  'Crescentia','Wing Tin','Zih Ciao','Nayef',
+  'Chloe','Jun See','Hema',
+  'Janelle','Leroy','Samantha'
+]})}
+if(!state.classes.find(c=>c.name==='1A3')){state.classes.push({id:1000000009,name:'1A3',subject:'CCE',students:[
+  'Kieran','Alice','Jared',
+  'Nick','Zou Mo','Lewis Ng',
+  'Jia Xuan','Isabel','Roopesh','Elsa',
+  'Ying Xin','Isabella','Kai Zhe','Yi Xuan',
+  'Mia','Sophie','Ignatious','Lewis Tan',
+  'Jiaying','Tanesha','Lucas','Eason',
+  'Ray','Kaylynn','Sree','Afiq',
+  'Ravellio','Deborah','Jia En','Jayden',
+  'Rizqi','Venkatesha','Niran',
+  'Zender','Harith','Charmaine'
+]})}
+if(!state.classes.find(c=>c.name==='3A')){state.classes.push({id:1000000002,name:'3A',subject:'Social Studies',students:[
+  'Irfaan','Wen Hao',
+  'Syabil','Shin Yong','Elfirul','Jabar',
+  'Reyes','Kevin','Farooq','Kevin',
+  'Javier','Johnny','Vince','Winnie',
+  'Franky','Alfeus','Danish','Alysha',
+  'Qalisyah','Li Xuan','Zi Ying','Raziq',
+  'Eugenia','Pooja','Jiaxuan',
+  'Tiara','Isabelle','Clara',
+  'Kai En','Shi Hui','Benisha'
+]})}
+if(!state.classes.find(c=>c.name==='3C')){state.classes.push({id:1000000003,name:'3C',subject:'Social Studies',students:[
+  'Jayven','Christopher',
+  'Jasper','Matthew','Jun Lin','Lucas Wu',
+  'Joshua','Dyon','Yao Hong','Brendon',
+  'Enver','Kaveen','Kayden','Javier',
+  'Yuan Ziyu','Jovial','Lucas Wee','Seth',
+  'Yu Xiang','Andric','Ocean','Jia An',
+  'Logan','Cartier','Yu Hong','Anson',
+  'Jovelle','Irfaanah','Kayla','Umara',
+  'Shu En','Janelle','Cynthia','Jane',
+  'Chloe','Quinn','Louisa','Justine',
+  'Myra','Xiang Lin','Valencia'
+]})}
+if(!state.classes.find(c=>c.name==='3SHT')){state.classes.push({id:1000000007,name:'3SHT',subject:'History',students:[
+  'Kiriel',
+  'Aisha','Sonya','Tasnuva',
+  'Ravis','Hoang Quan','Siew Yan',
+  'Kievan','Nathan','Veanna',
+  'Tristan','Rianson','Yue Ling',
+  'Maxine','Matthew','Nadine','Adhithi',
+  'Kai Qing','Xing Xuan',
+  'Renae','Yin Xuan'
+]})}
+if(!state.classes.find(c=>c.name==='3SHW')){state.classes.push({id:1000000008,name:'3SHW',subject:'History',students:[
+  'Henry','Haris','Traven','Ryan',
+  'Clarice','Jun Yang','Ewan','Jayden',
+  'Paven','Joseph','Jonathan',
+  'Kellynn','Teagan','Haasyir',
+  'Joshin','Andrew','Tristan',
+  'Sam','Xavier','Namo'
+]})}
 
-if (!state.classes.find(c => c.name === '1HIE')) {
-  state.classes.push({
-    id: 1000000004, name: '1HIE', subject: 'History',
-    students: [
-      'Zayden','Tharan','Van Khai','Talan','Jovi','Luffy',
-      'Reon','Ryan','Vanna','Angelina','Evan','Zheng An','Kristopher','Kaegan',
-      'Rachel','Arissa','Ian','Kayven','Criselda','Xin Yu','Rui Kai','Kevin',
-      'Jerine','Kate','Harrison','Shawn','Paige','Siting'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '1HIR')) {
-  state.classes.push({
-    id: 1000000005, name: '1HIR', subject: 'History',
-    students: [
-      'Nataniel','Kaizhe',
-      'Ravellio','Luong','Henry','Aaiden','Justin','Zhen Bin','Ruey Waye','Jialin',
-      'Lucas Yeo','Lukas Beh','Brendan','Zi Le','Charmaine','Elsa','Beatrix','Zhi Qing',
-      'Xinglin','Iain','Li Quan','Zhi Yu','Deborah','Alice','Rosette','Zi Xuan',
-      'Shanmitha','Aaralyn','Josella','Jia Ying','Jayden','Joshua','Zender','Roopesh',
-      'Kaylea','Regina','Khai Jie','Phoebe','Ling En','Cheng Zi','Elma','Royce'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '1HIX')) {
-  state.classes.push({
-    id: 1000000006, name: '1HIX', subject: 'History',
-    students: [
-      'Yixuan','Calista','Marissa','Yaagna',
-      'Bogyu','Richard','Hilitary','Zi Yu','Yan Ru','Joann','Isabella',
-      'Aden','Wei Xin','Kathleen','Jenevieve','Lucas','Aron','Minlang','Aqil',
-      'Claire','Crescentia','Anders','Wing Tin','Sachio','Zih Ciao','Mitchell','Nayef',
-      'Chloe','Janelle','Jun See','Leroy','Hema','Samantha'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '1A3')) {
-  state.classes.push({
-    id: 1000000009, name: '1A3', subject: 'History',
-    students: [
-      'Kieran','Nick','Alice','Zou Mo','Jared','Lewis Ng',
-      'Jia Xuan','Ying Xin','Isabel','Isabella','Roopesh','Kai Zhe','Elsa','Yi Xuan',
-      'Mia','Jiaying','Sophie','Tanesha','Ignatious','Lucas','Lewis Tan','Eason',
-      'Ray','Ravellio','Kaylynn','Deborah','Sree','Jia En','Afiq','Jayden',
-      'Rizqi','Zender','Venkatesha','Harith','Niran','Charmaine'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '3A')) {
-  state.classes.push({
-    id: 1000000002, name: '3A', subject: 'Social Studies',
-    students: [
-      'Syabil','Reyes','Irfaan',
-      'Javier','Franky','Wen Hao',
-      'Qalisyah','Eugenia','Jabar',
-      'Tiara','Kai En','Kevin',
-      'Shin Yong','Kevin','Winnie',
-      'Johnny','Alfeus','Alysha',
-      'Li Xuan','Pooja','Raziq',
-      'Isabelle','Shi Hui',
-      'Elfirul','Farooq',
-      'Vince','Danish',
-      'Zi Ying','Jiaxuan',
-      'Clara','Benisha'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '3C')) {
-  state.classes.push({
-    id: 1000000003, name: '3C', subject: 'Social Studies',
-    students: [
-      'Jasper','Joshua','Jayven','Christopher','Lucas Wu','Brendon',
-      'Enver','Yuan Ziyu','Matthew','Dyon','Jun Lin','Yao Hong','Javier','Seth',
-      'Yu Xiang','Logan','Kaveen','Jovial','Kayden','Lucas Wee','Jia An','Anson',
-      'Jovelle','Shu En','Andric','Cartier','Ocean','Yu Hong','Umara','Jane',
-      'Chloe','Myra','Irfaanah','Janelle','Kayla','Cynthia','Justine',
-      'Quinn','Xiang Lin','Louisa','Valencia'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '3SHT')) {
-  state.classes.push({
-    id: 1000000007, name: '3SHT', subject: 'Social Studies',
-    students: [
-      'Kiriel',
-      'Aisha','Ravis','Sonya','Hoang Quan','Tasnuva','Siew Yan',
-      'Kievan','Tristan','Nathan','Rianson','Veanna','Yue Ling',
-      'Maxine','Nadine','Matthew','Adhithi',
-      'Kai Qing','Renae','Xing Xuan','Yin Xuan'
-    ]
-  });
-}
-
-if (!state.classes.find(c => c.name === '3SHW')) {
-  state.classes.push({
-    id: 1000000008, name: '3SHW', subject: 'Social Studies',
-    students: [
-      'Paven','Kellynn','Henry','Haris','Traven','Ryan',
-      'Joshin','Sam','Clarice','Jun Yang','Ewan','Jayden',
-      'Joseph','Teagan','Jonathan','Haasyir',
-      'Andrew','Xavier','Tristan','Namo'
-    ]
-  });
-}
-
-// Sort: 1s before 3s, then alphabetically within each group
-state.classes.sort((a, b) => {
-  const aNum = parseInt(a.name[0]);
-  const bNum = parseInt(b.name[0]);
-  if (aNum !== bNum) return aNum - bNum;
+state.classes.sort((a,b)=>{
+  const an=parseInt(a.name[0]),bn=parseInt(b.name[0]);
+  if(an!==bn) return an-bn;
   return a.name.localeCompare(b.name);
 });
-
 save();
 renderHome();
 
-/* ---- PWA SETUP ---- */
-(function() {
-  function makeIcon(size) {
-    const c = document.createElement('canvas');
-    c.width = c.height = size;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#2A6ED4';
-    const r = size * 0.22;
-    ctx.beginPath();
-    ctx.moveTo(r, 0); ctx.lineTo(size-r, 0);
-    ctx.quadraticCurveTo(size, 0, size, r);
-    ctx.lineTo(size, size-r);
-    ctx.quadraticCurveTo(size, size, size-r, size);
-    ctx.lineTo(r, size);
-    ctx.quadraticCurveTo(0, size, 0, size-r);
-    ctx.lineTo(0, r);
-    ctx.quadraticCurveTo(0, 0, r, 0);
-    ctx.closePath();
-    ctx.fill();
-    const cols = 3, rows = 4;
-    const pad = size * 0.18;
-    const dotR = size * 0.055;
-    const cellW = (size - pad*2) / cols;
-    const cellH = (size - pad*2) / rows;
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        const x = pad + col * cellW + cellW/2;
-        const y = pad + row * cellH + cellH/2;
-        ctx.fillStyle = (row===1&&col===1) ? '#F5907E' : (row===2&&col===2) ? '#F0B060' : '#FFFFFF';
-        ctx.globalAlpha = (row===3&&col===2) ? 0.3 : 0.9;
-        ctx.beginPath(); ctx.arc(x, y, dotR, 0, Math.PI*2); ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-    return c.toDataURL('image/png');
+/* ---- PWA ---- */
+(function(){
+  function makeIcon(size){
+    const c=document.createElement('canvas');c.width=c.height=size;
+    const ctx=c.getContext('2d');ctx.fillStyle='#2A6ED4';
+    const r=size*.22;ctx.beginPath();ctx.moveTo(r,0);ctx.lineTo(size-r,0);ctx.quadraticCurveTo(size,0,size,r);ctx.lineTo(size,size-r);ctx.quadraticCurveTo(size,size,size-r,size);ctx.lineTo(r,size);ctx.quadraticCurveTo(0,size,0,size-r);ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);ctx.closePath();ctx.fill();
+    const cols=3,rows=4,pad=size*.18,dotR=size*.055,cW=(size-pad*2)/cols,cH=(size-pad*2)/rows;
+    for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){ctx.fillStyle=(row===1&&col===1)?'#F5907E':(row===2&&col===2)?'#F0B060':'#FFFFFF';ctx.globalAlpha=(row===3&&col===2)?.3:.9;ctx.beginPath();ctx.arc(pad+col*cW+cW/2,pad+row*cH+cH/2,dotR,0,Math.PI*2);ctx.fill()}
+    ctx.globalAlpha=1;return c.toDataURL('image/png');
   }
-
-  const icon192 = makeIcon(192);
-  const icon512 = makeIcon(512);
-  document.getElementById('apple-touch-icon').href = icon192;
-
-  const manifest = {
-    name: 'Class Behaviour Tracker', short_name: 'Class Tracker',
-    start_url: '.', display: 'standalone',
-    background_color: '#F5F4F0', theme_color: '#2A6ED4', orientation: 'portrait',
-    icons: [
-      { src: icon192, sizes: '192x192', type: 'image/png' },
-      { src: icon512, sizes: '512x512', type: 'image/png' }
-    ]
-  };
-  const mBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-  document.getElementById('pwa-manifest').href = URL.createObjectURL(mBlob);
-
-  const swCode = `const CACHE='ctss-v1';
-self.addEventListener('install',e=>{self.skipWaiting();});
-self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
-self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(cached=>{
-    if(cached)return cached;
-    return fetch(e.request).then(res=>{
-      if(!res||res.status!==200)return res;
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-      return res;
-    }).catch(()=>cached);
-  }));
-});`;
-
-  if ('serviceWorker' in navigator) {
-    const swBlob = new Blob([swCode], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob), {scope:'./'}).catch(()=>{});
-  }
-
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (!isStandalone && !localStorage.getItem('pwa-dismissed')) {
-    setTimeout(() => {
-      const b = document.createElement('div');
-      b.innerHTML = `<div style="display:flex;align-items:center;gap:10px;flex:1"><div style="font-size:22px">📲</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">Add to Home Screen</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Tap <strong>Share ↑</strong> then <strong>Add to Home Screen</strong></div></div></div><button onclick="this.parentNode.remove();localStorage.setItem('pwa-dismissed','1')" style="background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px 8px">✕</button>`;
-      b.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);padding:14px;display:flex;align-items:center;gap:10px;z-index:30;font-family:var(--font);box-shadow:0 -4px 20px rgba(0,0,0,0.08)';
+  const i192=makeIcon(192),i512=makeIcon(512);
+  document.getElementById('apple-touch-icon').href=i192;
+  const m={name:'Class Behaviour Tracker',short_name:'Class Tracker',start_url:'.',display:'standalone',background_color:'#F5F4F0',theme_color:'#2A6ED4',orientation:'portrait',icons:[{src:i192,sizes:'192x192',type:'image/png'},{src:i512,sizes:'512x512',type:'image/png'}]};
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));
+  const sw=`const C='ctss-v1';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cached=>{if(cached)return cached;return fetch(e.request).then(res=>{if(!res||res.status!==200)return res;const clone=res.clone();caches.open(C).then(c=>c.put(e.request,clone));return res}).catch(()=>cached)}))})`;
+  if('serviceWorker' in navigator) navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(!isStandalone&&!localStorage.getItem('pwa-dismissed')){
+    setTimeout(()=>{
+      const b=document.createElement('div');
+      b.innerHTML=`<div style="display:flex;align-items:center;gap:10px;flex:1"><div style="font-size:22px">📲</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">Add to Home Screen</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Tap <strong>Share ↑</strong> then <strong>Add to Home Screen</strong></div></div></div><button onclick="this.parentNode.remove();localStorage.setItem('pwa-dismissed','1')" style="background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px 8px">✕</button>`;
+      b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);padding:14px;display:flex;align-items:center;gap:10px;z-index:30;font-family:var(--font)';
       document.body.appendChild(b);
-    }, 2000);
+    },2000);
   }
 })();
-
 </script>
 </body>
 </html>
