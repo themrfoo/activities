@@ -287,12 +287,14 @@ select option{background:var(--surface);color:var(--text)}
       <div class="header-title" id="sol-class-title">Start of Lesson</div>
       <div class="header-sub" id="sol-lesson-label"></div>
     </div>
-    <button class="btn-ghost" onclick="skipSol()">Skip</button>
   </div>
   <div class="scroll-area">
-    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Tap to mark any issues. Tap again to deselect. Absent students can have a reason added.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Tap to mark any issues. Tap again to deselect.</div>
     <div id="sol-list"></div>
-    <button class="sol-done-btn" onclick="confirmSol()">Done — Start Lesson</button>
+  </div>
+  <div style="padding:12px 14px;border-top:0.5px solid var(--border);flex-shrink:0;display:flex;gap:10px">
+    <button class="sol-done-btn" style="flex:3;margin-top:0" onclick="confirmSol()">Done — Start Lesson</button>
+    <button class="btn-ghost" style="flex:1;padding:15px;font-size:15px" onclick="skipSol()">Skip</button>
   </div>
 </div>
 
@@ -698,25 +700,73 @@ function renderSolList(){
   const cls=state.classes.find(c=>c.id===currentClassId);
   const el=document.getElementById('sol-list');
   el.innerHTML='';
-  cls.students.forEach(name=>{
-    if(!solSelections[name]) solSelections[name]={absent:false,late:false,attire:false,nomats:false,slowstart:false,reason:''};
-    const s=solSelections[name];
-    const row=document.createElement('div');
-    row.className='sol-student-row'+(s.absent?' absent-row':'');
-    row.id=`sol-row-${CSS.escape(name)}`;
-    row.innerHTML=`<div class="sol-name">${esc(name)}</div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-        <div class="sol-chips">
-          <button class="sol-chip absent${s.absent?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','absent')">Absent</button>
-          <button class="sol-chip late${s.late?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','late')">Late</button>
-          <button class="sol-chip attire${s.attire?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','attire')">Attire</button>
-          <button class="sol-chip nomats${s.nomats?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','nomats')">No Mats</button>
-          <button class="sol-chip slowstart${s.slowstart?' active':''}" onclick="toggleSol('${name.replace(/'/g,"\\'")}','slowstart')">Slow Start</button>
-        </div>
-        ${s.absent?`<input class="sol-reason-input" placeholder="Reason (optional)" value="${esc(s.reason)}" oninput="solReason('${name.replace(/'/g,"\\'")}',this.value)" />`:''} 
-      </div>`;
-    el.appendChild(row);
-  });
+  const students=cls.students;
+  const perCol=Math.ceil(students.length/3);
+  const col1=students.slice(0,perCol);
+  const col2=students.slice(perCol,perCol*2);
+  const col3=students.slice(perCol*2);
+
+  // Chip labels short for space
+  const chips=[
+    {key:'absent',label:'Abs',cls:'absent'},
+    {key:'late',label:'Late',cls:'late'},
+    {key:'attire',label:'Att',cls:'attire'},
+    {key:'nomats',label:'Mats',cls:'nomats'},
+    {key:'slowstart',label:'Slow',cls:'slowstart'}
+  ];
+
+  function renderCol(names,colNum){
+    const wrap=document.createElement('div');
+    wrap.style.cssText='flex:1;min-width:0';
+    // Column header
+    const hdr=document.createElement('div');
+    hdr.style.cssText='font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;margin-bottom:8px';
+    hdr.textContent=`Column ${colNum}`;
+    wrap.appendChild(hdr);
+
+    names.forEach(name=>{
+      if(!solSelections[name]) solSelections[name]={absent:false,late:false,attire:false,nomats:false,slowstart:false,reason:''};
+      const s=solSelections[name];
+      const card=document.createElement('div');
+      card.style.cssText='background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:8px;margin-bottom:7px'+(s.absent?';opacity:.5':'');
+
+      const nameEl=document.createElement('div');
+      nameEl.style.cssText='font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px';
+      nameEl.textContent=name;
+      card.appendChild(nameEl);
+
+      const chipRow=document.createElement('div');
+      chipRow.style.cssText='display:flex;flex-wrap:wrap;gap:4px';
+      chips.forEach(({key,label,cls:chipCls})=>{
+        const btn=document.createElement('button');
+        const active=s[key];
+        btn.className=`sol-chip ${chipCls}${active?' active':''}`;
+        btn.style.cssText='font-size:10px;padding:3px 7px';
+        btn.textContent=label;
+        btn.onclick=()=>toggleSol(name,key);
+        chipRow.appendChild(btn);
+      });
+      card.appendChild(chipRow);
+
+      if(s.absent){
+        const inp=document.createElement('input');
+        inp.className='sol-reason-input';
+        inp.placeholder='Reason (optional)';
+        inp.value=s.reason||'';
+        inp.oninput=e=>solReason(name,e.target.value);
+        card.appendChild(inp);
+      }
+      wrap.appendChild(card);
+    });
+    return wrap;
+  }
+
+  const row=document.createElement('div');
+  row.style.cssText='display:flex;gap:10px;align-items:flex-start';
+  if(col1.length) row.appendChild(renderCol(col1,1));
+  if(col2.length) row.appendChild(renderCol(col2,2));
+  if(col3.length) row.appendChild(renderCol(col3,3));
+  el.appendChild(row);
 }
 
 function toggleSol(name,type){
@@ -773,6 +823,9 @@ function goToStudentGrid(){
   document.getElementById('class-title').textContent=cls.name;
   document.getElementById('class-subtitle').textContent=cls.subject;
   document.getElementById('lesson-banner-text').textContent=lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson);
+  // Reset touch state so taps work cleanly on the new screen
+  touchMoved=false; isDragging=false; dragSrc=null;
+  clearTimeout(dragLongTimer);
   renderStudentGrid();
   showScreen('screen-students');
 }
@@ -792,8 +845,10 @@ function renderStudentGrid(){
     grid.innerHTML='<div class="empty" style="grid-column:1/-1"><strong>No students</strong>Go to Setup → Students.</div>';
     return;
   }
-  const badgeOrder=['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping','Late','Attire','No Materials','Slow Start'];
+  const solTrackable=['Late','Attire','No Materials','Slow Start'];
+  const behBadgeOrder=['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping'];
   cls.students.forEach(name=>{
+    const inc=weekIncidents(currentClassId,name);
     const watch=getWatch(currentClassId,name);
     const onWatch=watch&&watch.strikes>0;
     const absent=isAbsent(name);
@@ -806,25 +861,21 @@ function renderStudentGrid(){
 
     const tally={};
     inc.forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
-    // This week's behaviour badges (non-SOL)
-    const behBadgeOrder=['Rude','Vulgarity','Disruptive','Talking','No Work','Device','Sleeping'];
     const weekBadges=behBadgeOrder.filter(t=>tally[t]).map(t=>`<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
     // Cumulative SOL badges (all-time count across lessons)
-    const solCounts={};
-    SOL_TRACKABLE.forEach(type=>{
-      const n=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===type&&i.isSol).length;
-      if(n>0) solCounts[type]=n;
-    });
-    const solBadges=SOL_TRACKABLE.filter(t=>solCounts[t]).map(t=>`<span class="ob ${behClass(t)}">${solCounts[t]}</span>`).join('');
-    // Faded watchlist badges (strike counts per type)
+    const solBadges=solTrackable.filter(t=>{
+      const n=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol).length;
+      return n>0;
+    }).map(t=>{
+      const n=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol).length;
+      return `<span class="ob ${behClass(t)}">${n}</span>`;
+    }).join('');
+    // Faded watchlist badges
     const typeStrikes=(watch&&watch.typeStrikes)||{};
-    const watchBadges=[...behBadgeOrder,...SOL_TRACKABLE].filter(t=>typeStrikes[t]).map(t=>`<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
+    const watchBadges=[...behBadgeOrder,...solTrackable].filter(t=>typeStrikes[t]).map(t=>`<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
 
-    // Note dot
     const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
     const hasNote=!!(state.notes[nKey]&&state.notes[nKey].trim());
-
-    // SOL dot (has sol flags this lesson)
     const hasSol=currentLesson&&Object.entries(solSelections).some(([s,v])=>s===name&&(v.late||v.attire||v.nomats||v.slowstart));
 
     const btn=document.createElement('div');
@@ -871,7 +922,13 @@ function renderStudentGrid(){
         }
         dragSrc=null;return;
       }
-      if(!touchMoved) openPanel(name);
+      if(!touchMoved){
+        e.preventDefault();
+        openPanel(name);
+      }
+    });
+    btn.addEventListener('click',e=>{
+      if(!isDragging) openPanel(name);
     });
     grid.appendChild(btn);
   });
