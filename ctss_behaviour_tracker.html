@@ -213,6 +213,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .b-sleep{background:var(--surface2);color:var(--text2);border-color:var(--border2)}
 .b-restroom{background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal)}
 .seat-btn.restroom{border-color:var(--teal);border-width:2px;background:var(--teal-bg)}
+.seat-btn.restroom-long{border-color:var(--red);border-width:2px;background:var(--red-bg)}
 .restroom-timer{font-size:10px;font-weight:600;color:var(--teal-text);margin-top:2px}
 .history-btn{width:100%;margin-top:8px;padding:13px;border-radius:var(--radius-sm);border:0.5px solid var(--border);font-size:14px;font-weight:500;font-family:var(--font);color:var(--blue-text);background:var(--blue-bg);cursor:pointer}
 .panel-logged-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
@@ -460,8 +461,23 @@ select option{background:var(--surface);color:var(--text)}
     <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
     <button class="setup-tab" id="tab-seating" onclick="switchTab('seating')">Seating</button>
     <button class="setup-tab" id="tab-reset" onclick="switchTab('reset')">Reset</button>
+    <button class="setup-tab" id="tab-backup" onclick="switchTab('backup')">Backup</button>
   </div>
   <div class="scroll-area">
+    <div id="setup-backup" style="display:none">
+      <div class="reset-card">
+        <div class="reset-card-title">Export backup</div>
+        <div class="reset-card-desc">Saves all your data — classes, seating, incidents, watchlist, offence notes — as a file on your phone. Keep it somewhere safe.</div>
+        <button class="reset-btn blue" onclick="exportBackup()">Export backup file</button>
+      </div>
+      <div class="reset-card">
+        <div class="reset-card-title">Import backup</div>
+        <div class="reset-card-desc">Restores everything from a previously exported backup file. This will overwrite your current data.</div>
+        <button class="reset-btn amber" onclick="document.getElementById('import-file-input').click()">Choose backup file…</button>
+        <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importBackup(this)"/>
+        <div id="import-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+    </div>
     <div id="setup-classes">
       <div class="form-group"><input class="form-input" id="new-class-name" placeholder="Class name e.g. 3E1" maxlength="20"/></div>
       <div class="form-group"><input class="form-input" id="new-class-subject" placeholder="Subject" maxlength="40"/></div>
@@ -817,6 +833,10 @@ function doNextWeek(nextT,nextW){
     });
   });
   state.currentTerm=nextT;state.currentWeek=nextW;save();renderHome();toast(`Now T${nextT} W${nextW}`);
+  // Prompt backup after advancing week
+  setTimeout(()=>{
+    showConfirm(`Advanced to T${nextT} W${nextW}. Export a backup now?`,()=>exportBackup());
+  },600);
 }
 
 /* ---- SCREENS ---- */
@@ -930,36 +950,90 @@ function renderSeatingMap(){
           const inc=weekIncidents(currentClassId,name);
           const watch=getWatch(currentClassId,name);
           const absent=isAbsent(name);
-          const{hitThreshold,over5}=checkWeekThreshold(currentClassId,name);
+          const{hitThreshold}=checkWeekThreshold(currentClassId,name);
           const onWatch=watch&&watch.strikes>0;
           const inRestroom=!!restroomTimers[name];
-          let cls2='seat-btn';
-          if(inRestroom)cls2+=' restroom';
-          else if(absent)cls2+=' absent';
-          else if(inc.length>0)cls2+=' flagged';
-          else if(onWatch)cls2+=' on-watch';
-          const tally={};inc.filter(i=>!i.isSol&&!i.noFlag).forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
+          const restroomMins=inRestroom?Math.round((Date.now()-restroomTimers[name])/60000):0;
+          const longRestroom=inRestroom&&restroomMins>=10;
+
+          // Previous restroom trips this week (completed, not current)
+          const restroomIncs=state.incidents.filter(i=>
+            i.classId===currentClassId&&i.student===name&&i.isRestroom&&
+            i.term===state.currentTerm&&i.week===state.currentWeek
+          );
+          const restroomCount=restroomIncs.length;
+          const hadLongRestroom=restroomIncs.some(i=>i.detail&&parseInt(i.detail)>=10);
+
+          // Behaviour tally (non-SOL, non-restroom, this week)
+          const tally={};
+          inc.filter(i=>!i.isSol&&!i.noFlag).forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
           const behOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Device','Sleeping'];
-          const thresh=state.settings&&state.settings.threshold||3;
-          // Threshold dots: one dot per threshold multiple of same type
-          const threshDots=thresh>0?behOrder.filter(t=>tally[t]&&tally[t]>=thresh).map(t=>{
-            const dotCount=Math.floor(tally[t]/thresh);
-            return Array(dotCount).fill(`<span class="total-badge" style="background:var(--${behClass(t).replace('c-','')});position:relative;top:0;right:0;display:inline-flex;width:10px;height:10px;min-width:10px;padding:0;border:none;margin:0 1px;flex-shrink:0"></span>`).join('');
-          }).join(''):'';
-          const wkBadges=behOrder.filter(t=>tally[t]).map(t=>`<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
-          const solBadges=SOL_TRACKABLE.filter(t=>{return state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol).length>0}).map(t=>{const n=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol).length;return `<span class="ob ${behClass(t)}">${n}</span>`}).join('');
+
+          // Border: most severe flagged type
+          const severityOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Attire','Device','No PLD','Sleeping'];
           const ts=(watch&&watch.typeStrikes)||{};
-          const wBadges=[...behOrder,...SOL_TRACKABLE].filter(t=>ts[t]).map(t=>`<span class="ob ${behClass(t)} ob-watch">${ts[t]}</span>`).join('');
+          const allFlaggedTypes=[...Object.keys(tally).filter(t=>tally[t]>0),...Object.keys(ts).filter(t=>ts[t]>0)];
+          const mostSevere=severityOrder.find(t=>allFlaggedTypes.includes(t));
+          const borderColVar=mostSevere?behClass(mostSevere).replace('c-',''):'orange';
+
+          // Card class + border
+          let cls2='seat-btn';
+          if(longRestroom) cls2+=' restroom-long';
+          else if(inRestroom) cls2+=' restroom';
+          else if(absent) cls2+=' absent';
+          const borderStyle=(!absent&&!inRestroom&&(onWatch||hitThreshold))?
+            `border:2px solid var(--${borderColVar});`:'';
+
+          // ── TOP-LEFT: Offence pill (history) ──
+          const topLeft=onWatch
+            ?`<span style="position:absolute;top:-7px;left:-7px;background:var(--${borderColVar});color:#fff;font-size:9px;font-weight:700;border-radius:99px;padding:2px 5px;border:2px solid var(--bg);line-height:1;z-index:2">O${watch.strikes}</span>`
+            :'';
+
+          // ── TOP-RIGHT: Threshold exceeded dots + SOL dots ──
+          const thresh=state.settings&&state.settings.threshold||3;
+          const threshDotSpans=thresh>0?behOrder.filter(t=>tally[t]&&tally[t]>=thresh).map(t=>{
+            const count=Math.floor(tally[t]/thresh);
+            return Array(count).fill(`<span style="width:7px;height:7px;border-radius:50%;background:var(--${behClass(t).replace('c-','')});display:inline-block;flex-shrink:0;border:1.5px solid var(--bg)"></span>`).join('');
+          }).join(''):'';
+          const solTypes=SOL_TRACKABLE.filter(t=>
+            state.incidents.some(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol&&i.term===state.currentTerm&&i.week===state.currentWeek)
+          );
+          const solDotSpans=solTypes.map(t=>`<span style="width:5px;height:5px;border-radius:50%;background:var(--${behClass(t).replace('c-','')});display:inline-block;flex-shrink:0"></span>`).join('');
+          const topRight=(threshDotSpans||solDotSpans)
+            ?`<span style="position:absolute;top:3px;right:3px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;z-index:2">
+                ${threshDotSpans?`<span style="display:flex;gap:1px;flex-wrap:wrap;justify-content:flex-end">${threshDotSpans}</span>`:''}
+                ${solDotSpans?`<span style="display:flex;gap:1px;flex-wrap:wrap;justify-content:flex-end">${solDotSpans}</span>`:''}
+              </span>`
+            :'';
+
+          // ── BOTTOM-LEFT: Restroom history (previous trips this week) ──
+          const bottomLeft=(!inRestroom&&restroomCount>0)
+            ?`<span style="position:absolute;bottom:3px;left:4px;font-size:9px;font-weight:600;color:${hadLongRestroom?'var(--red-text)':'var(--teal-text)'};line-height:1;z-index:2">🚻${restroomCount>1?restroomCount:''}${hadLongRestroom?'⚠':''}</span>`
+            :'';
+
+          // ── BOTTOM-RIGHT: Live restroom timer ──
+          const bottomRight=inRestroom
+            ?`<span style="position:absolute;bottom:3px;right:4px;font-size:9px;font-weight:600;color:${longRestroom?'var(--red-text)':'var(--teal-text)'};line-height:1;z-index:2">🚻${restroomMins}m${longRestroom?'⚠':''}</span>`
+            :'';
+
+          // Note dot (keep top-left area, use a tiny blue dot if no offence pill)
           const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
           const hasNote=!!(state.notes[nKey]&&state.notes[nKey].trim());
-          const hasSol=currentLesson&&solSelections[name]&&(solSelections[name].late||solSelections[name].attire||solSelections[name].nomats||solSelections[name].slowstart||solSelections[name].nopld);
-          const restroomMins=inRestroom?Math.round((Date.now()-restroomTimers[name])/60000):0;
+          const noteDot=(!onWatch&&hasNote)?'<span class="note-dot"></span>':'';
+
+          // Under-name badges (in-class counts only)
+          const wkBadges=behOrder.filter(t=>tally[t]).map(t=>`<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
+
           btn.className=cls2;
-          btn.innerHTML=`${hasNote?'<span class="note-dot"></span>':''}${hasSol?'<span class="sol-dot"></span>':''}
-            ${threshDots?`<span style="position:absolute;top:4px;right:4px;display:flex;gap:1px;align-items:center">${threshDots}</span>`:''}
+          if(borderStyle) btn.style.cssText=borderStyle;
+          btn.innerHTML=`
+            ${noteDot}
+            ${topLeft}
+            ${topRight}
+            ${bottomLeft}
+            ${bottomRight}
             <div class="seat-name">${esc(name)}</div>
-            ${inRestroom?`<div class="restroom-timer">🚻 ${restroomMins}min</div>`:''}
-            ${(wBadges||wkBadges||solBadges)?`<div class="seat-badges">${wBadges}${wkBadges}${solBadges}</div>`:''}`;
+            ${wkBadges?`<div class="seat-badges">${wkBadges}</div>`:''}`;
           btn.addEventListener('click',()=>openPanel(name));
         } else {
           btn.className='seat-btn';
@@ -1022,12 +1096,18 @@ function openPanel(name){
 }
 
 function renderPanelLogged(name){
-  const inc=weekIncidents(currentClassId,name);
+  const inc=state.incidents.filter(i=>
+    i.classId===currentClassId&&i.student===name&&
+    i.term===state.currentTerm&&i.week===state.currentWeek
+  ).filter(i=>!i.isSol);
   const el=document.getElementById('panel-logged');
   if(!inc.length){el.style.display='none';return}
   el.style.display='block';
   let html=`<div class="panel-logged-title">Logged this week — tap to remove</div>`;
-  inc.forEach(i=>{html+=`<div class="panel-logged-item"><div class="log-dot ${behClass(i.type)}"></div><div class="panel-logged-type">${i.type}${i.isSol?' <span style="font-size:10px;opacity:.6">(entry)</span>':''}</div><div class="panel-logged-time">${i.time}</div><button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button></div>`});
+  inc.forEach(i=>{
+    const label=i.isRestroom?`🚻 ${i.displayDetail||i.detail||'Restroom'}`:i.type+(i.isSol?' (entry)':'');
+    html+=`<div class="panel-logged-item"><div class="log-dot ${i.isRestroom?'c-teal':behClass(i.type)}"></div><div class="panel-logged-type">${label}</div><div class="panel-logged-time">${i.time}</div><button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button></div>`;
+  });
   el.innerHTML=html;
 }
 
@@ -1083,28 +1163,38 @@ function toggleRestroom(){
   if(!selectedStudent)return;
   const name=selectedStudent;
   if(restroomTimers[name]){
-    // Stop — log with start, end, duration
     const startTs=restroomTimers[name];
     const endTs=Date.now();
     const mins=Math.round((endTs-startTs)/60000);
     const now=new Date();
     const startTime=new Date(startTs).toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
     const endTime=now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+    const isLong=mins>=10;
     state.incidents.push({
       id:Date.now(),classId:currentClassId,student:name,type:'Restroom',
-      detail:`${startTime} – ${endTime} (${mins} min)`,
+      detail:`${mins}`,
+      displayDetail:`${isLong?'⚠ ':''}${startTime} – ${endTime} (${mins} min)`,
       term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
       time:startTime,date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'}),
-      isRestroom:true,noFlag:true
+      isRestroom:true,noFlag:true,isLongRestroom:isLong
     });
     delete restroomTimers[name];save();closeAllPanels();renderSeatingMap();
-    toast(`${name} — back ${mins} min`);
+    toast(`${name} — back ${mins} min${isLong?' ⚠':''}`);
   } else {
     restroomTimers[name]=Date.now();
     closeAllPanels();renderSeatingMap();
     const startTime=new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
     toast(`${name} — restroom ${startTime}`);
-    if(!restroomInterval)restroomInterval=setInterval(()=>{if(document.getElementById('screen-students').classList.contains('active'))renderSeatingMap()},30000);
+    if(!restroomInterval) restroomInterval=setInterval(()=>{
+      if(document.getElementById('screen-students').classList.contains('active')){
+        // Check for 10min alert
+        Object.entries(restroomTimers).forEach(([n,ts])=>{
+          const mins=Math.round((Date.now()-ts)/60000);
+          if(mins===10) toast(`⚠ ${n} — restroom 10 min!`);
+        });
+        renderSeatingMap();
+      }
+    },60000);
   }
 }
 
@@ -1113,7 +1203,13 @@ function stopAllRestroomTimers(){
     const mins=Math.round((Date.now()-restroomTimers[name])/60000);
     const now=new Date();
     if(currentLesson){
-      state.incidents.push({id:Date.now()+Math.random(),classId:currentClassId,student:name,type:'Restroom',detail:`${mins} min (auto)`,term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,time:now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}),date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'}),isRestroom:true,noFlag:true});
+      const isLong=mins>=10;
+      state.incidents.push({id:Date.now()+Math.random(),classId:currentClassId,student:name,type:'Restroom',
+        detail:`${mins}`,displayDetail:`${isLong?'⚠ ':''}auto-stopped (${mins} min)`,
+        term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+        time:now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}),
+        date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'}),
+        isRestroom:true,noFlag:true,isLongRestroom:isLong});
     }
   });
   restroomTimers={};
@@ -1324,36 +1420,73 @@ function confirmSol(){
 }
 
 /* ---- LOG ---- */
+function renderByType(incidents){
+  // Group incidents by type, return html string
+  const typeOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Device','Sleeping','Late','Attire','No Materials','No PLD','Slow Start','Restroom'];
+  const byType={};
+  incidents.forEach(i=>{
+    const t=i.isRestroom?'Restroom':i.type;
+    if(!byType[t])byType[t]=[];
+    byType[t].push(i);
+  });
+  let html='';
+  typeOrder.filter(t=>byType[t]&&byType[t].length).forEach(t=>{
+    const items=byType[t];
+    const names=[...new Set(items.map(i=>i.student))];
+    const dotCol=t==='Restroom'?'c-teal':behClass(t);
+    html+=`<div style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <div class="log-dot ${dotCol}" style="width:9px;height:9px;flex-shrink:0"></div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${t}</div>
+        <div style="font-size:12px;color:var(--text3);background:var(--surface2);border-radius:99px;padding:1px 7px">${items.length}</div>
+      </div>
+      <div style="padding-left:17px;font-size:13px;color:var(--text2);line-height:1.7">${names.map(n=>esc(n)).join(' · ')}</div>
+    </div>`;
+  });
+  return html||'<div style="color:var(--text3);font-size:13px;padding:4px 0">None</div>';
+}
+
 function showLog(){
   const incidents=state.incidents.filter(i=>i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek);
   const el=document.getElementById('log-content');let html='';
+
+  // Watchlist carry-over
   const watchEntries=Object.values(state.watchlist).filter(w=>w.classId===currentClassId&&w.strikes>0);
   if(watchEntries.length){
     html+='<div class="section-title">Carried over</div>';
-    watchEntries.forEach(w=>{const pills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div><div class="pill-row">${pills}<span class="pill strikes">×${w.strikes}wk</span></div></div>`});
+    watchEntries.forEach(w=>{
+      const pills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+      html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div><div class="pill-row">${pills}<span class="pill strikes">Offence ${w.strikes}</span></div></div>`;
+    });
   }
+
+  // Absent this lesson
   if(currentLesson){
     const abs=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===currentLesson.term&&s.week===currentLesson.week&&s.lesson===currentLesson.lesson);
     if(abs.length){html+='<div class="section-title" style="margin-top:16px">Absent</div>';abs.forEach(s=>{html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — ${esc(s.reason)}`:''}</div>`})}
   }
-  if(!incidents.length){html+='<div class="empty" style="padding:2rem 0"><strong>All clear</strong>No incidents logged this week.</div>'}
-  else{
-    const byStudent={};incidents.forEach(i=>{if(!byStudent[i.student])byStudent[i.student]=[];byStudent[i.student].push(i)});
-    const sorted=Object.entries(byStudent).sort((a,b)=>b[1].length-a[1].length);
-    html+='<div class="section-title" style="margin-top:16px">This week — summary</div>';
-    sorted.forEach(([name,inc])=>{
-      const tally={};inc.forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
-      const bd=Object.entries(tally).map(([t,c])=>`${t} ×${c}`).join(' · ');
-      const watch=getWatch(currentClassId,name);
-      const{hitThreshold}=checkWeekThreshold(currentClassId,name);
-      html+=`<div class="summary-row ${hitThreshold?'over3':''}"><div style="flex:1"><div class="summary-name">${esc(name)}</div><div class="summary-sub">${bd}</div></div><span class="summary-count">${inc.length}</span>${watch&&watch.strikes>0?`<span class="strikes-pill">×${watch.strikes}w</span>`:''}</div>`;
+
+  if(!incidents.length){
+    html+='<div class="empty" style="padding:2rem 0"><strong>All clear</strong>No incidents logged this week.</div>';
+  } else {
+    // ── THIS WEEK SUMMARY — grouped by offence type ──
+    html+='<div class="section-title" style="margin-top:16px">This week — by offence</div>';
+    html+=renderByType(incidents);
+
+    // ── BY LESSON — each lesson grouped by offence type ──
+    const byLesson={};
+    incidents.forEach(i=>{
+      const k=`T${i.term}W${i.week}L${i.lesson}`;
+      if(!byLesson[k])byLesson[k]={label:lessonLabel(i.term,i.week,i.lesson),lesson:i.lesson,items:[]};
+      byLesson[k].items.push(i);
     });
-    const byLesson={};incidents.forEach(i=>{const k=`T${i.term}W${i.week}L${i.lesson}`;if(!byLesson[k])byLesson[k]={label:lessonLabel(i.term,i.week,i.lesson),items:[]};byLesson[k].items.push(i)});
     html+='<div class="section-title" style="margin-top:18px">By lesson</div>';
-    Object.values(byLesson).forEach(g=>{
-      html+=`<div class="lesson-group-header">${g.label}</div>`;
-      g.items.slice().reverse().forEach(i=>{html+=`<div class="log-item"><div class="log-dot ${behClass(i.type)}"></div><div class="log-text"><strong>${esc(i.student)}</strong> <span>— ${i.type}</span></div><div class="log-time">${i.time}</div><div class="log-del" onclick="deleteIncident(${i.id})">✕</div></div>`});
+    Object.values(byLesson).sort((a,b)=>b.lesson-a.lesson).forEach(g=>{
+      html+=`<div class="lesson-group-header" style="margin-bottom:8px">${g.label}</div>`;
+      html+=renderByType(g.items);
     });
+
+    // Notes
     const wn=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|`)&&k.endsWith(`T${state.currentTerm}W${state.currentWeek}`));
     if(wn.length){html+='<div class="section-title" style="margin-top:18px">Notes</div>';wn.forEach(([k,note])=>{const s=k.split('|')[1];html+=`<div class="note-block"><div class="note-block-label">${esc(s)}</div>${esc(note)}</div>`})}
   }
@@ -1745,7 +1878,7 @@ function removeStudent(cid,name){
   }
 }
 function switchTab(tab){
-  ['classes','students','seating','reset'].forEach(t=>{
+  ['classes','students','seating','reset','backup'].forEach(t=>{
     const el=document.getElementById(`setup-${t}`);if(el)el.style.display=t===tab?'block':'none';
     const btn=document.getElementById(`tab-${t}`);if(btn)btn.className='setup-tab'+(t===tab?' active':'');
   });
@@ -1984,6 +2117,54 @@ function openClassReport(cid){
   showScreen('screen-report');
 }
 
+/* ---- BACKUP / RESTORE ---- */
+function exportBackup(){
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'}).replace(/ /g,'-');
+  const filename=`ctss-backup-${dateStr}.json`;
+  const data=JSON.stringify(state,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url)},1000);
+  toast('Backup saved — '+filename);
+}
+
+function importBackup(input){
+  const file=input.files[0];if(!file)return;
+  const status=document.getElementById('import-status');
+  status.textContent='Reading file…';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const parsed=JSON.parse(e.target.result);
+      if(!parsed.classes||!Array.isArray(parsed.classes)){
+        status.style.color='var(--red-text)';
+        status.textContent='Invalid backup file.';return;
+      }
+      showConfirm(`Restore backup? Replaces all current data (${parsed.classes.length} classes).`,()=>{
+        state={...state,...parsed};
+        if(!state.watchlist)state.watchlist={};
+        if(!state.notes)state.notes={};
+        if(!state.solData)state.solData={};
+        if(!state.seatMap)state.seatMap={};
+        if(!state.settings)state.settings={threshold:3,actionOptions:[],responseOptions:[]};
+        save();
+        status.style.color='var(--green-text)';
+        status.textContent=`✓ Restored ${parsed.classes.length} classes successfully.`;
+        renderHome();toast('Backup restored');
+      });
+    }catch(err){
+      status.style.color='var(--red-text)';
+      status.textContent='Could not read file. Make sure it is a valid backup JSON.';
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
 document.getElementById('new-action-option').addEventListener('keydown',e=>{if(e.key==='Enter')addOption('action')});
 document.getElementById('new-response-option').addEventListener('keydown',e=>{if(e.key==='Enter')addOption('response')});
 
@@ -2014,6 +2195,114 @@ if(!state.classes.find(c=>c.name==='3SHT')){state.classes.push({id:1000000007,na
 if(!state.classes.find(c=>c.name==='3SHW')){state.classes.push({id:1000000008,name:'3SHW',subject:'History',students:['Henry','Haris','Traven','Ryan','Clarice','Jun Yang','Ewan','Jayden','Paven','Joseph','Jonathan','Kellynn','Teagan','Haasyir','Joshin','Andrew','Tristan','Sam','Xavier','Namo']})}
 
 state.classes.sort((a,b)=>{const an=parseInt(a.name[0]),bn=parseInt(b.name[0]);if(an!==bn)return an-bn;return a.name.localeCompare(b.name)});
+
+// Pre-load seating maps for 1HIR and 1HIX (only if not already set)
+const hirId=1000000005;
+if(!state.seatMap[hirId]){
+  state.seatMap[hirId]=[
+    {rows:[
+      ['Kaylea','Regina'],
+      ['Shanmitha','Aaralyn'],
+      ['Xinglin','Iain'],
+      ['Lucas Yeo','Lukas Beh'],
+      ['Ravellio','Luong'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Khai Jie','Phoebe'],
+      ['Josella','Jia Ying'],
+      ['Li Quan','Zhi Yu'],
+      ['Brendan','Zi Le'],
+      ['Henry','Aaiden'],
+      ['Nataniel','Kaizhe']
+    ]},
+    {rows:[
+      ['Ling En','Cheng Zi'],
+      ['Jayden','Joshua'],
+      ['Deborah','Alice'],
+      ['Charmaine','Elsa'],
+      ['Justin','Zhen Bin'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Elma','Royce'],
+      ['Zender','Roopesh'],
+      ['Rosette','Zi Xuan'],
+      ['Beatrix','Zhi Qing'],
+      ['Ruey Waye','Jialin'],
+      [null,null]
+    ]}
+  ];
+}
+
+const hixId=1000000006;
+if(!state.seatMap[hixId]){
+  state.seatMap[hixId]=[
+    {rows:[
+      ['Chloe','Janelle'],
+      ['Claire','Crescentia'],
+      ['Aden','Wei Xin'],
+      ['Bogyu','Richard'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Jun See','Leroy'],
+      ['Anders','Wing Tin'],
+      ['Kathleen','Jenevieve'],
+      ['Hilitary','Zi Yu'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Hema','Samantha'],
+      ['Sachio','Zih Ciao'],
+      ['Lucas','Aron'],
+      ['Yan Ru','Joann'],
+      ['Yixuan','Calista']
+    ]},
+    {rows:[
+      [null,null],
+      ['Mitchell','Nayef'],
+      ['Minlang','Aqil'],
+      ['Isabella',null],
+      ['Marissa','Yaagna']
+    ]}
+  ];
+}
+
+const saId=1000000002;
+if(!state.seatMap[saId]){
+  state.seatMap[saId]=[
+    {rows:[
+      ['Tiara','Kai En'],
+      ['Qalisyah','Eugenia'],
+      ['Javier','Franky'],
+      ['Syabil','Reyes'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Isabelle','Shi Hui'],
+      ['Li Xuan','Pooja'],
+      ['Johnny','Alfeus'],
+      ['Shin Yong','Kevin'],
+      [null,null]
+    ]},
+    {rows:[
+      ['Clara','Benisha'],
+      ['Zi Ying','Jiaxuan'],
+      ['Vince','Danish'],
+      ['Elfirul','Farooq'],
+      [null,null]
+    ]},
+    {rows:[
+      [null,'Raziq'],
+      [null,null],
+      ['Winnie','Alysha'],
+      ['Jabar','Kevin'],
+      ['Irfaan','Wen Hao']
+    ]}
+  ];
+}
+
 save();renderHome();
 
 /* ---- PWA ---- */
