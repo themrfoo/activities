@@ -12,422 +12,599 @@
 <link id="apple-touch-icon" rel="apple-touch-icon"/>
 <title>Class Behaviour Tracker</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #F5F4F0; --surface: #FFFFFF; --surface2: #EEECEA;
-    --text: #1A1917; --text2: #6B6960; --text3: #A09E96;
-    --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.14);
-    --red: #D94F3D; --red-bg: #FDF0EE; --red-text: #A8301F;
-    --amber: #C47B1A; --amber-bg: #FDF5E6; --amber-text: #8F540C;
-    --blue: #2A6ED4; --blue-bg: #EEF3FD; --blue-text: #1A4E9E;
-    --purple: #6B4FBB; --purple-bg: #F2EEFB; --purple-text: #4A3186;
-    --orange: #C45D1A; --orange-bg: #FDF1E6; --orange-text: #8F400C;
-    --green: #1E7E34; --green-bg: #EAF5ED; --green-text: #155724;
-    --radius: 14px; --radius-sm: 9px;
-    --font: 'DM Sans', system-ui, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121210; --surface: #1E1D1A; --surface2: #2A2926;
-      --text: #F0EEE8; --text2: #9E9C94; --text3: #6B6960;
-      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.13);
-      --red-bg: #2A1410; --red-text: #F5907E;
-      --amber-bg: #261A08; --amber-text: #F0B060;
-      --blue-bg: #0E1B30; --blue-text: #7AABF5;
-      --purple-bg: #1A1228; --purple-text: #B09AE8;
-      --orange-bg: #2A1608; --orange-text: #F0A060;
-      --green-bg: #0C1F10; --green-text: #6FCF8A;
-    }
-  }
-  html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); overflow: hidden; }
-  #app { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-  .screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .screen.active { display: flex; }
-  .header {
-    padding: 16px 16px 12px; display: flex; align-items: center; gap: 8px;
-    background: var(--bg); border-bottom: 0.5px solid var(--border); flex-shrink: 0;
-  }
-  .header-title { font-size: 18px; font-weight: 600; flex: 1; color: var(--text); }
-  .header-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
-  .btn-ghost {
-    background: var(--surface); border: 0.5px solid var(--border2);
-    border-radius: var(--radius-sm); padding: 8px 12px;
-    font-size: 13px; font-weight: 500; color: var(--text);
-    font-family: var(--font); cursor: pointer; white-space: nowrap;
-  }
-  .btn-ghost:active { opacity: 0.7; transform: scale(0.97); }
-  .btn-danger { color: var(--red-text); border-color: var(--red); background: var(--red-bg); }
-  .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F4F0;--surface:#FFF;--surface2:#EEECEA;
+  --text:#1A1917;--text2:#6B6960;--text3:#A09E96;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.14);
+  --red:#D94F3D;--red-bg:#FDF0EE;--red-text:#A8301F;
+  --amber:#C47B1A;--amber-bg:#FDF5E6;--amber-text:#8F540C;
+  --blue:#2A6ED4;--blue-bg:#EEF3FD;--blue-text:#1A4E9E;
+  --purple:#6B4FBB;--purple-bg:#F2EEFB;--purple-text:#4A3186;
+  --orange:#C45D1A;--orange-bg:#FDF1E6;--orange-text:#8F400C;
+  --green:#1E7E34;--green-bg:#EAF5ED;--green-text:#155724;
+  --teal:#0F7B6C;--teal-bg:#E6F5F3;--teal-text:#0A5C50;
+  --radius:14px;--radius-sm:9px;
+  --font:'DM Sans',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#121210;--surface:#1E1D1A;--surface2:#2A2926;
+  --text:#F0EEE8;--text2:#9E9C94;--text3:#6B6960;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
+  --red-bg:#2A1410;--red-text:#F5907E;
+  --amber-bg:#261A08;--amber-text:#F0B060;
+  --blue-bg:#0E1B30;--blue-text:#7AABF5;
+  --purple-bg:#1A1228;--purple-text:#B09AE8;
+  --orange-bg:#2A1608;--orange-text:#F0A060;
+  --green-bg:#0C1F10;--green-text:#6FCF8A;
+  --teal-bg:#0A1F1C;--teal-text:#4ECDC4;
+}}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+.header{padding:14px 14px 10px;display:flex;align-items:center;gap:8px;background:var(--bg);border-bottom:0.5px solid var(--border);flex-shrink:0}
+.header-title{font-size:18px;font-weight:600;flex:1;color:var(--text)}
+.header-sub{font-size:12px;color:var(--text2);margin-top:1px}
+.btn-ghost{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:7px 11px;font-size:13px;font-weight:500;color:var(--text);font-family:var(--font);cursor:pointer;white-space:nowrap}
+.btn-ghost:active{opacity:.7;transform:scale(.97)}
+.btn-danger{color:var(--red-text);border-color:var(--red);background:var(--red-bg)}
+.btn-green{color:var(--green-text);border-color:var(--green);background:var(--green-bg)}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:15px;line-height:1.6}
+.empty strong{display:block;font-size:17px;color:var(--text);margin-bottom:6px}
+.divider{height:0.5px;background:var(--border);margin:14px 0}
 
-  /* HOME BANNER */
-  .home-banner {
-    margin: 10px 14px 4px; padding: 10px 14px;
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-  }
-  .home-banner-label { font-size: 13px; color: var(--text2); }
-  .home-banner-label strong { color: var(--text); font-weight: 600; }
-  .next-week-btn {
-    font-size: 13px; font-weight: 600; color: var(--blue-text);
-    background: var(--blue-bg); border: 0.5px solid var(--blue);
-    border-radius: var(--radius-sm); padding: 6px 12px;
-    font-family: var(--font); cursor: pointer;
-  }
-  .next-week-btn:active { opacity: 0.7; }
+/* HOME */
+.home-banner{margin:10px 14px 4px;padding:10px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.home-banner-label{font-size:13px;color:var(--text2)}
+.home-banner-label strong{color:var(--text);font-weight:600}
+.next-week-btn{font-size:13px;font-weight:600;color:var(--blue-text);background:var(--blue-bg);border:0.5px solid var(--blue);border-radius:var(--radius-sm);padding:6px 12px;font-family:var(--font);cursor:pointer}
+.next-week-btn:active{opacity:.7}
+.class-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.class-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 14px;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s}
+.class-card:active{transform:scale(.96)}
+.class-card-name{font-size:17px;font-weight:600;color:var(--text)}
+.class-card-sub{font-size:12px;color:var(--text2);margin-top:3px}
+.class-badge{display:inline-block;margin-top:10px;font-size:11px;font-weight:600;border-radius:99px;padding:2px 9px}
+.class-badge.incident{background:var(--red-bg);color:var(--red-text)}
+.class-badge.watch{background:var(--orange-bg);color:var(--orange-text)}
+.class-badge.none{background:var(--surface2);color:var(--text3)}
 
-  /* CLASS GRID */
-  .class-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .class-card {
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius); padding: 16px 14px; cursor: pointer; min-height: 96px;
-    display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.1s;
-  }
-  .class-card:active { transform: scale(0.96); }
-  .class-card-name { font-size: 17px; font-weight: 600; color: var(--text); }
-  .class-card-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
-  .class-badge { display: inline-block; margin-top: 10px; font-size: 11px; font-weight: 600; border-radius: 99px; padding: 2px 9px; }
-  .class-badge.incident { background: var(--red-bg); color: var(--red-text); }
-  .class-badge.watch { background: var(--orange-bg); color: var(--orange-text); }
-  .class-badge.none { background: var(--surface2); color: var(--text3); }
-  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 15px; line-height: 1.6; }
-  .empty strong { display: block; font-size: 17px; color: var(--text); margin-bottom: 6px; }
+/* BACKDROP + PANELS */
+.backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:10}
+.backdrop.open{display:block}
+.bottom-panel{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:14px 16px 34px;z-index:12;max-height:88vh;overflow-y:auto}
+.bottom-panel.open{display:block}
+.panel-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 14px}
+.panel-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;text-align:center}
 
-  /* LESSON PICKER PANEL */
-  .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10; }
-  .backdrop.open { display: block; }
-  .lesson-picker {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 0.5px solid var(--border2);
-    border-radius: 20px 20px 0 0; padding: 14px 16px 34px; z-index: 12;
-  }
-  .lesson-picker.open { display: block; }
-  .picker-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 99px; margin: 0 auto 16px; }
-  .picker-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; text-align: center; }
-  .picker-row { margin-bottom: 14px; }
-  .picker-row-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .picker-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    padding: 10px 16px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border2); font-size: 15px; font-weight: 500;
-    font-family: var(--font); cursor: pointer; color: var(--text2); background: var(--surface2);
-    transition: all 0.1s;
-  }
-  .chip:active { transform: scale(0.95); }
-  .chip.selected { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue); font-weight: 600; }
-  .picker-confirm {
-    width: 100%; margin-top: 6px; padding: 16px; border-radius: var(--radius-sm);
-    font-size: 16px; font-weight: 600; font-family: var(--font);
-    color: #fff; background: var(--blue); border: none; cursor: pointer;
-  }
-  .picker-confirm:active { opacity: 0.8; }
-  .picker-confirm:disabled { background: var(--surface2); color: var(--text3); cursor: default; }
+/* LESSON PICKER */
+.picker-row{margin-bottom:14px}
+.picker-row-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.picker-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 16px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:15px;font-weight:500;font-family:var(--font);cursor:pointer;color:var(--text2);background:var(--surface2)}
+.chip:active{transform:scale(.95)}
+.chip.selected{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue);font-weight:600}
+.picker-confirm{width:100%;margin-top:6px;padding:16px;border-radius:var(--radius-sm);font-size:16px;font-weight:600;font-family:var(--font);color:#fff;background:var(--blue);border:none;cursor:pointer}
+.picker-confirm:active{opacity:.8}
+.picker-confirm:disabled{background:var(--surface2);color:var(--text3);cursor:default}
+.cancel-btn{width:100%;margin-top:10px;padding:14px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:15px;font-family:var(--font);color:var(--text2);background:transparent;cursor:pointer}
 
-  /* LESSON BANNER (inside class screen) */
-  .lesson-banner {
-    margin: 10px 14px 4px; padding: 10px 14px;
-    background: var(--green-bg); border: 0.5px solid var(--green);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-    cursor: pointer;
-  }
-  .lesson-banner:active { opacity: 0.8; }
-  .lesson-banner-text { font-size: 13px; font-weight: 600; color: var(--green-text); }
-  .lesson-banner-change { font-size: 12px; color: var(--green-text); opacity: 0.7; }
+/* LESSON BANNER */
+.lesson-banner{margin:8px 14px 4px;padding:9px 14px;background:var(--green-bg);border:0.5px solid var(--green);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;cursor:pointer}
+.lesson-banner-text{font-size:13px;font-weight:600;color:var(--green-text)}
+.lesson-banner-change{font-size:12px;color:var(--green-text);opacity:.7}
 
-  /* STUDENTS */
-  .student-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-  .student-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 12px 6px 10px;
-    cursor: pointer; text-align: center; min-height: 72px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; transition: transform 0.1s; gap: 4px;
-  }
-  .student-btn:active { transform: scale(0.93); }
-  .student-btn.dragging {
-    opacity: 0.4; transform: scale(0.95);
-  }
-  .student-btn.drag-over {
-    border-color: var(--blue); border-width: 2px;
-    background: var(--blue-bg);
-  }
-  .student-btn.drag-ready {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    transform: scale(1.06);
-    z-index: 5; position: relative;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .student-btn.on-watch { border-color: var(--orange); border-width: 1.5px; background: var(--orange-bg); }
-  .student-btn.on-watch.flagged { border-color: var(--red); background: var(--red-bg); }
-  .student-btn-name { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.3; }
-  .offence-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 4px; }
-  .ob { font-size: 10px; font-weight: 600; border-radius: 99px; padding: 1px 5px; min-width: 16px; text-align: center; }
-  .ob.c-red    { background: var(--red);    color: #fff; }
-  .ob.c-amber  { background: var(--amber);  color: #fff; }
-  .ob.c-blue   { background: var(--blue);   color: #fff; }
-  .ob.c-purple { background: var(--purple); color: #fff; }
-  .ob.c-orange { background: var(--orange); color: #fff; }
-  .ob.c-gray   { background: var(--text2);  color: #fff; }
-  .ob.ob-watch { opacity: 0.45; outline: 1.5px solid currentColor; outline-offset: -2px; }
-  .log-dot.c-red    { background: var(--red); }
-  .log-dot.c-amber  { background: var(--amber); }
-  .log-dot.c-blue   { background: var(--blue); }
-  .log-dot.c-purple { background: var(--purple); }
-  .log-dot.c-orange { background: var(--orange); }
-  .log-dot.c-gray   { background: var(--text2); }
-  .watch-tag {
-    font-size: 10px; font-weight: 600; color: var(--orange-text);
-    background: transparent; border-radius: 99px; padding: 1px 6px;
-    border: 0.5px solid var(--orange);
-  }
-  .student-btn.flagged .watch-tag { color: var(--red-text); border-color: var(--red); }
+/* SWIPEABLE SEATING MAP */
+.seat-outer{flex:1;overflow:hidden;position:relative}
+.seat-slider{display:flex;height:100%;transition:transform .3s cubic-bezier(.25,.46,.45,.94);will-change:transform}
+.seat-page{min-width:100%;height:100%;display:flex;flex-direction:column;padding:10px 14px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.seat-page.scrollable{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.seat-page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0}
+.seat-col-label{font-size:15px;font-weight:600;color:var(--text)}
+.seat-col-sub{font-size:12px;color:var(--text2)}
+.seat-grid{display:grid;flex:1;gap:8px;align-content:start}
+.seat-row{display:grid;gap:8px}
 
-  /* BEHAVIOUR PANEL */
-  .beh-panel {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 0.5px solid var(--border2);
-    border-radius: 20px 20px 0 0; padding: 14px 14px 30px; z-index: 11;
-  }
-  .beh-panel.open { display: block; }
-  .panel-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 99px; margin: 0 auto 14px; }
-  .panel-student { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .panel-watchinfo {
-    font-size: 12px; color: var(--orange-text); margin-bottom: 12px;
-    background: var(--orange-bg); border-radius: var(--radius-sm);
-    padding: 7px 10px; border: 0.5px solid var(--orange);
-  }
-  .beh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .beh-btn {
-    padding: 18px 10px; border-radius: var(--radius); border: 1px solid;
-    font-size: 14px; font-weight: 600; font-family: var(--font); cursor: pointer; text-align: center; transition: transform 0.1s;
-  }
-  .beh-btn:active { transform: scale(0.95); }
-  .b-device   { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple); }
-  .b-late     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
-  .b-attire   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
-  .b-rude     { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-vulgar   { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-sleep    { background: var(--surface2);  color: var(--text2);       border-color: var(--border2); }
-  .b-talk     { background: var(--amber-bg);  color: var(--amber-text);  border-color: var(--amber); }
-  .b-nowork   { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue); }
-  .b-disrupt  { background: var(--red-bg);    color: var(--red-text);    border-color: var(--red); }
-  .b-nomats   { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
-  .b-slow     { background: var(--orange-bg); color: var(--orange-text); border-color: var(--orange); }
-  .cancel-btn {
-    width: 100%; margin-top: 10px; padding: 15px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border2); font-size: 15px; font-family: var(--font);
-    color: var(--text2); background: transparent; cursor: pointer;
-  }
-  .cancel-btn:active { opacity: 0.6; }
-  .history-btn {
-    width: 100%; margin-top: 8px; padding: 13px; border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border); font-size: 14px; font-weight: 500; font-family: var(--font);
-    color: var(--blue-text); background: var(--blue-bg); cursor: pointer;
-  }
-  .history-btn:active { opacity: 0.7; }
-  .panel-logged-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .panel-logged-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: var(--radius-sm);
-    background: var(--surface2); margin-bottom: 5px;
-  }
-  .panel-logged-type { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
-  .panel-logged-time { font-size: 12px; color: var(--text3); }
-  .panel-logged-del {
-    font-size: 13px; font-weight: 600; color: var(--red-text);
-    background: var(--red-bg); border: 0.5px solid var(--red);
-    border-radius: var(--radius-sm); padding: 4px 10px;
-    cursor: pointer; font-family: var(--font);
-  }
+/* Student card in seating map */
+.seat-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 6px 8px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;gap:3px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;min-height:0}
+.seat-btn:active{transform:scale(.94)}
+.seat-btn.flagged{border-color:var(--red);border-width:2px}
+.seat-btn.on-watch{border-color:var(--orange);border-width:2px;background:var(--orange-bg)}
+.seat-btn.on-watch.flagged{border-color:var(--red);background:var(--red-bg)}
+.seat-btn.absent{opacity:.35;border-style:dashed}
+.seat-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.2}
+.total-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:99px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg)}
+.seat-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-top:3px}
+.note-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);position:absolute;top:5px;left:5px}
+.sol-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);position:absolute;top:5px;right:5px}
+.ob{font-size:9px;font-weight:600;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center}
+.ob.c-red{background:var(--red);color:#fff}
+.ob.c-amber{background:var(--amber);color:#fff}
+.ob.c-blue{background:var(--blue);color:#fff}
+.ob.c-purple{background:var(--purple);color:#fff}
+.ob.c-orange{background:var(--orange);color:#fff}
+.ob.c-teal{background:var(--teal);color:#fff}
+.ob.c-gray{background:var(--text2);color:#fff}
+.ob.ob-watch{opacity:.4;outline:1.5px solid currentColor;outline-offset:-2px}
 
-  /* LOG */
-  .section-title {
-    font-size: 12px; font-weight: 600; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.06em; padding: 0 2px; margin: 18px 0 8px;
-  }
-  .section-title:first-child { margin-top: 0; }
-  .summary-row {
-    display: flex; align-items: center;
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 7px; gap: 8px;
-  }
-  .summary-row.over3 { border-color: var(--red); }
-  .summary-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
-  .summary-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .summary-count { font-size: 13px; font-weight: 600; background: var(--red-bg); color: var(--red-text); border-radius: 99px; padding: 2px 10px; }
-  .strikes-pill { font-size: 11px; font-weight: 600; background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
-  .carried-card { background: var(--orange-bg); border: 0.5px solid var(--orange); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 7px; }
-  .carried-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .pill-row { display: flex; flex-wrap: wrap; gap: 5px; }
-  .pill { font-size: 12px; font-weight: 600; border-radius: 99px; padding: 3px 10px; }
-  .pill.c-red    { background: var(--red-bg);    color: var(--red-text); }
-  .pill.c-amber  { background: var(--amber-bg);  color: var(--amber-text); }
-  .pill.c-blue   { background: var(--blue-bg);   color: var(--blue-text); }
-  .pill.c-purple { background: var(--purple-bg); color: var(--purple-text); }
-  .pill.c-orange { background: var(--orange-bg); color: var(--orange-text); }
-  .pill.c-gray   { background: var(--surface2);  color: var(--text2); }
-  .pill.strikes  { background: var(--orange-bg); color: var(--orange-text); border: 0.5px solid var(--orange); }
-  .log-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-  .log-item:last-child { border-bottom: none; }
-  .log-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .log-text { flex: 1; font-size: 14px; color: var(--text); line-height: 1.4; }
-  .log-text span { color: var(--text2); font-size: 13px; }
-  .log-time { font-size: 12px; color: var(--text3); white-space: nowrap; }
-  .log-del { font-size: 16px; color: var(--text3); cursor: pointer; padding: 4px 6px; }
-  .lesson-group-header {
-    font-size: 13px; font-weight: 600; color: var(--text2);
-    padding: 10px 0 6px; margin-top: 6px;
-  }
+/* PAGE INDICATOR DOTS */
+.page-dots{display:flex;justify-content:center;gap:6px;padding:8px 0 4px;flex-shrink:0}
+.page-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .2s}
+.page-dot.active{background:var(--blue);width:18px;border-radius:99px}
 
-  /* WATCHLIST */
-  .watch-item { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px; }
-  .watch-item-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .watch-item-class { font-size: 12px; color: var(--text2); margin-top: 2px; margin-bottom: 10px; }
+/* WHITEBOARD INDICATOR */
+.whiteboard-bar{text-align:center;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;padding:4px 0;flex-shrink:0}
 
-  /* STUDENT HISTORY */
-  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-  .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 10px; text-align: center; }
-  .stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
-  .stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .history-block { margin-bottom: 16px; }
-  .history-block-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 7px; padding: 0 2px; }
-  .history-block-title.current { color: var(--blue-text); }
-  .history-inc-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 5px; }
-  .history-type { flex: 1; font-size: 14px; color: var(--text); }
-  .history-meta { font-size: 12px; color: var(--text3); text-align: right; line-height: 1.5; }
+/* SOL */
+.sol-chip{font-size:11px;font-weight:600;border-radius:99px;padding:4px 9px;border:1px solid;cursor:pointer;font-family:var(--font)}
+.sol-chip:active{transform:scale(.93)}
+.sol-chip.absent{border-color:var(--text3);color:var(--text3);background:transparent}
+.sol-chip.absent.active{background:var(--text2);color:#fff;border-color:var(--text2)}
+.sol-chip.late{border-color:var(--amber);color:var(--amber-text);background:transparent}
+.sol-chip.late.active{background:var(--amber);color:#fff}
+.sol-chip.attire{border-color:var(--blue);color:var(--blue-text);background:transparent}
+.sol-chip.attire.active{background:var(--blue);color:#fff}
+.sol-chip.nomats{border-color:var(--orange);color:var(--orange-text);background:transparent}
+.sol-chip.nomats.active{background:var(--orange);color:#fff}
+.sol-chip.slowstart{border-color:var(--teal);color:var(--teal-text);background:transparent}
+.sol-chip.slowstart.active{background:var(--teal);color:#fff}
+.sol-chip.nopld{border-color:var(--purple);color:var(--purple-text);background:transparent}
+.sol-chip.nopld.active{background:var(--purple);color:#fff}
+.sol-reason-input{width:100%;margin-top:5px;padding:6px 10px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
+.sol-done-btn{width:100%;padding:15px;border-radius:var(--radius-sm);font-size:16px;font-weight:600;font-family:var(--font);color:#fff;background:var(--green);border:none;cursor:pointer}
+.sol-done-btn:active{opacity:.8}
+/* SOL swipeable */
+.sol-seat-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 4px 6px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;min-height:0;gap:4px}
+.sol-seat-btn.sol-has-flag{border-color:var(--amber);border-width:2px;background:var(--amber-bg)}
+.sol-seat-btn.sol-absent{opacity:.4;border-style:dashed}
+.sol-name-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.2}
+.sol-chips-inline{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:4px}
 
-  /* SETUP */
-  .setup-tabs { display: flex; gap: 6px; padding: 14px 14px 0; flex-shrink: 0; }
-  .setup-tab { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text2); background: transparent; cursor: pointer; }
-  .setup-tab.active { background: var(--surface); color: var(--text); border-color: var(--border2); }
-  .form-group { margin-bottom: 10px; }
-  .form-input { width: 100%; padding: 13px 14px; font-size: 15px; font-family: var(--font); color: var(--text); background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); outline: none; }
-  .form-input:focus { border-color: var(--blue); }
-  .form-submit { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; font-family: var(--font); color: var(--text); background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; }
-  .form-submit:active { opacity: 0.7; }
-  .setup-list-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-  .setup-list-item:last-child { border-bottom: none; }
-  .setup-list-text { font-size: 14px; color: var(--text); }
-  .setup-list-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .list-del { font-size: 16px; color: var(--text3); cursor: pointer; padding: 4px 8px; }
-  .class-select { width: 100%; padding: 13px 14px; font-size: 15px; font-family: var(--font); color: var(--text); background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); margin-bottom: 10px; outline: none; }
-  .inline-row { display: flex; gap: 8px; }
-  .inline-row .form-input { flex: 1; }
-  .inline-add { padding: 13px 16px; font-size: 15px; font-weight: 600; font-family: var(--font); color: var(--text); background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
-  .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+/* LOG */
+.section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:0 2px;margin:18px 0 8px}
+.section-title:first-child{margin-top:0}
+.summary-row{display:flex;align-items:center;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:7px;gap:8px}
+.summary-row.over3{border-color:var(--red)}
+.summary-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.summary-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.summary-count{font-size:13px;font-weight:600;background:var(--red-bg);color:var(--red-text);border-radius:99px;padding:2px 10px}
+.strikes-pill{font-size:11px;font-weight:600;background:var(--orange-bg);color:var(--orange-text);border:0.5px solid var(--orange);border-radius:99px;padding:2px 8px;white-space:nowrap}
+.carried-card{background:var(--orange-bg);border:0.5px solid var(--orange);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:7px}
+.carried-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.pill-row{display:flex;flex-wrap:wrap;gap:5px}
+.pill{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px}
+.pill.c-red{background:var(--red-bg);color:var(--red-text)}
+.pill.c-amber{background:var(--amber-bg);color:var(--amber-text)}
+.pill.c-blue{background:var(--blue-bg);color:var(--blue-text)}
+.pill.c-purple{background:var(--purple-bg);color:var(--purple-text)}
+.pill.c-orange{background:var(--orange-bg);color:var(--orange-text)}
+.pill.c-teal{background:var(--teal-bg);color:var(--teal-text)}
+.pill.c-gray{background:var(--surface2);color:var(--text2)}
+.pill.strikes{background:var(--orange-bg);color:var(--orange-text);border:0.5px solid var(--orange)}
+.log-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:0.5px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.log-dot.c-red{background:var(--red)}.log-dot.c-amber{background:var(--amber)}.log-dot.c-blue{background:var(--blue)}.log-dot.c-purple{background:var(--purple)}.log-dot.c-orange{background:var(--orange)}.log-dot.c-teal{background:var(--teal)}.log-dot.c-gray{background:var(--text2)}
+.log-text{flex:1;font-size:14px;color:var(--text);line-height:1.4}
+.log-text span{color:var(--text2);font-size:13px}
+.log-time{font-size:12px;color:var(--text3);white-space:nowrap}
+.log-del{font-size:16px;color:var(--text3);cursor:pointer;padding:4px 6px}
+.lesson-group-header{font-size:13px;font-weight:600;color:var(--text2);padding:10px 0 6px;margin-top:6px}
+.note-block{background:var(--blue-bg);border:0.5px solid var(--blue);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:5px;font-size:13px;color:var(--blue-text);line-height:1.5}
+.note-block-label{font-size:11px;font-weight:600;color:var(--blue-text);opacity:.7;margin-bottom:3px}
+.absent-block{background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:5px;font-size:13px;color:var(--text2)}
 
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: 99px; z-index: 20; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; font-family: var(--font); }
-  .toast.show { opacity: 1; }
-  select option { background: var(--surface); color: var(--text); }
+/* BEHAVIOUR PANEL */
+.panel-student{font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
+.panel-watchinfo{font-size:12px;color:var(--orange-text);margin-bottom:12px;background:var(--orange-bg);border-radius:var(--radius-sm);padding:7px 10px;border:0.5px solid var(--orange)}
+.beh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.beh-btn{padding:16px 10px;border-radius:var(--radius);border:1px solid;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;text-align:center}
+.beh-btn:active{transform:scale(.95)}
+.b-rude{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-vulgar{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-disrupt{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.b-talk{background:var(--amber-bg);color:var(--amber-text);border-color:var(--amber)}
+.b-disengage{background:var(--amber-bg);color:var(--amber-text);border-color:var(--amber)}
+.b-nowork{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue)}
+.b-device{background:var(--purple-bg);color:var(--purple-text);border-color:var(--purple)}
+.b-sleep{background:var(--surface2);color:var(--text2);border-color:var(--border2)}
+.b-restroom{background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal)}
+.seat-btn.restroom{border-color:var(--teal);border-width:2px;background:var(--teal-bg)}
+.seat-btn.restroom-long{border-color:var(--red);border-width:2px;background:var(--red-bg)}
+.restroom-timer{font-size:10px;font-weight:600;color:var(--teal-text);margin-top:2px}
+.history-btn{width:100%;margin-top:8px;padding:13px;border-radius:var(--radius-sm);border:0.5px solid var(--border);font-size:14px;font-weight:500;font-family:var(--font);color:var(--blue-text);background:var(--blue-bg);cursor:pointer}
+.panel-logged-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.panel-logged-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2);margin-bottom:5px}
+.panel-logged-type{flex:1;font-size:13px;font-weight:500;color:var(--text)}
+.panel-logged-time{font-size:12px;color:var(--text3)}
+.panel-logged-del{font-size:13px;font-weight:600;color:var(--red-text);background:var(--red-bg);border:0.5px solid var(--red);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;font-family:var(--font)}
+.note-area{width:100%;padding:10px;font-size:14px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none;resize:none;margin-top:6px;min-height:60px}
+.note-save-btn{width:100%;margin-top:6px;padding:11px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:var(--font);color:var(--blue-text);background:var(--blue-bg);border:0.5px solid var(--blue);cursor:pointer}
+
+/* WATCHLIST */
+.watch-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px}
+.watch-item-name{font-size:15px;font-weight:600;color:var(--text)}
+.watch-item-class{font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:10px}
+.rehab-btn{font-size:12px;font-weight:600;color:var(--green-text);background:var(--green-bg);border:0.5px solid var(--green);border-radius:99px;padding:4px 12px;cursor:pointer;font-family:var(--font);margin-top:10px;display:inline-block}
+
+/* HISTORY */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center}
+.stat-num{font-size:22px;font-weight:600;color:var(--text)}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px}
+.history-block{margin-bottom:16px}
+.history-block-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:7px;padding:0 2px}
+.history-block-title.current{color:var(--blue-text)}
+.history-inc-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px}
+.history-type{flex:1;font-size:14px;color:var(--text)}
+.history-meta{font-size:12px;color:var(--text3);text-align:right;line-height:1.5}
+.rehab-btn-history{width:100%;margin-top:14px;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:var(--font);color:var(--green-text);background:var(--green-bg);border:0.5px solid var(--green);cursor:pointer}
+
+/* SETUP */
+.setup-tabs{display:flex;gap:6px;padding:12px 14px 0;flex-shrink:0}
+.setup-tab{flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:0.5px solid var(--border);font-size:12px;font-weight:500;font-family:var(--font);color:var(--text2);background:transparent;cursor:pointer}
+.setup-tab.active{background:var(--surface);color:var(--text);border-color:var(--border2)}
+.form-group{margin-bottom:10px}
+.form-input{width:100%;padding:12px 14px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
+.form-input:focus{border-color:var(--blue)}
+.form-submit{width:100%;padding:13px;font-size:15px;font-weight:600;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer}
+.form-submit:active{opacity:.7}
+.setup-list-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.setup-list-item:last-child{border-bottom:none}
+.setup-list-text{font-size:14px;color:var(--text)}
+.setup-list-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.list-del{font-size:16px;color:var(--text3);cursor:pointer;padding:4px 8px}
+.class-select{width:100%;padding:12px 14px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);margin-bottom:10px;outline:none}
+.inline-row{display:flex;gap:8px}
+.inline-row .form-input{flex:1}
+.inline-add{padding:12px 14px;font-size:15px;font-weight:600;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap}
+.reset-card{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px}
+.reset-card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.reset-card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px}
+.reset-btn{width:100%;padding:13px;font-size:14px;font-weight:600;font-family:var(--font);border-radius:var(--radius-sm);cursor:pointer}
+.reset-btn.amber{background:var(--amber-bg);color:var(--amber-text);border:0.5px solid var(--amber)}
+.reset-btn.red{background:var(--red-bg);color:var(--red-text);border:0.5px solid var(--red)}
+.reset-btn.blue{background:var(--blue-bg);color:var(--blue-text);border:0.5px solid var(--blue)}
+.reset-btn:active{opacity:.7}
+
+/* SEATING SETUP */
+.seat-setup-col{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px}
+.seat-setup-col-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.seat-setup-col-title{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.seat-setup-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.seat-cell{flex:1;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;min-height:40px;display:flex;align-items:center;justify-content:center}
+.seat-cell.empty{color:var(--text3);font-size:12px;border-style:dashed}
+.seat-cell.selected{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-text)}
+.seat-cell:active{transform:scale(.95)}
+.unassigned-pool{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0}
+.pool-student{background:var(--surface);border:0.5px solid var(--border2);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer}
+.pool-student:active{transform:scale(.95)}
+.pool-student.selected{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-text)}
+.row-size-btn{background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:5px 10px;font-size:13px;font-weight:600;color:var(--text);font-family:var(--font);cursor:pointer}
+.row-size-btn:active{opacity:.7}
+
+/* STUDENT PICKER POPUP */
+.student-picker-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:50;align-items:flex-end;justify-content:center}
+.student-picker-overlay.open{display:flex}
+.student-picker-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-height:70vh;display:flex;flex-direction:column;padding-bottom:20px}
+.student-picker-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.student-picker-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:10px}
+.student-picker-search{width:100%;padding:10px 12px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
+.student-picker-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 12px}
+.student-picker-item{padding:12px 10px;font-size:15px;font-weight:500;color:var(--text);border-bottom:0.5px solid var(--border);cursor:pointer}
+.student-picker-item:last-child{border-bottom:none}
+.student-picker-item:active{background:var(--blue-bg);color:var(--blue-text)}
+.student-picker-empty{padding:20px;text-align:center;color:var(--text3);font-size:14px}
+.student-picker-cancel{margin:8px 12px 0;padding:13px;border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);color:var(--text2);background:var(--surface2);border:0.5px solid var(--border2);cursor:pointer;width:calc(100% - 24px)}
+.settings-section{margin-bottom:20px}
+.settings-section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.threshold-chips{display:flex;gap:8px;flex-wrap:wrap}
+.threshold-chip{flex:1;padding:12px 8px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:14px;font-weight:500;font-family:var(--font);cursor:pointer;color:var(--text2);background:var(--surface2);text-align:center}
+.threshold-chip.selected{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue);font-weight:600}
+.option-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.option-item:last-child{border-bottom:none}
+.option-name{flex:1;font-size:14px;color:var(--text)}
+.option-tag{font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;cursor:pointer}
+.option-tag.positive{background:var(--green-bg);color:var(--green-text);border:0.5px solid var(--green)}
+.option-tag.negative{background:var(--red-bg);color:var(--red-text);border:0.5px solid var(--red)}
+.option-tag.neutral{background:var(--surface2);color:var(--text3);border:0.5px solid var(--border2)}
+
+/* OFFENCE DETAIL SCREEN */
+.offence-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
+.offence-card.current{border-color:var(--orange);border-width:1.5px}
+.offence-num{font-size:13px;font-weight:700;color:var(--orange-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.offence-date{font-size:12px;color:var(--text3);margin-bottom:10px}
+.offence-field-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;margin-top:10px}
+.offence-select-row{display:flex;flex-wrap:wrap;gap:6px}
+.offence-opt{font-size:13px;font-weight:500;border-radius:99px;padding:6px 12px;border:0.5px solid var(--border2);cursor:pointer;font-family:var(--font);background:var(--surface2);color:var(--text2)}
+.offence-opt.selected.positive{background:var(--green-bg);color:var(--green-text);border-color:var(--green)}
+.offence-opt.selected.negative{background:var(--red-bg);color:var(--red-text);border-color:var(--red)}
+.offence-opt.selected.neutral{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue)}
+.followup-toggle{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);cursor:pointer}
+.followup-toggle.done{background:var(--green-bg)}
+.followup-label{flex:1;font-size:13px;font-weight:500;color:var(--text)}
+.followup-status{font-size:12px;font-weight:600;color:var(--text3)}
+.followup-toggle.done .followup-status{color:var(--green-text)}
+.offence-note-area{width:100%;padding:8px 10px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none;resize:none;margin-top:6px;min-height:50px}
+.save-offence-btn{width:100%;margin-top:8px;padding:12px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:var(--font);color:#fff;background:var(--blue);border:none;cursor:pointer}
+
+/* CLASS REPORT */
+.report-student-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
+.report-student-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.report-offence-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm)}
+.report-offence-num{font-size:12px;font-weight:700;color:var(--orange-text);min-width:60px}
+.report-action{font-size:12px;color:var(--text2);flex:1}
+.report-response{font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px}
+.report-response.positive{background:var(--green-bg);color:var(--green-text)}
+.report-response.negative{background:var(--red-bg);color:var(--red-text)}
+.report-response.neutral{background:var(--surface2);color:var(--text3)}
+.report-followup{font-size:11px;font-weight:600;color:var(--text3)}
+.report-followup.done{color:var(--green-text)}
+
+/* CONFIRM MODAL */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:50;align-items:center;justify-content:center}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--surface);border-radius:var(--radius);padding:24px 20px;margin:20px;max-width:320px;width:100%}
+.confirm-msg{font-size:16px;font-weight:500;color:var(--text);margin-bottom:20px;line-height:1.5;text-align:center}
+.confirm-btns{display:flex;gap:10px}
+.confirm-ok{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;font-family:var(--font);color:#fff;background:var(--blue);border:none;cursor:pointer}
+.confirm-cancel{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:15px;font-weight:500;font-family:var(--font);color:var(--text2);background:var(--surface2);border:0.5px solid var(--border2);cursor:pointer}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:14px;font-weight:500;padding:10px 18px;border-radius:99px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;font-family:var(--font)}
+.toast.show{opacity:1}
+select option{background:var(--surface);color:var(--text)}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- HOME -->
-  <div id="screen-home" class="screen active">
-    <div class="header">
-      <div style="flex:1"><div class="header-title">Classes</div></div>
-      <button class="btn-ghost" onclick="showScreen('screen-watchlist')">Watchlist</button>
-      <button class="btn-ghost" onclick="showScreen('screen-setup')">Setup</button>
-    </div>
-    <div class="home-banner">
-      <div class="home-banner-label">Term <strong id="home-term">2</strong> · Week <strong id="home-week">2</strong></div>
-      <button class="next-week-btn" onclick="confirmNextWeek()">Next Week</button>
-    </div>
-    <div class="scroll-area">
-      <div class="class-grid" id="class-grid"></div>
-      <div id="home-empty" class="empty" style="display:none"><strong>No classes yet</strong>Tap Setup to add your classes and students.</div>
-    </div>
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="header">
+    <div style="flex:1"><div class="header-title">Classes</div></div>
+    <button class="btn-ghost" onclick="showScreen('screen-watchlist')">Watchlist</button>
+    <button class="btn-ghost" onclick="showScreen('screen-setup')">Setup</button>
+    <button class="btn-ghost" onclick="showScreen('screen-settings')" style="font-size:16px;padding:7px 10px">⚙</button>
   </div>
-
-  <!-- STUDENTS -->
-  <div id="screen-students" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
-      <div style="flex:1">
-        <div class="header-title" id="class-title">Class</div>
-        <div class="header-sub" id="class-subtitle"></div>
-      </div>
-      <button class="btn-ghost" onclick="showLog()">Log</button>
-    </div>
-    <div class="lesson-banner" id="lesson-banner" onclick="openLessonPicker(false)">
-      <div class="lesson-banner-text" id="lesson-banner-text">Tap to set lesson</div>
-      <div class="lesson-banner-change">Change</div>
-    </div>
-    <div class="scroll-area"><div class="student-grid" id="student-grid"></div></div>
+  <div class="home-banner">
+    <div class="home-banner-label">Term <strong id="home-term">2</strong> · Week <strong id="home-week">2</strong></div>
+    <button class="next-week-btn" onclick="confirmNextWeek()">Next Week</button>
   </div>
-
-  <!-- LOG -->
-  <div id="screen-log" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
-      <div class="header-title">Incident Log</div>
-      <button class="btn-ghost btn-danger" onclick="clearClassLog()">Clear</button>
-    </div>
-    <div class="scroll-area" id="log-content"></div>
+  <div class="scroll-area">
+    <div class="class-grid" id="class-grid"></div>
+    <div id="home-empty" class="empty" style="display:none"><strong>No classes yet</strong>Tap Setup to add classes and students.</div>
   </div>
-
-  <!-- WATCHLIST -->
-  <div id="screen-watchlist" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
-      <div class="header-title">Watchlist</div>
-    </div>
-    <div class="scroll-area" id="watchlist-content"></div>
-  </div>
-
-  <!-- STUDENT HISTORY -->
-  <div id="screen-student-history" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
-      <div style="flex:1">
-        <div class="header-title" id="history-student-name"></div>
-        <div class="header-sub" id="history-class-name"></div>
-      </div>
-    </div>
-    <div class="scroll-area" id="history-content"></div>
-  </div>
-
-  <!-- SETUP -->
-  <div id="screen-setup" class="screen">
-    <div class="header">
-      <button class="btn-ghost" onclick="showScreen('screen-home')">← Done</button>
-      <div class="header-title">Setup</div>
-    </div>
-    <div class="setup-tabs">
-      <button class="setup-tab active" id="tab-classes" onclick="switchTab('classes')">Classes</button>
-      <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
-    </div>
-    <div class="scroll-area">
-      <div id="setup-classes">
-        <div class="form-group"><input class="form-input" id="new-class-name" placeholder="Class name e.g. 3E1" maxlength="20"/></div>
-        <div class="form-group"><input class="form-input" id="new-class-subject" placeholder="Subject e.g. Social Studies" maxlength="40"/></div>
-        <button class="form-submit" onclick="addClass()">Add class</button>
-        <div class="divider"></div>
-        <div id="class-list"></div>
-      </div>
-      <div id="setup-students" style="display:none">
-        <select class="class-select" id="class-select" onchange="renderStudentList()"></select>
-        <div class="inline-row form-group">
-          <input class="form-input" id="new-student" placeholder="Student name" maxlength="40"/>
-          <button class="inline-add" onclick="addStudent()">Add</button>
-        </div>
-        <div id="student-list"></div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- LESSON PICKER -->
+<!-- SOL CHECK-IN -->
+<div id="screen-sol" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="sol-class-title">Check-in</div>
+      <div class="header-sub" id="sol-lesson-label"></div>
+    </div>
+  </div>
+  <div class="seat-outer" id="sol-outer">
+    <div class="seat-slider" id="sol-slider"></div>
+  </div>
+  <div class="page-dots" id="sol-dots"></div>
+  <div style="padding:10px 14px;border-top:0.5px solid var(--border);flex-shrink:0">
+    <button class="sol-done-btn" onclick="confirmSol()">Done</button>
+  </div>
+</div>
+
+<!-- STUDENTS (SEATING MAP) -->
+<div id="screen-students" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="class-title">Class</div>
+      <div class="header-sub" id="class-subtitle"></div>
+    </div>
+    <button class="btn-ghost btn-green" onclick="openSol()">Check-in</button>
+    <button class="btn-ghost" onclick="showLog()">Log</button>
+  </div>
+  <div class="lesson-banner" onclick="openLessonPicker(true)">
+    <div class="lesson-banner-text" id="lesson-banner-text">Tap to set lesson</div>
+    <div class="lesson-banner-change">Change</div>
+  </div>
+  <div class="seat-outer" id="seat-outer">
+    <div class="seat-slider" id="seat-slider"></div>
+  </div>
+  <div class="page-dots" id="page-dots"></div>
+  <div class="whiteboard-bar">▼ Whiteboard / Front</div>
+</div>
+
+<!-- LOG -->
+<div id="screen-log" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
+    <div class="header-title">Incident Log</div>
+    <button class="btn-ghost btn-danger" onclick="clearClassLog()">Clear</button>
+  </div>
+  <div class="scroll-area" id="log-content"></div>
+</div>
+
+<!-- WATCHLIST -->
+<div id="screen-watchlist" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div class="header-title">Watchlist</div>
+  </div>
+  <div class="scroll-area" id="watchlist-content"></div>
+</div>
+
+<!-- STUDENT HISTORY -->
+<div id="screen-student-history" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="history-student-name"></div>
+      <div class="header-sub" id="history-class-name"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="history-content"></div>
+</div>
+
+<!-- SETUP -->
+<div id="screen-setup" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Done</button>
+    <div class="header-title">Setup</div>
+  </div>
+  <div class="setup-tabs">
+    <button class="setup-tab active" id="tab-classes" onclick="switchTab('classes')">Classes</button>
+    <button class="setup-tab" id="tab-students" onclick="switchTab('students')">Students</button>
+    <button class="setup-tab" id="tab-seating" onclick="switchTab('seating')">Seating</button>
+    <button class="setup-tab" id="tab-reset" onclick="switchTab('reset')">Reset</button>
+  </div>
+  <div class="scroll-area">
+    <div id="setup-classes">
+      <div class="form-group"><input class="form-input" id="new-class-name" placeholder="Class name e.g. 3E1" maxlength="20"/></div>
+      <div class="form-group"><input class="form-input" id="new-class-subject" placeholder="Subject" maxlength="40"/></div>
+      <button class="form-submit" onclick="addClass()">Add class</button>
+      <div class="divider"></div>
+      <div id="class-list"></div>
+    </div>
+    <div id="setup-students" style="display:none">
+      <select class="class-select" id="class-select" onchange="renderStudentList()"></select>
+      <div class="inline-row form-group">
+        <input class="form-input" id="new-student" placeholder="Student name" maxlength="40"/>
+        <button class="inline-add" onclick="addStudent()">Add</button>
+      </div>
+      <div id="student-list"></div>
+    </div>
+    <div id="setup-seating" style="display:none">
+      <select class="class-select" id="seating-class-select" onchange="seatSelectedStudent=null;seatSelectedCell=null;renderSeatingSetup()"></select>
+      <div id="seating-cols-header" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <div style="font-size:13px;color:var(--text2);flex:1">Column pairs:</div>
+        <button class="row-size-btn" onclick="addSeatCol()">+ Column</button>
+        <button class="row-size-btn" onclick="removeSeatCol()">− Column</button>
+        <button class="row-size-btn" style="color:var(--green-text);border-color:var(--green);background:var(--green-bg)" onclick="autoAllocate()">Auto fill</button>
+        <button class="row-size-btn" style="color:var(--red-text);border-color:var(--red);background:var(--red-bg)" onclick="clearAllSeats()">Clear all</button>
+      </div>
+      <div id="seating-status" style="font-size:13px;color:var(--blue-text);background:var(--blue-bg);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:10px;display:none"></div>
+      <div id="seating-setup-content"></div>
+      <div style="margin-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Unassigned students</div>
+        <div class="unassigned-pool" id="unassigned-pool"></div>
+      </div>
+    </div>
+    <div id="setup-reset" style="display:none">
+      <div class="reset-card">
+        <div class="reset-card-title">Clear this week</div>
+        <div class="reset-card-desc">Removes all incidents for T<span id="reset-term"></span> W<span id="reset-week"></span>. Classes and students kept.</div>
+        <button class="reset-btn amber" onclick="resetWeek()">Clear this week's incidents</button>
+      </div>
+      <div class="reset-card">
+        <div class="reset-card-title">Clear all incidents</div>
+        <div class="reset-card-desc">Removes all incidents and watchlist. Classes and students kept.</div>
+        <button class="reset-btn blue" onclick="resetIncidents()">Clear incidents, keep classes</button>
+      </div>
+      <div class="reset-card">
+        <div class="reset-card-title">Delete everything</div>
+        <div class="reset-card-desc">Wipes all data. Cannot be undone.</div>
+        <button class="reset-btn red" onclick="resetAll()">Delete everything</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="screen-settings" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div class="header-title">Settings</div>
+  </div>
+  <div class="scroll-area">
+    <div class="settings-section">
+      <div class="settings-section-title">Warning threshold</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5">How many of the same offence type triggers a watchlist flag.</div>
+      <div class="threshold-chips">
+        <div class="threshold-chip" id="tc-1" onclick="setThreshold(1)">1</div>
+        <div class="threshold-chip" id="tc-2" onclick="setThreshold(2)">2</div>
+        <div class="threshold-chip" id="tc-3" onclick="setThreshold(3)">3</div>
+        <div class="threshold-chip" id="tc-0" onclick="setThreshold(0)">Record only</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="settings-section">
+      <div class="settings-section-title">Action options</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5">Actions you can take. Tap the tag to toggle positive/negative/neutral.</div>
+      <div id="action-options-list"></div>
+      <div class="inline-row" style="margin-top:8px">
+        <input class="form-input" id="new-action-option" placeholder="Add action…" maxlength="40"/>
+        <button class="inline-add" onclick="addOption('action')">Add</button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="settings-section">
+      <div class="settings-section-title">Response options</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5">How students respond. Tap the tag to toggle positive/negative/neutral.</div>
+      <div id="response-options-list"></div>
+      <div class="inline-row" style="margin-top:8px">
+        <input class="form-input" id="new-response-option" placeholder="Add response…" maxlength="40"/>
+        <button class="inline-add" onclick="addOption('response')">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFENCE DETAIL -->
+<div id="screen-offence" class="screen">
+  <div class="header">
+    <button class="btn-ghost" id="offence-back-btn" onclick="history.back()">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="offence-student-name"></div>
+      <div class="header-sub" id="offence-class-name"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="offence-content"></div>
+</div>
+
+<!-- CLASS REPORT -->
+<div id="screen-report" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1">
+      <div class="header-title" id="report-class-title">Class Report</div>
+      <div class="header-sub" id="report-class-sub"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="report-content"></div>
+</div>
+
+</div>
+<div class="student-picker-overlay" id="student-picker-overlay">
+  <div class="student-picker-box">
+    <div class="student-picker-header">
+      <div class="student-picker-title">Choose student</div>
+      <input class="student-picker-search" id="student-picker-search" placeholder="Search…" oninput="filterStudentPicker(this.value)"/>
+    </div>
+    <div class="student-picker-list" id="student-picker-list"></div>
+    <button class="student-picker-cancel" onclick="closeStudentPicker()">Cancel</button>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-ok" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
 <div class="backdrop" id="backdrop" onclick="closeAllPanels()"></div>
 
-<div class="lesson-picker" id="lesson-picker">
-  <div class="picker-handle"></div>
-  <div class="picker-title">Set lesson</div>
+<!-- LESSON PICKER -->
+<div class="bottom-panel" id="lesson-picker">
+  <div class="panel-handle"></div>
+  <div class="panel-title">Set lesson</div>
   <div class="picker-row">
     <div class="picker-row-label">Term</div>
     <div class="picker-chips" id="chips-term">
@@ -460,27 +637,31 @@
     </div>
   </div>
   <button class="picker-confirm" id="picker-confirm" onclick="confirmLesson()" disabled>Confirm</button>
-  <button class="cancel-btn" onclick="cancelLessonPicker()" style="margin-top:8px">Cancel</button>
+  <button class="cancel-btn" onclick="cancelPicker()">Cancel</button>
 </div>
 
 <!-- BEHAVIOUR PANEL -->
-<div class="beh-panel" id="beh-panel">
+<div class="bottom-panel" id="beh-panel">
   <div class="panel-handle"></div>
   <div class="panel-student" id="panel-name"></div>
   <div class="panel-watchinfo" id="panel-watchinfo" style="display:none"></div>
-  <div id="panel-logged" style="display:none;margin-bottom:12px"></div>
+  <div class="panel-logged-title" style="margin-bottom:8px">Log behaviour</div>
   <div class="beh-grid">
     <button class="beh-btn b-rude" onclick="logBehaviour('Rude')">Rude</button>
     <button class="beh-btn b-vulgar" onclick="logBehaviour('Vulgarity')">Vulgarity</button>
     <button class="beh-btn b-disrupt" onclick="logBehaviour('Disruptive')">Disruptive</button>
     <button class="beh-btn b-talk" onclick="logBehaviour('Talking')">Talking</button>
-    <button class="beh-btn b-late" onclick="logBehaviour('Late')">Late</button>
+    <button class="beh-btn b-disengage" onclick="logBehaviour('Disengaged')">Disengaged</button>
     <button class="beh-btn b-nowork" onclick="logBehaviour('No Work')">No Work</button>
-    <button class="beh-btn b-attire" onclick="logBehaviour('Attire')">Attire</button>
     <button class="beh-btn b-device" onclick="logBehaviour('Device')">Device</button>
-    <button class="beh-btn b-nomats" onclick="logBehaviour('No Materials')">No Materials</button>
-    <button class="beh-btn b-slow" onclick="logBehaviour('Slow Start')">Slow Start</button>
     <button class="beh-btn b-sleep" onclick="logBehaviour('Sleeping')">Sleeping</button>
+    <button class="beh-btn b-restroom" onclick="toggleRestroom()" id="btn-restroom">🚻 Restroom</button>
+  </div>
+  <div id="panel-logged" style="display:none;margin:12px 0"></div>
+  <div style="margin-bottom:12px">
+    <div class="panel-logged-title">Weekly note</div>
+    <textarea class="note-area" id="panel-note-text" placeholder="Add a note…" rows="2"></textarea>
+    <button class="note-save-btn" onclick="saveNote()">Save note</button>
   </div>
   <button class="cancel-btn" onclick="closeAllPanels()">Cancel</button>
   <button class="history-btn" onclick="openStudentHistory()">View full history</button>
@@ -489,688 +670,1492 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE = 'ctss_v4';
-let state = {
-  classes: [], incidents: [], watchlist: {},
-  currentTerm: 2, currentWeek: 2
-};
-// session-only lesson context (not persisted)
-let currentClassId = null;
-let selectedStudent = null;
-let pickerTerm = null, pickerWeek = null, pickerLesson = null;
-let currentLesson = null; // { term, week, lesson } for current class session
-let pickerIsGlobal = false; // true = called from Next Week, false = per-class
-
-function lessonKey(t, w, l) { return `T${t}W${w}L${l}`; }
-function lessonLabel(t, w, l) { return `T${t} · W${w} · L${l}`; }
-
-function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
-function load() { try { const d = localStorage.getItem(STORE); if(d) { const p = JSON.parse(d); state = {...state, ...p}; } } catch(e){} }
-function wKey(classId, student) { return classId + '|' + student; }
-function getWatch(classId, student) { return state.watchlist[wKey(classId, student)] || null; }
-function weekInc(classId, student) {
-  return state.incidents.filter(i => i.classId === classId && i.student === student && i.term === state.currentTerm && i.week === state.currentWeek);
+const STORE='ctss_v7';
+/*
+state.seatMap = {
+  classId: [
+    { rows: [ [name|null, name|null], [name|null, name|null], ... ] }  // each col-pair
+  ]
 }
-function behClass(t) {
-  if (t === 'Disruptive' || t === 'Rude' || t === 'Vulgarity') return 'c-red';
-  if (t === 'Talking' || t === 'Late') return 'c-amber';
-  if (t === 'No Work' || t === 'Attire') return 'c-blue';
-  if (t === 'Device') return 'c-purple';
-  if (t === 'No Materials' || t === 'Slow Start') return 'c-orange';
-  if (t === 'Sleeping') return 'c-gray';
+Default: 2 seats per row, up to 8 rows per col-pair
+*/
+let state={
+  classes:[],incidents:[],watchlist:{},notes:{},solData:{},seatMap:{},
+  currentTerm:2,currentWeek:2,
+  settings:{
+    threshold:3,
+    actionOptions:[
+      {label:'Email student',sentiment:'neutral'},
+      {label:'Reflection',sentiment:'neutral'},
+      {label:'Parent email',sentiment:'neutral'}
+    ],
+    responseOptions:[
+      {label:'Dismissed',sentiment:'negative'},
+      {label:'Reflected',sentiment:'positive'},
+      {label:'Improved',sentiment:'positive'},
+      {label:'Partial improvement',sentiment:'positive'}
+    ]
+  }
+};
+let currentClassId=null,selectedStudent=null,currentLesson=null;
+let pickerTerm=null,pickerWeek=null,pickerLesson=null,pickerIsChange=false;
+let solSelections={};
+let currentPage=0;
+let seatSetupClassId=null,seatSelectedStudent=null,seatSelectedCell=null;
+let restroomTimers={},restroomInterval=null;
+let offenceBack='screen-watchlist';
+
+function lessonLabel(t,w,l){return `T${t} · W${w} · L${l}`}
+function wKey(cid,s){return `${cid}|${s}`}
+function noteKey(cid,s,t,w){return `${cid}|${s}|T${t}W${w}`}
+
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){}}
+function load(){try{const d=localStorage.getItem(STORE);if(d){const p=JSON.parse(d);state={...state,...p}}}catch(e){}}
+function getWatch(cid,s){return state.watchlist[wKey(cid,s)]||null}
+function weekIncidents(cid,s){return state.incidents.filter(i=>i.classId===cid&&i.student===s&&i.term===state.currentTerm&&i.week===state.currentWeek)}
+
+function behClass(t){
+  if(['Rude','Vulgarity','Disruptive'].includes(t)) return 'c-red';
+  if(['Talking','Late','Disengaged'].includes(t)) return 'c-amber';
+  if(['No Work','Attire'].includes(t)) return 'c-blue';
+  if(['Device','No PLD'].includes(t)) return 'c-purple';
+  if(t==='No Materials') return 'c-orange';
+  if(t==='Slow Start') return 'c-teal';
   return 'c-gray';
 }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 1800);
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+let _confirmCb=null;
+function showConfirm(msg,onOk){
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-ok').onclick=()=>{closeConfirm();onOk()};
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
+
+/* ---- SEATMAP HELPERS ---- */
+function getSeatMap(cid){
+  if(!state.seatMap[cid]){
+    // Default: 2 col-pairs, each 2×8 (2 seats per row, 8 rows)
+    state.seatMap[cid]=[
+      {rows:Array(8).fill(null).map(()=>[null,null])},
+      {rows:Array(8).fill(null).map(()=>[null,null])}
+    ];
+  }
+  return state.seatMap[cid];
 }
 
-/* NEXT WEEK */
-function confirmNextWeek() {
-  const nextW = state.currentWeek >= 10 ? 1 : state.currentWeek + 1;
-  const nextT = state.currentWeek >= 10 ? state.currentTerm + 1 : state.currentTerm;
-  if (!confirm(`Advance to T${nextT} W${nextW}?\n\nStudents with 3+ incidents this week will be added to the watchlist.`)) return;
-  doNextWeek(nextT, nextW);
+function getAssignedStudents(cid){
+  const map=getSeatMap(cid);
+  const assigned=new Set();
+  map.forEach(col=>col.rows.forEach(row=>row.forEach(n=>{if(n) assigned.add(n)})));
+  return assigned;
 }
 
-function doNextWeek(nextT, nextW) {
-  state.classes.forEach(cls => {
-    const byStudent = {};
-    state.incidents.filter(i => i.classId === cls.id && i.term === state.currentTerm && i.week === state.currentWeek)
-      .forEach(i => { if (!byStudent[i.student]) byStudent[i.student] = []; byStudent[i.student].push(i.type); });
-    Object.entries(byStudent).forEach(([student, types]) => {
-      if (types.length >= 3) {
-        const key = wKey(cls.id, student);
-        const entry = state.watchlist[key] || { classId: cls.id, student, strikes: 0, typeStrikes: {}, carriedOffences: {} };
-        if (!entry.typeStrikes) entry.typeStrikes = {};
-        entry.strikes += 1;
-        // Count offences this week
-        const weekTally = {};
-        types.forEach(t => { weekTally[t] = (weekTally[t]||0)+1; });
-        // For each type that appeared this week, increment its cumulative strike count
-        Object.keys(weekTally).forEach(t => {
-          entry.typeStrikes[t] = (entry.typeStrikes[t]||0) + 1;
-        });
-        entry.carriedOffences = weekTally;
-        state.watchlist[key] = entry;
+function getUnassigned(cid){
+  const cls=state.classes.find(c=>c.id===cid);
+  if(!cls) return [];
+  const assigned=getAssignedStudents(cid);
+  return cls.students.filter(s=>!assigned.has(s));
+}
+
+function allStudentsInMap(cid){
+  const assigned=getAssignedStudents(cid);
+  const cls=state.classes.find(c=>c.id===cid);
+  return cls?[...assigned].filter(s=>cls.students.includes(s)):[];
+}
+
+/* ---- THRESHOLD ---- */
+const SOL_TRACKABLE=['Late','Attire','No Materials','Slow Start','No PLD'];
+function checkWeekThreshold(cid,student){
+  const thresh=state.settings.threshold||3;
+  const inc=weekIncidents(cid,student).filter(i=>!i.isSol&&!i.noFlag);
+  const tc={};inc.forEach(i=>{tc[i.type]=(tc[i.type]||0)+1});
+  const hit=thresh>0&&Object.values(tc).some(c=>c>=thresh);
+  const all=weekIncidents(cid,student).filter(i=>!i.noFlag);
+  return{hitThreshold:hit,over5:all.length>=5};
+}
+
+function checkSolThresholds(cid){
+  const cls=state.classes.find(c=>c.id===cid);if(!cls)return;
+  cls.students.forEach(student=>{
+    SOL_TRACKABLE.forEach(type=>{
+      const count=state.incidents.filter(i=>i.classId===cid&&i.student===student&&i.type===type&&i.isSol).length;
+      if(count>0&&count%3===0){
+        const key=wKey(cid,student);
+        const entry=state.watchlist[key]||{classId:cid,student,strikes:0,typeStrikes:{},solTypeCount:{},carriedOffences:{}};
+        if(!entry.typeStrikes)entry.typeStrikes={};if(!entry.solTypeCount)entry.solTypeCount={};
+        const prev=entry.solTypeCount[type]||0;
+        if(count>prev){entry.strikes+=1;entry.typeStrikes[type]=(entry.typeStrikes[type]||0)+1;entry.solTypeCount[type]=count;entry.carriedOffences[type]=count;state.watchlist[key]=entry;toast(`${student} — ${type} flagged ×${count}`)}
       }
     });
   });
-  state.currentTerm = nextT;
-  state.currentWeek = nextW;
-  save();
-  renderHome();
-  toast(`Now T${nextT} W${nextW}`);
 }
 
-/* SCREENS */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+/* ---- NEXT WEEK ---- */
+function confirmNextWeek(){
+  const nextW=state.currentWeek>=10?1:state.currentWeek+1;
+  const nextT=state.currentWeek>=10?state.currentTerm+1:state.currentTerm;
+  showConfirm(`Advance to T${nextT} W${nextW}?`,()=>doNextWeek(nextT,nextW));
+}
+function doNextWeek(nextT,nextW){
+  state.classes.forEach(cls=>{
+    const byStudent={};
+    state.incidents.filter(i=>i.classId===cls.id&&i.term===state.currentTerm&&i.week===state.currentWeek&&!i.isSol)
+      .forEach(i=>{if(!byStudent[i.student])byStudent[i.student]=[];byStudent[i.student].push(i.type)});
+    Object.entries(byStudent).forEach(([student,types])=>{
+      const tc={};types.forEach(t=>{tc[t]=(tc[t]||0)+1});
+      const thresh=state.settings.threshold||3;
+      const triggered=thresh>0?Object.entries(tc).filter(([,c])=>c>=thresh):[];
+      if(triggered.length>0){
+        const key=wKey(cls.id,student);
+        const entry=state.watchlist[key]||{classId:cls.id,student,strikes:0,typeStrikes:{},solTypeCount:{},carriedOffences:{}};
+        if(!entry.typeStrikes)entry.typeStrikes={};if(!entry.solTypeCount)entry.solTypeCount={};
+        entry.strikes+=1;triggered.forEach(([t])=>{entry.typeStrikes[t]=(entry.typeStrikes[t]||0)+1});
+        triggered.forEach(([t,c])=>{entry.carriedOffences[t]=c});state.watchlist[key]=entry;
+      }
+    });
+  });
+  state.currentTerm=nextT;state.currentWeek=nextW;save();renderHome();toast(`Now T${nextT} W${nextW}`);
+}
+
+/* ---- SCREENS ---- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'screen-home') renderHome();
-  if (id === 'screen-setup') { renderClassList(); updateClassSelect(); renderStudentList(); }
-  if (id === 'screen-watchlist') renderWatchlist();
+  if(id==='screen-home'){if(Object.keys(restroomTimers).length)stopAllRestroomTimers();renderHome()}
+  if(id==='screen-setup'){renderClassList();updateClassSelect();renderStudentList();updateSeatingClassSelect()}
+  if(id==='screen-watchlist') renderWatchlist();
+  if(id==='screen-settings') renderSettings();
 }
 
-/* HOME */
-function renderHome() {
-  document.getElementById('home-term').textContent = state.currentTerm;
-  document.getElementById('home-week').textContent = state.currentWeek;
-  const grid = document.getElementById('class-grid');
-  const empty = document.getElementById('home-empty');
-  grid.innerHTML = '';
-  if (!state.classes.length) { empty.style.display = 'block'; grid.style.display = 'none'; return; }
-  empty.style.display = 'none'; grid.style.display = 'grid';
-  state.classes.forEach(cls => {
-    const n = state.incidents.filter(i => i.classId === cls.id && i.term === state.currentTerm && i.week === state.currentWeek).length;
-    const wCount = Object.values(state.watchlist).filter(w => w.classId === cls.id && w.strikes > 0).length;
-    let badge = n > 0
-      ? `<span class="class-badge incident">${n} incident${n>1?'s':''}</span>`
-      : wCount > 0 ? `<span class="class-badge watch">${wCount} on watchlist</span>`
-      : `<span class="class-badge none">${cls.students.length} students</span>`;
-    const d = document.createElement('div');
-    d.className = 'class-card';
-    d.innerHTML = `<div><div class="class-card-name">${esc(cls.name)}</div><div class="class-card-sub">${esc(cls.subject)}</div></div>${badge}`;
-    d.onclick = () => openClass(cls.id);
-    grid.appendChild(d);
+/* ---- HOME ---- */
+function renderHome(){
+  document.getElementById('home-term').textContent=state.currentTerm;
+  document.getElementById('home-week').textContent=state.currentWeek;
+  const grid=document.getElementById('class-grid'),empty=document.getElementById('home-empty');
+  grid.innerHTML='';
+  if(!state.classes.length){empty.style.display='block';grid.style.display='none';return}
+  empty.style.display='none';grid.style.display='grid';
+  state.classes.forEach(cls=>{
+    const n=state.incidents.filter(i=>i.classId===cls.id&&i.term===state.currentTerm&&i.week===state.currentWeek).length;
+    const wc=Object.values(state.watchlist).filter(w=>w.classId===cls.id&&w.strikes>0).length;
+    const badge=n>0?`<span class="class-badge incident">${n} incident${n>1?'s':''}</span>`:wc>0?`<span class="class-badge watch">${wc} on watchlist</span>`:`<span class="class-badge none">${cls.students.length} students</span>`;
+    const d=document.createElement('div');d.className='class-card';
+    d.innerHTML=`<div><div class="class-card-name">${esc(cls.name)}</div><div class="class-card-sub">${esc(cls.subject)}</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+        <div style="flex:1">${badge}</div>
+        <span style="font-size:11px;font-weight:500;color:var(--blue-text);cursor:pointer;padding:3px 8px;border:0.5px solid var(--blue);border-radius:99px;background:var(--blue-bg);white-space:nowrap" onclick="event.stopPropagation();openClassReport(${cls.id})">Report</span>
+      </div>`;
+    d.onclick=()=>openClass(cls.id);grid.appendChild(d);
   });
 }
 
-/* OPEN CLASS — show lesson picker first */
-function openClass(id) {
-  currentClassId = id;
-  currentLesson = null;
-  openLessonPicker(false);
+/* ---- OPEN CLASS ---- */
+function openClass(id){
+  currentClassId=id;currentLesson=null;currentPage=0;
+  pickerIsChange=false;openLessonPicker(false);
 }
 
-/* LESSON PICKER */
-function openLessonPicker(isGlobal) {
-  pickerIsGlobal = isGlobal;
-  // Pre-select current global term/week
-  pickerTerm = state.currentTerm;
-  pickerWeek = state.currentWeek;
-  pickerLesson = currentLesson ? currentLesson.lesson : null;
-  syncChips();
+/* ---- LESSON PICKER ---- */
+function openLessonPicker(isChange){
+  pickerIsChange=isChange;pickerTerm=state.currentTerm;pickerWeek=state.currentWeek;
+  pickerLesson=currentLesson?currentLesson.lesson:null;syncChips();
   document.getElementById('backdrop').classList.add('open');
   document.getElementById('lesson-picker').classList.add('open');
 }
-
-function syncChips() {
-  ['term','week','lesson'].forEach(type => {
-    const val = type === 'term' ? pickerTerm : type === 'week' ? pickerWeek : pickerLesson;
-    document.querySelectorAll(`#chips-${type} .chip`).forEach(c => {
-      const n = parseInt(c.textContent.replace(/[TWL]/,''));
-      c.classList.toggle('selected', n === val);
-    });
+function syncChips(){
+  ['term','week','lesson'].forEach(type=>{
+    const val=type==='term'?pickerTerm:type==='week'?pickerWeek:pickerLesson;
+    document.querySelectorAll(`#chips-${type} .chip`).forEach(c=>{c.classList.toggle('selected',parseInt(c.textContent.replace(/[TWL]/,''))===val)});
   });
-  const ready = pickerTerm && pickerWeek && pickerLesson;
-  document.getElementById('picker-confirm').disabled = !ready;
+  document.getElementById('picker-confirm').disabled=!(pickerTerm&&pickerWeek&&pickerLesson);
 }
-
-function selectChip(type, val) {
-  if (type === 'term') pickerTerm = val;
-  else if (type === 'week') pickerWeek = val;
-  else pickerLesson = val;
-  syncChips();
+function selectChip(type,val){
+  if(type==='term')pickerTerm=val;else if(type==='week')pickerWeek=val;else pickerLesson=val;syncChips();
 }
-
-function confirmLesson() {
-  if (!pickerTerm || !pickerWeek || !pickerLesson) return;
+function confirmLesson(){
+  if(!pickerTerm||!pickerWeek||!pickerLesson)return;
   closeAllPanels();
-  currentLesson = { term: pickerTerm, week: pickerWeek, lesson: pickerLesson };
-  document.getElementById('lesson-banner-text').textContent = lessonLabel(pickerTerm, pickerWeek, pickerLesson);
-  const cls = state.classes.find(c => c.id === currentClassId);
-  document.getElementById('class-title').textContent = cls.name;
-  document.getElementById('class-subtitle').textContent = cls.subject;
-  renderStudentGrid();
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  currentLesson={term:pickerTerm,week:pickerWeek,lesson:pickerLesson};
+  if(pickerIsChange){document.getElementById('lesson-banner-text').textContent=lessonLabel(pickerTerm,pickerWeek,pickerLesson);renderSeatingMap();return}
+  goToStudentGrid();
+}
+function cancelPicker(){closeAllPanels();if(!currentLesson)showScreen('screen-home')}
+
+/* ---- STUDENT GRID (SEATING MAP) ---- */
+function goToStudentGrid(){
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('class-title').textContent=cls.name;
+  document.getElementById('class-subtitle').textContent=cls.subject;
+  document.getElementById('lesson-banner-text').textContent=lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson);
+  currentPage=0;renderSeatingMap();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-students').classList.add('active');
 }
 
-function closeAllPanels() {
-  document.getElementById('backdrop').classList.remove('open');
-  document.getElementById('lesson-picker').classList.remove('open');
-  document.getElementById('beh-panel').classList.remove('open');
-  selectedStudent = null;
+function isAbsent(name){
+  if(!currentLesson)return false;
+  return !!state.solData[`sol|${currentClassId}|${name}|${lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson)}`];
 }
 
-function cancelLessonPicker() {
-  closeAllPanels();
-  // If no lesson set yet (came from home), go back to home
-  if (!currentLesson) showScreen('screen-home');
-}
+function renderSeatingMap(){
+  const slider=document.getElementById('seat-slider');
+  const dots=document.getElementById('page-dots');
+  slider.innerHTML='';dots.innerHTML='';
+  const map=getSeatMap(currentClassId);
 
-/* STUDENTS */
-let dragSrc = null, dragLongTimer = null, isDragging = false;
+  map.forEach((col,pageIdx)=>{
+    const page=document.createElement('div');
+    page.className='seat-page';
 
-function renderStudentGrid() {
-  const grid = document.getElementById('student-grid');
-  grid.innerHTML = '';
-  const cls = state.classes.find(c => c.id === currentClassId);
-  if (!cls || !cls.students.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><strong>No students</strong>Go to Setup → Students.</div>';
-    return;
-  }
-  cls.students.forEach(name => {
-    const inc = weekInc(currentClassId, name);
-    const watch = getWatch(currentClassId, name);
-    const onWatch = watch && watch.strikes > 0;
-    let btnClass = 'student-btn';
-    if (inc.length > 0) btnClass += ' flagged';
-    else if (onWatch) btnClass += ' on-watch';
+    // Header
+    const hdr=document.createElement('div');
+    hdr.className='seat-page-header';
+    hdr.innerHTML=`<div><div class="seat-col-label">Column ${pageIdx+1}</div><div class="seat-col-sub">${col.rows.length} rows · ${col.rows[0]?col.rows[0].length:2} seats/row</div></div>`;
+    page.appendChild(hdr);
 
-    const tally = {};
-    inc.forEach(i => { tally[i.type] = (tally[i.type]||0)+1; });
-    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
-    const weekBadges = badgeOrder.filter(t => tally[t]).map(t => `<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
-    const typeStrikes = (watch && watch.typeStrikes) || {};
-    const watchBadges = badgeOrder.filter(t => typeStrikes[t]).map(t => `<span class="ob ${behClass(t)} ob-watch">${typeStrikes[t]}</span>`).join('');
-    const allBadges = watchBadges + weekBadges;
+    // Calculate card height dynamically
+    const rows=col.rows.length;
+    const seatsPerRow=col.rows[0]?col.rows[0].length:2;
 
-    const btn = document.createElement('div');
-    btn.className = btnClass;
-    btn.dataset.name = name;
-    btn.innerHTML = `
-      <div class="student-btn-name">${esc(name)}</div>
-      ${allBadges ? `<div class="offence-badges">${allBadges}</div>` : ''}`;
+    // Build rows
+    col.rows.forEach((row,rowIdx)=>{
+      const rowEl=document.createElement('div');
+      rowEl.className='seat-row';
+      rowEl.style.gridTemplateColumns=`repeat(${seatsPerRow},1fr)`;
+      row.forEach((name,seatIdx)=>{
+        const btn=document.createElement('div');
+        if(name){
+          const inc=weekIncidents(currentClassId,name);
+          const watch=getWatch(currentClassId,name);
+          const absent=isAbsent(name);
+          const{hitThreshold}=checkWeekThreshold(currentClassId,name);
+          const onWatch=watch&&watch.strikes>0;
+          const inRestroom=!!restroomTimers[name];
+          const restroomMins=inRestroom?Math.round((Date.now()-restroomTimers[name])/60000):0;
+          const longRestroom=inRestroom&&restroomMins>=10;
 
-    // Long press to drag
-    btn.addEventListener('touchstart', e => {
-      isDragging = false;
-      dragLongTimer = setTimeout(() => {
-        isDragging = true;
-        dragSrc = btn;
-        btn.classList.add('drag-ready');
-        navigator.vibrate && navigator.vibrate(40);
-      }, 450);
-    }, {passive: true});
+          // Previous restroom trips this week (completed, not current)
+          const restroomIncs=state.incidents.filter(i=>
+            i.classId===currentClassId&&i.student===name&&i.isRestroom&&
+            i.term===state.currentTerm&&i.week===state.currentWeek
+          );
+          const restroomCount=restroomIncs.length;
+          const hadLongRestroom=restroomIncs.some(i=>i.detail&&parseInt(i.detail)>=10);
 
-    btn.addEventListener('touchmove', e => {
-      if (!isDragging) { clearTimeout(dragLongTimer); return; }
-      e.preventDefault();
-      const touch = e.touches[0];
-      const el = document.elementFromPoint(touch.clientX, touch.clientY);
-      const target = el && el.closest('.student-btn');
-      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
-      if (target && target !== dragSrc) target.classList.add('drag-over');
-    }, {passive: false});
+          // Behaviour tally (non-SOL, non-restroom, this week)
+          const tally={};
+          inc.filter(i=>!i.isSol&&!i.noFlag).forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
+          const behOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Device','Sleeping'];
 
-    btn.addEventListener('touchend', e => {
-      clearTimeout(dragLongTimer);
-      if (!isDragging) { openPanel(name); return; }
-      isDragging = false;
-      const touch = e.changedTouches[0];
-      const el = document.elementFromPoint(touch.clientX, touch.clientY);
-      const target = el && el.closest('.student-btn');
-      btn.classList.remove('drag-ready');
-      grid.querySelectorAll('.student-btn').forEach(b => b.classList.remove('drag-over'));
-      if (target && target !== dragSrc) {
-        // Swap in the class students array
-        const cls2 = state.classes.find(c => c.id === currentClassId);
-        const srcIdx = cls2.students.indexOf(dragSrc.dataset.name);
-        const tgtIdx = cls2.students.indexOf(target.dataset.name);
-        if (srcIdx !== -1 && tgtIdx !== -1) {
-          cls2.students.splice(srcIdx, 1);
-          cls2.students.splice(tgtIdx, 0, dragSrc.dataset.name);
-          save();
-          renderStudentGrid();
+          // Border: most severe flagged type
+          const severityOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Attire','Device','No PLD','Sleeping'];
+          const ts=(watch&&watch.typeStrikes)||{};
+          const allFlaggedTypes=[...Object.keys(tally).filter(t=>tally[t]>0),...Object.keys(ts).filter(t=>ts[t]>0)];
+          const mostSevere=severityOrder.find(t=>allFlaggedTypes.includes(t));
+          const borderColVar=mostSevere?behClass(mostSevere).replace('c-',''):'orange';
+
+          // Card class + border
+          let cls2='seat-btn';
+          if(longRestroom) cls2+=' restroom-long';
+          else if(inRestroom) cls2+=' restroom';
+          else if(absent) cls2+=' absent';
+          const borderStyle=(!absent&&!inRestroom&&(onWatch||hitThreshold))?
+            `border:2px solid var(--${borderColVar});`:'';
+
+          // ── TOP-LEFT: Offence pill (history) ──
+          const topLeft=onWatch
+            ?`<span style="position:absolute;top:-7px;left:-7px;background:var(--${borderColVar});color:#fff;font-size:9px;font-weight:700;border-radius:99px;padding:2px 5px;border:2px solid var(--bg);line-height:1;z-index:2">O${watch.strikes}</span>`
+            :'';
+
+          // ── TOP-RIGHT: Threshold exceeded dots + SOL dots ──
+          const thresh=state.settings&&state.settings.threshold||3;
+          const threshDotSpans=thresh>0?behOrder.filter(t=>tally[t]&&tally[t]>=thresh).map(t=>{
+            const count=Math.floor(tally[t]/thresh);
+            return Array(count).fill(`<span style="width:7px;height:7px;border-radius:50%;background:var(--${behClass(t).replace('c-','')});display:inline-block;flex-shrink:0;border:1.5px solid var(--bg)"></span>`).join('');
+          }).join(''):'';
+          const solTypes=SOL_TRACKABLE.filter(t=>
+            state.incidents.some(i=>i.classId===currentClassId&&i.student===name&&i.type===t&&i.isSol&&i.term===state.currentTerm&&i.week===state.currentWeek)
+          );
+          const solDotSpans=solTypes.map(t=>`<span style="width:5px;height:5px;border-radius:50%;background:var(--${behClass(t).replace('c-','')});display:inline-block;flex-shrink:0"></span>`).join('');
+          const topRight=(threshDotSpans||solDotSpans)
+            ?`<span style="position:absolute;top:3px;right:3px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;z-index:2">
+                ${threshDotSpans?`<span style="display:flex;gap:1px;flex-wrap:wrap;justify-content:flex-end">${threshDotSpans}</span>`:''}
+                ${solDotSpans?`<span style="display:flex;gap:1px;flex-wrap:wrap;justify-content:flex-end">${solDotSpans}</span>`:''}
+              </span>`
+            :'';
+
+          // ── BOTTOM-LEFT: Restroom history (previous trips this week) ──
+          const bottomLeft=(!inRestroom&&restroomCount>0)
+            ?`<span style="position:absolute;bottom:3px;left:4px;font-size:9px;font-weight:600;color:${hadLongRestroom?'var(--red-text)':'var(--teal-text)'};line-height:1;z-index:2">🚻${restroomCount>1?restroomCount:''}${hadLongRestroom?'⚠':''}</span>`
+            :'';
+
+          // ── BOTTOM-RIGHT: Live restroom timer ──
+          const bottomRight=inRestroom
+            ?`<span style="position:absolute;bottom:3px;right:4px;font-size:9px;font-weight:600;color:${longRestroom?'var(--red-text)':'var(--teal-text)'};line-height:1;z-index:2">🚻${restroomMins}m${longRestroom?'⚠':''}</span>`
+            :'';
+
+          // Note dot (keep top-left area, use a tiny blue dot if no offence pill)
+          const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
+          const hasNote=!!(state.notes[nKey]&&state.notes[nKey].trim());
+          const noteDot=(!onWatch&&hasNote)?'<span class="note-dot"></span>':'';
+
+          // Under-name badges (in-class counts only)
+          const wkBadges=behOrder.filter(t=>tally[t]).map(t=>`<span class="ob ${behClass(t)}">${tally[t]}</span>`).join('');
+
+          btn.className=cls2;
+          if(borderStyle) btn.style.cssText=borderStyle;
+          btn.innerHTML=`
+            ${noteDot}
+            ${topLeft}
+            ${topRight}
+            ${bottomLeft}
+            ${bottomRight}
+            <div class="seat-name">${esc(name)}</div>
+            ${wkBadges?`<div class="seat-badges">${wkBadges}</div>`:''}`;
+          btn.addEventListener('click',()=>openPanel(name));
+        } else {
+          btn.className='seat-btn';
+          btn.style.background='transparent';
+          btn.style.border='none';
+          btn.style.cursor='default';
         }
-      }
-      dragSrc = null;
+        rowEl.appendChild(btn);
+      });
+      page.appendChild(rowEl);
     });
+    slider.appendChild(page);
 
-    grid.appendChild(btn);
+    // Dot
+    const dot=document.createElement('div');
+    dot.className='page-dot'+(pageIdx===currentPage?' active':'');
+    dots.appendChild(dot);
   });
+
+  // Set slider position
+  slider.style.transform=`translateX(-${currentPage*100}%)`;
+
+  // Swipe handling
+  let startX=0,startY=0,moved=false;
+  const outer=document.getElementById('seat-outer');
+  outer.ontouchstart=e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;moved=false};
+  outer.ontouchmove=e=>{
+    const dx=e.touches[0].clientX-startX;
+    const dy=Math.abs(e.touches[0].clientY-startY);
+    if(Math.abs(dx)>dy&&Math.abs(dx)>10){moved=true;e.preventDefault()}
+  };
+  outer.ontouchend=e=>{
+    if(!moved)return;
+    const dx=e.changedTouches[0].clientX-startX;
+    if(dx<-40&&currentPage<map.length-1)currentPage++;
+    else if(dx>40&&currentPage>0)currentPage--;
+    slider.style.transform=`translateX(-${currentPage*100}%)`;
+    document.querySelectorAll('.page-dot').forEach((d,i)=>{d.classList.toggle('active',i===currentPage)});
+  };
 }
 
-/* BEHAVIOUR PANEL */
-function openPanel(name) {
-  if (!currentLesson) { openLessonPicker(false); return; }
-  selectedStudent = name;
-  document.getElementById('panel-name').textContent = name;
-
-  // Watchinfo
-  const watch = getWatch(currentClassId, name);
-  const info = document.getElementById('panel-watchinfo');
-  if (watch && watch.strikes > 0) {
-    const typeStrikes = watch.typeStrikes || {};
-    const badgeOrder = ['Disruptive','Rude','Vulgarity','Talking','Late','No Work','Attire','Device','No Materials','Slow Start','Sleeping'];
-    const parts = badgeOrder.filter(t => typeStrikes[t])
-      .map(t => `${t} ×${typeStrikes[t]} wk${typeStrikes[t]>1?'s':''}`).join(' · ');
-    info.innerHTML = `Watchlist · ${watch.strikes} week${watch.strikes>1?'s':''} flagged<br><span style="opacity:0.8">${parts}</span>`;
-    info.style.display = 'block';
-  } else { info.style.display = 'none'; }
-
-  // Show this week's logged incidents with delete option
+/* ---- BEHAVIOUR PANEL ---- */
+function openPanel(name){
+  if(!currentLesson){openLessonPicker(false);return}
+  selectedStudent=name;
+  document.getElementById('panel-name').textContent=name;
+  const watch=getWatch(currentClassId,name);
+  const info=document.getElementById('panel-watchinfo');
+  if(watch&&watch.strikes>0){
+    const ts=watch.typeStrikes||{};
+    const parts=Object.entries(ts).map(([t,c])=>`${t} ×${c}wk`).join(' · ');
+    info.innerHTML=`<strong>Offence ${watch.strikes}</strong> · ${watch.strikes} week${watch.strikes>1?'s':''} flagged<br><span style="opacity:.8">${parts}</span>`;
+    info.style.display='block';
+  } else info.style.display='none';
   renderPanelLogged(name);
-
+  const nKey=noteKey(currentClassId,name,state.currentTerm,state.currentWeek);
+  document.getElementById('panel-note-text').value=state.notes[nKey]||'';
   document.getElementById('beh-panel').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
 }
 
-function renderPanelLogged(name) {
-  const inc = weekInc(currentClassId, name);
-  const el = document.getElementById('panel-logged');
-  if (!inc.length) { el.style.display = 'none'; return; }
-  el.style.display = 'block';
-  let html = `<div class="panel-logged-title">Logged this week — tap to remove</div>`;
-  inc.forEach(i => {
-    html += `<div class="panel-logged-item">
-      <div class="log-dot ${behClass(i.type)}" style="flex-shrink:0"></div>
-      <div class="panel-logged-type">${i.type}</div>
-      <div class="panel-logged-time">${i.time}</div>
-      <button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button>
+function renderPanelLogged(name){
+  const inc=state.incidents.filter(i=>
+    i.classId===currentClassId&&i.student===name&&
+    i.term===state.currentTerm&&i.week===state.currentWeek
+  ).filter(i=>!i.isSol);
+  const el=document.getElementById('panel-logged');
+  if(!inc.length){el.style.display='none';return}
+  el.style.display='block';
+  let html=`<div class="panel-logged-title">Logged this week — tap to remove</div>`;
+  inc.forEach(i=>{
+    const label=i.isRestroom?`🚻 ${i.displayDetail||i.detail||'Restroom'}`:i.type+(i.isSol?' (entry)':'');
+    html+=`<div class="panel-logged-item"><div class="log-dot ${i.isRestroom?'c-teal':behClass(i.type)}"></div><div class="panel-logged-type">${label}</div><div class="panel-logged-time">${i.time}</div><button class="panel-logged-del" onclick="deletePanelIncident(${i.id})">Remove</button></div>`;
+  });
+  el.innerHTML=html;
+}
+
+function deletePanelIncident(id){
+  state.incidents=state.incidents.filter(i=>i.id!==id);save();renderSeatingMap();renderPanelLogged(selectedStudent);
+}
+
+function saveNote(){
+  const nKey=noteKey(currentClassId,selectedStudent,state.currentTerm,state.currentWeek);
+  const val=document.getElementById('panel-note-text').value.trim();
+  if(val)state.notes[nKey]=val;else delete state.notes[nKey];
+  save();renderSeatingMap();toast('Note saved');
+}
+
+function logBehaviour(type){
+  const now=new Date();const student=selectedStudent;
+  state.incidents.push({
+    id:Date.now(),classId:currentClassId,student,type,
+    term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+    time:now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}),
+    date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'})
+  });
+  save();closeAllPanels();
+  // Check for immediate threshold flag
+  const thresh=state.settings.threshold||3;
+  if(thresh>0){
+    const inc=weekIncidents(currentClassId,student).filter(i=>!i.isSol&&!i.noFlag);
+    const tc={};inc.forEach(i=>{tc[i.type]=(tc[i.type]||0)+1});
+    const triggered=Object.entries(tc).filter(([,c])=>c>=thresh&&c%thresh===0);
+    triggered.forEach(([t,c])=>{
+      const key=wKey(currentClassId,student);
+      const entry=state.watchlist[key]||{classId:currentClassId,student,strikes:0,typeStrikes:{},solTypeCount:{},carriedOffences:{},offenceNotes:{}};
+      if(!entry.typeStrikes)entry.typeStrikes={};
+      if(!entry.carriedOffences)entry.carriedOffences={};
+      if(!entry.offenceNotes)entry.offenceNotes={};
+      // Only add a strike if this exact count milestone is new
+      const prevCarried=entry.carriedOffences[t]||0;
+      if(c>prevCarried){
+        entry.strikes+=1;
+        entry.typeStrikes[t]=(entry.typeStrikes[t]||0)+1;
+        entry.carriedOffences[t]=c;
+        entry.offenceNotes[entry.strikes]={date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'})};
+        state.watchlist[key]=entry;
+        save();
+        toast(`${student} — ${t} ×${c} → Offence ${entry.strikes}!`);
+      }
+    });
+  }
+  renderSeatingMap();
+}
+
+function toggleRestroom(){
+  if(!selectedStudent)return;
+  const name=selectedStudent;
+  if(restroomTimers[name]){
+    const startTs=restroomTimers[name];
+    const endTs=Date.now();
+    const mins=Math.round((endTs-startTs)/60000);
+    const now=new Date();
+    const startTime=new Date(startTs).toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+    const endTime=now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+    const isLong=mins>=10;
+    state.incidents.push({
+      id:Date.now(),classId:currentClassId,student:name,type:'Restroom',
+      detail:`${mins}`,
+      displayDetail:`${isLong?'⚠ ':''}${startTime} – ${endTime} (${mins} min)`,
+      term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+      time:startTime,date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'}),
+      isRestroom:true,noFlag:true,isLongRestroom:isLong
+    });
+    delete restroomTimers[name];save();closeAllPanels();renderSeatingMap();
+    toast(`${name} — back ${mins} min${isLong?' ⚠':''}`);
+  } else {
+    restroomTimers[name]=Date.now();
+    closeAllPanels();renderSeatingMap();
+    const startTime=new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+    toast(`${name} — restroom ${startTime}`);
+    if(!restroomInterval) restroomInterval=setInterval(()=>{
+      if(document.getElementById('screen-students').classList.contains('active')){
+        // Check for 10min alert
+        Object.entries(restroomTimers).forEach(([n,ts])=>{
+          const mins=Math.round((Date.now()-ts)/60000);
+          if(mins===10) toast(`⚠ ${n} — restroom 10 min!`);
+        });
+        renderSeatingMap();
+      }
+    },60000);
+  }
+}
+
+function stopAllRestroomTimers(){
+  Object.keys(restroomTimers).forEach(name=>{
+    const mins=Math.round((Date.now()-restroomTimers[name])/60000);
+    const now=new Date();
+    if(currentLesson){
+      const isLong=mins>=10;
+      state.incidents.push({id:Date.now()+Math.random(),classId:currentClassId,student:name,type:'Restroom',
+        detail:`${mins}`,displayDetail:`${isLong?'⚠ ':''}auto-stopped (${mins} min)`,
+        term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,
+        time:now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}),
+        date:now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'}),
+        isRestroom:true,noFlag:true,isLongRestroom:isLong});
+    }
+  });
+  restroomTimers={};
+  if(restroomInterval){clearInterval(restroomInterval);restroomInterval=null}
+  save();
+}
+
+function closeAllPanels(){
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('lesson-picker').classList.remove('open');
+  document.getElementById('beh-panel').classList.remove('open');
+  selectedStudent=null;
+}
+
+/* ---- SOL ---- */
+function openSol(){
+  if(!currentLesson){openLessonPicker(false);return}
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('sol-class-title').textContent=cls.name;
+  document.getElementById('sol-lesson-label').textContent=lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson);
+  // Restore from saved data
+  solSelections={};
+  cls.students.forEach(name=>{
+    const s={absent:false,late:false,attire:false,nomats:false,nopld:false,slowstart:false,reason:''};
+    const solKey=`sol|${currentClassId}|${name}|${lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson)}`;
+    if(state.solData[solKey]){s.absent=true;s.reason=state.solData[solKey].reason||''}
+    const li=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name&&i.isSol&&i.term===currentLesson.term&&i.week===currentLesson.week&&i.lesson===currentLesson.lesson);
+    li.forEach(i=>{if(i.type==='Late')s.late=true;if(i.type==='Attire')s.attire=true;if(i.type==='No Materials')s.nomats=true;if(i.type==='No PLD')s.nopld=true;if(i.type==='Slow Start')s.slowstart=true});
+    solSelections[name]=s;
+  });
+  renderSolList();showScreen('screen-sol');
+}
+
+function renderSolList(){
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  const slider=document.getElementById('sol-slider');
+  const dots=document.getElementById('sol-dots');
+  slider.innerHTML='';dots.innerHTML='';
+  const map=getSeatMap(currentClassId);
+  const solChips=[
+    {key:'absent',label:'Abs',cls:'absent'},
+    {key:'late',label:'Late',cls:'late'},
+    {key:'attire',label:'Att',cls:'attire'},
+    {key:'nomats',label:'No Mats',cls:'nomats'},
+    {key:'nopld',label:'No PLD',cls:'nopld'},
+    {key:'slowstart',label:'Slow',cls:'slowstart'}
+  ];
+
+  map.forEach((col,pi)=>{
+    const colStudents=[];
+    col.rows.forEach(row=>row.forEach(n=>{if(n&&cls.students.includes(n))colStudents.push(n)}));
+    const page=document.createElement('div');
+    page.className='seat-page';
+    // Header
+    const hdr=document.createElement('div');
+    hdr.className='seat-page-header';
+    hdr.innerHTML=`<div class="seat-col-label">Column ${pi+1}</div>`;
+    page.appendChild(hdr);
+
+    if(!colStudents.length){
+      const empty=document.createElement('div');
+      empty.className='empty';empty.innerHTML='<strong>No students assigned</strong>';
+      page.appendChild(empty);
+    } else {
+      // Render same grid as seating map
+      const seatsPerRow=col.rows[0]?col.rows[0].length:2;
+      col.rows.forEach((row)=>{
+        const rowEl=document.createElement('div');
+        rowEl.className='seat-row';
+        rowEl.style.gridTemplateColumns=`repeat(${seatsPerRow},1fr)`;
+        rowEl.style.gap='8px';
+        row.forEach(name=>{
+          const card=document.createElement('div');
+          if(name&&cls.students.includes(name)){
+            if(!solSelections[name])solSelections[name]={absent:false,late:false,attire:false,nomats:false,nopld:false,slowstart:false,reason:''};
+            const s=solSelections[name];
+            const hasFlag=s.late||s.attire||s.nomats||s.nopld||s.slowstart;
+            card.className='sol-seat-btn'+(s.absent?' sol-absent':hasFlag?' sol-has-flag':'');
+            // Name
+            const nm=document.createElement('div');nm.className='sol-name-text';nm.textContent=name;card.appendChild(nm);
+            // Chips inline
+            const cr=document.createElement('div');cr.className='sol-chips-inline';
+            solChips.forEach(({key,label,cls:cc})=>{
+              const btn=document.createElement('button');
+              btn.className=`sol-chip ${cc}${s[key]?' active':''}`;
+              btn.style.cssText='font-size:9px;padding:2px 6px';
+              btn.textContent=label;
+              btn.onclick=e=>{e.stopPropagation();toggleSol(name,key)};
+              cr.appendChild(btn);
+            });
+            card.appendChild(cr);
+            // Reason input if absent
+            if(s.absent){
+              const inp=document.createElement('input');inp.className='sol-reason-input';
+              inp.style.cssText='font-size:11px;padding:4px 6px';
+              inp.placeholder='Reason';inp.value=s.reason||'';
+              inp.oninput=e=>solReason(name,e.target.value);
+              inp.onclick=e=>e.stopPropagation();
+              card.appendChild(inp);
+            }
+          } else {
+            card.className='seat-btn';
+            card.style.cssText='background:transparent;border:none;cursor:default';
+          }
+          rowEl.appendChild(card);
+        });
+        page.appendChild(rowEl);
+      });
+    }
+    slider.appendChild(page);
+
+    // Dot
+    const dot=document.createElement('div');
+    dot.className='page-dot'+(pi===0?' active':'');
+    dots.appendChild(dot);
+  });
+
+  // Unassigned
+  const unassigned=getUnassigned(currentClassId).filter(n=>cls.students.includes(n));
+  if(unassigned.length){
+    const page=document.createElement('div');page.className='seat-page scrollable';
+    const hdr=document.createElement('div');hdr.className='seat-page-header';
+    hdr.innerHTML='<div class="seat-col-label">Unassigned</div>';
+    page.appendChild(hdr);
+    unassigned.forEach(name=>{
+      if(!solSelections[name])solSelections[name]={absent:false,late:false,attire:false,nomats:false,nopld:false,slowstart:false,reason:''};
+      const s=solSelections[name];
+      const card=document.createElement('div');
+      card.className='sol-seat-btn'+(s.absent?' sol-absent':((s.late||s.attire||s.nomats||s.nopld||s.slowstart)?' sol-has-flag':''));
+      card.style.marginBottom='8px';
+      const nm=document.createElement('div');nm.className='sol-name-text';nm.textContent=name;card.appendChild(nm);
+      const cr=document.createElement('div');cr.className='sol-chips-inline';
+      solChips.forEach(({key,label,cls:cc})=>{const btn=document.createElement('button');btn.className=`sol-chip ${cc}${s[key]?' active':''}`;btn.style.cssText='font-size:9px;padding:2px 6px';btn.textContent=label;btn.onclick=e=>{e.stopPropagation();toggleSol(name,key)};cr.appendChild(btn)});
+      card.appendChild(cr);
+      page.appendChild(card);
+    });
+    slider.appendChild(page);
+    const dot=document.createElement('div');dot.className='page-dot';dots.appendChild(dot);
+  }
+
+  // Swipe handling for SOL
+  let sx=0,sy=0,sm=false,isVertical=false,solPage=0;
+  const outer=document.getElementById('sol-outer');
+  const totalPages=slider.children.length;
+  outer.ontouchstart=e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;sm=false;isVertical=false};
+  outer.ontouchmove=e=>{
+    const dx=Math.abs(e.touches[0].clientX-sx);
+    const dy=Math.abs(e.touches[0].clientY-sy);
+    if(!sm&&!isVertical){
+      if(dy>dx&&dy>8){isVertical=true;return} // vertical — let scroll happen
+      if(dx>dy&&dx>10){sm=true;e.preventDefault()} // horizontal — swipe
+    } else if(sm){e.preventDefault()}
+  };
+  outer.ontouchend=e=>{
+    if(!sm)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(dx<-40&&solPage<totalPages-1)solPage++;
+    else if(dx>40&&solPage>0)solPage--;
+    slider.style.transform=`translateX(-${solPage*100}%)`;
+    document.querySelectorAll('#sol-dots .page-dot').forEach((d,i)=>d.classList.toggle('active',i===solPage));
+  };
+}
+
+function toggleSol(name,type){
+  if(!solSelections[name])solSelections[name]={absent:false,late:false,attire:false,nomats:false,nopld:false,slowstart:false,reason:''};
+  solSelections[name][type]=!solSelections[name][type];
+  if(type==='absent'&&solSelections[name].absent){
+    solSelections[name].late=false;solSelections[name].attire=false;
+    solSelections[name].nomats=false;solSelections[name].nopld=false;solSelections[name].slowstart=false;
+  }
+  // Auto-save immediately so Back doesn't lose data
+  saveSolSelections();
+  renderSolList();
+}
+function solReason(name,val){
+  if(solSelections[name])solSelections[name].reason=val;
+  saveSolSelections();
+}
+
+function saveSolSelections(){
+  if(!currentLesson)return;
+  const cls=state.classes.find(c=>c.id===currentClassId);if(!cls)return;
+  const now=new Date();
+  const time=now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+  const date=now.toLocaleDateString('en-SG',{day:'2-digit',month:'short'});
+  // Clear existing SOL for this lesson then re-write
+  state.incidents=state.incidents.filter(i=>!(i.classId===currentClassId&&i.isSol&&i.term===currentLesson.term&&i.week===currentLesson.week&&i.lesson===currentLesson.lesson));
+  Object.keys(state.solData).forEach(k=>{const d=state.solData[k];if(d.classId===currentClassId&&d.term===currentLesson.term&&d.week===currentLesson.week&&d.lesson===currentLesson.lesson)delete state.solData[k]});
+  Object.entries(solSelections).forEach(([student,s])=>{
+    const types=[];
+    if(s.late)types.push('Late');if(s.attire)types.push('Attire');
+    if(s.nomats)types.push('No Materials');if(s.nopld)types.push('No PLD');if(s.slowstart)types.push('Slow Start');
+    if(s.absent){
+      const solKey=`sol|${currentClassId}|${student}|${lessonLabel(currentLesson.term,currentLesson.week,currentLesson.lesson)}`;
+      state.solData[solKey]={student,reason:s.reason,date,time,term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,classId:currentClassId};
+    }
+    types.forEach(type=>{state.incidents.push({id:Date.now()+Math.random(),classId:currentClassId,student,type,term:currentLesson.term,week:currentLesson.week,lesson:currentLesson.lesson,time,date,isSol:true})});
+  });
+  save();
+}
+
+function confirmSol(){
+  saveSolSelections();
+  checkSolThresholds(currentClassId);
+  save();
+  showScreen('screen-students');
+  renderSeatingMap();
+}
+
+/* ---- LOG ---- */
+function renderByType(incidents){
+  // Group incidents by type, return html string
+  const typeOrder=['Rude','Vulgarity','Disruptive','Talking','Disengaged','No Work','Device','Sleeping','Late','Attire','No Materials','No PLD','Slow Start','Restroom'];
+  const byType={};
+  incidents.forEach(i=>{
+    const t=i.isRestroom?'Restroom':i.type;
+    if(!byType[t])byType[t]=[];
+    byType[t].push(i);
+  });
+  let html='';
+  typeOrder.filter(t=>byType[t]&&byType[t].length).forEach(t=>{
+    const items=byType[t];
+    const names=[...new Set(items.map(i=>i.student))];
+    const dotCol=t==='Restroom'?'c-teal':behClass(t);
+    html+=`<div style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <div class="log-dot ${dotCol}" style="width:9px;height:9px;flex-shrink:0"></div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${t}</div>
+        <div style="font-size:12px;color:var(--text3);background:var(--surface2);border-radius:99px;padding:1px 7px">${items.length}</div>
+      </div>
+      <div style="padding-left:17px;font-size:13px;color:var(--text2);line-height:1.7">${names.map(n=>esc(n)).join(' · ')}</div>
     </div>`;
   });
-  el.innerHTML = html;
+  return html||'<div style="color:var(--text3);font-size:13px;padding:4px 0">None</div>';
 }
 
-function deletePanelIncident(id) {
-  state.incidents = state.incidents.filter(i => i.id !== id);
-  save();
-  renderStudentGrid();
-  renderPanelLogged(selectedStudent);
-  // If no more incidents, hide the logged section
-  const inc = weekInc(currentClassId, selectedStudent);
-  if (!inc.length) document.getElementById('panel-logged').style.display = 'none';
-}
+function showLog(){
+  const incidents=state.incidents.filter(i=>i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek);
+  const el=document.getElementById('log-content');let html='';
 
-function logBehaviour(type) {
-  const now = new Date();
-  const student = selectedStudent;
-  state.incidents.push({
-    id: Date.now(),
-    classId: currentClassId,
-    student,
-    type,
-    term: currentLesson.term,
-    week: currentLesson.week,
-    lesson: currentLesson.lesson,
-    time: now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'}),
-    date: now.toLocaleDateString('en-SG', {day:'2-digit', month:'short'})
-  });
-  save(); closeAllPanels(); renderStudentGrid();
-  const count = weekInc(currentClassId, student).length;
-  toast(student + ' — ' + type + (count >= 3 ? ' ⚠ 3+ this week' : ''));
-}
-
-/* LOG */
-function showLog() {
-  const incidents = state.incidents.filter(i => i.classId === currentClassId && i.term === state.currentTerm && i.week === state.currentWeek);
-  const el = document.getElementById('log-content');
-  let html = '';
-
-  // Carried over
-  const watchEntries = Object.values(state.watchlist).filter(w => w.classId === currentClassId && w.strikes > 0);
-  if (watchEntries.length) {
-    html += '<div class="section-title">Carried over</div>';
-    watchEntries.forEach(w => {
-      const pills = Object.entries(w.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-      html += `<div class="carried-card"><div class="carried-name">${esc(w.student)}</div>
-        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes} wk${w.strikes>1?'s':''} flagged</span></div></div>`;
+  // Watchlist carry-over
+  const watchEntries=Object.values(state.watchlist).filter(w=>w.classId===currentClassId&&w.strikes>0);
+  if(watchEntries.length){
+    html+='<div class="section-title">Carried over</div>';
+    watchEntries.forEach(w=>{
+      const pills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+      html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div><div class="pill-row">${pills}<span class="pill strikes">Offence ${w.strikes}</span></div></div>`;
     });
   }
 
-  if (!incidents.length) {
-    html += '<div class="empty" style="padding:2rem 0"><strong>All clear this week</strong>No new incidents logged.</div>';
-  } else {
-    // Summary
-    const byStudent = {};
-    incidents.forEach(i => { if (!byStudent[i.student]) byStudent[i.student] = []; byStudent[i.student].push(i); });
-    const sorted = Object.entries(byStudent).sort((a,b) => b[1].length - a[1].length);
-    html += '<div class="section-title" style="margin-top:18px">This week — summary</div>';
-    sorted.forEach(([name, inc]) => {
-      const tally = {};
-      inc.forEach(i => { tally[i.type] = (tally[i.type]||0)+1; });
-      const breakdown = Object.entries(tally).map(([t,c]) => `${t} ×${c}`).join(' · ');
-      const watch = getWatch(currentClassId, name);
-      html += `<div class="summary-row ${inc.length>=3?'over3':''}">
-        <div style="flex:1"><div class="summary-name">${esc(name)}</div><div class="summary-sub">${breakdown}</div></div>
-        <span class="summary-count">${inc.length}</span>
-        ${watch && watch.strikes > 0 ? `<span class="strikes-pill">×${watch.strikes}w</span>` : ''}
-      </div>`;
-    });
+  // Absent this lesson
+  if(currentLesson){
+    const abs=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===currentLesson.term&&s.week===currentLesson.week&&s.lesson===currentLesson.lesson);
+    if(abs.length){html+='<div class="section-title" style="margin-top:16px">Absent</div>';abs.forEach(s=>{html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — ${esc(s.reason)}`:''}</div>`})}
+  }
 
-    // By lesson
-    const byLesson = {};
-    incidents.forEach(i => {
-      const k = `T${i.term}W${i.week}L${i.lesson}`;
-      if (!byLesson[k]) byLesson[k] = { label: lessonLabel(i.term, i.week, i.lesson), items: [] };
+  if(!incidents.length){
+    html+='<div class="empty" style="padding:2rem 0"><strong>All clear</strong>No incidents logged this week.</div>';
+  } else {
+    // ── THIS WEEK SUMMARY — grouped by offence type ──
+    html+='<div class="section-title" style="margin-top:16px">This week — by offence</div>';
+    html+=renderByType(incidents);
+
+    // ── BY LESSON — each lesson grouped by offence type ──
+    const byLesson={};
+    incidents.forEach(i=>{
+      const k=`T${i.term}W${i.week}L${i.lesson}`;
+      if(!byLesson[k])byLesson[k]={label:lessonLabel(i.term,i.week,i.lesson),lesson:i.lesson,items:[]};
       byLesson[k].items.push(i);
     });
-    html += '<div class="section-title" style="margin-top:20px">By lesson</div>';
-    Object.values(byLesson).forEach(group => {
-      html += `<div class="lesson-group-header">${group.label}</div>`;
-      group.items.slice().reverse().forEach(i => {
-        html += `<div class="log-item">
-          <div class="log-dot ${behClass(i.type)}"></div>
-          <div class="log-text"><strong>${esc(i.student)}</strong> <span>— ${i.type}</span></div>
-          <div class="log-time">${i.time}</div>
-          <div class="log-del" onclick="deleteIncident(${i.id})">✕</div>
-        </div>`;
-      });
+    html+='<div class="section-title" style="margin-top:18px">By lesson</div>';
+    Object.values(byLesson).sort((a,b)=>b.lesson-a.lesson).forEach(g=>{
+      html+=`<div class="lesson-group-header" style="margin-bottom:8px">${g.label}</div>`;
+      html+=renderByType(g.items);
     });
+
+    // Notes
+    const wn=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|`)&&k.endsWith(`T${state.currentTerm}W${state.currentWeek}`));
+    if(wn.length){html+='<div class="section-title" style="margin-top:18px">Notes</div>';wn.forEach(([k,note])=>{const s=k.split('|')[1];html+=`<div class="note-block"><div class="note-block-label">${esc(s)}</div>${esc(note)}</div>`})}
   }
-  el.innerHTML = html;
-  showScreen('screen-log');
+  el.innerHTML=html;showScreen('screen-log');
+}
+function deleteIncident(id){state.incidents=state.incidents.filter(i=>i.id!==id);save();showLog();renderSeatingMap()}
+function clearClassLog(){
+  showConfirm('Clear this week\'s incidents for this class?',()=>{
+    state.incidents=state.incidents.filter(i=>!(i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek));
+    save();showLog();renderSeatingMap();
+  });
 }
 
-function deleteIncident(id) {
-  state.incidents = state.incidents.filter(i => i.id !== id);
-  save(); showLog(); renderStudentGrid();
-}
-
-function clearClassLog() {
-  if (!confirm('Clear this week\'s incidents for this class?')) return;
-  state.incidents = state.incidents.filter(i => !(i.classId === currentClassId && i.term === state.currentTerm && i.week === state.currentWeek));
-  save(); showLog(); renderStudentGrid();
-}
-
-/* WATCHLIST */
-function renderWatchlist() {
-  const el = document.getElementById('watchlist-content');
-  const entries = Object.values(state.watchlist).filter(w => w.strikes > 0);
-  if (!entries.length) {
-    el.innerHTML = '<div class="empty"><strong>Watchlist is empty</strong>Students with 3+ incidents in a week appear here after you advance to the next week.</div>';
-    return;
-  }
-  const byClass = {};
-  entries.forEach(w => { if (!byClass[w.classId]) byClass[w.classId] = []; byClass[w.classId].push(w); });
-  let html = '';
-  Object.entries(byClass).forEach(([cid, ws]) => {
-    const cls = state.classes.find(c => c.id == cid);
-    html += `<div class="section-title">${cls ? esc(cls.name) + ' — ' + esc(cls.subject) : 'Unknown'}</div>`;
-    ws.sort((a,b) => b.strikes - a.strikes).forEach(w => {
-      const pills = Object.entries(w.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-      html += `<div class="watch-item">
-        <div class="watch-item-name">${esc(w.student)}</div>
-        <div class="watch-item-class">Flagged ${w.strikes} week${w.strikes>1?'s':''} total</div>
-        <div class="pill-row">${pills}<span class="pill strikes">×${w.strikes} flag${w.strikes>1?'s':''}</span></div>
+/* ---- WATCHLIST ---- */
+function renderWatchlist(){
+  const el=document.getElementById('watchlist-content');
+  const entries=Object.values(state.watchlist).filter(w=>w.strikes>0);
+  if(!entries.length){el.innerHTML='<div class="empty"><strong>Watchlist is empty</strong>Students with repeated offences appear here after Next Week.</div>';return}
+  const byClass={};entries.forEach(w=>{if(!byClass[w.classId])byClass[w.classId]=[];byClass[w.classId].push(w)});
+  let html='';
+  Object.entries(byClass).forEach(([cid,ws])=>{
+    const cls=state.classes.find(c=>c.id==cid);
+    html+=`<div class="section-title">${cls?esc(cls.name)+' — '+esc(cls.subject):'Unknown'}</div>`;
+    ws.sort((a,b)=>b.strikes-a.strikes).forEach(w=>{
+      const notes=w.offenceNotes||{};
+      const latestNote=notes[w.strikes]||{};
+      const sentiments=state.settings.responseOptions||[];
+      const respSentiment=latestNote.response?((sentiments.find(s=>s.label===latestNote.response)||{}).sentiment||'neutral'):'';
+      const respClass=respSentiment==='positive'?'positive':respSentiment==='negative'?'negative':'neutral';
+      const followedUp=latestNote.followedUp;
+      const offenceTypePills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}" style="font-size:10px">${t} ×${c}</span>`).join('');
+      html+=`<div class="watch-item" onclick="openOffenceDetail('${cid}','${w.student.replace(/'/g,"\\'")}','screen-watchlist')" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="flex:1"><div class="watch-item-name">${esc(w.student)}</div><div class="watch-item-class">${cls?esc(cls.name):''}</div></div>
+          <span style="font-size:13px;font-weight:700;color:var(--orange-text);background:var(--orange-bg);border-radius:99px;padding:3px 10px">Offence ${w.strikes}</span>
+        </div>
+        ${offenceTypePills?`<div class="pill-row" style="margin-bottom:8px">${offenceTypePills}</div>`:''}
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          ${latestNote.action?`<span style="font-size:12px;color:var(--text2)">${esc(latestNote.action)}</span>`:'<span style="font-size:12px;color:var(--text3);font-style:italic">No action recorded</span>'}
+          ${latestNote.response?`<span class="report-response ${respClass}">${esc(latestNote.response)}</span>`:''}
+          ${followedUp!==undefined?`<span class="report-followup ${followedUp?'done':''}">${followedUp?'✓ Followed up':'⏳ Pending'}</span>`:''}
+        </div>
+        <div style="font-size:11px;color:var(--blue-text);margin-top:8px">Tap to view & edit offence notes →</div>
       </div>`;
     });
   });
-  el.innerHTML = html;
+  el.innerHTML=html;
+}
+function rehabilitate(cid,student){
+  showConfirm(`Reset ${student}'s watchlist strikes?`,()=>{
+    const key=wKey(cid,student);
+    if(state.watchlist[key]){state.watchlist[key].strikes=0;state.watchlist[key].typeStrikes={};state.watchlist[key].carriedOffences={}}
+    save();renderWatchlist();if(currentClassId)renderSeatingMap();toast(student+' rehabilitated');
+  });
 }
 
-/* STUDENT HISTORY */
-function openStudentHistory() {
-  const name = selectedStudent;
-  closeAllPanels();
-  const cls = state.classes.find(c => c.id === currentClassId);
-  document.getElementById('history-student-name').textContent = name;
-  document.getElementById('history-class-name').textContent = cls ? cls.name + ' · ' + cls.subject : '';
-
-  const all = state.incidents.filter(i => i.classId === currentClassId && i.student === name);
-  const watch = getWatch(currentClassId, name);
-  const el = document.getElementById('history-content');
-
-  if (!all.length && (!watch || !watch.strikes)) {
-    el.innerHTML = '<div class="empty"><strong>No history yet</strong>No incidents have been logged for this student.</div>';
-    showScreen('screen-student-history'); return;
-  }
-
-  const typeTally = {};
-  all.forEach(i => { typeTally[i.type] = (typeTally[i.type]||0)+1; });
-  if (watch) Object.entries(watch.carriedOffences).forEach(([t,c]) => { typeTally[t] = (typeTally[t]||0)+c; });
-  const topType = Object.entries(typeTally).sort((a,b)=>b[1]-a[1])[0];
-  const totalAll = all.length + (watch ? Object.values(watch.carriedOffences).reduce((a,b)=>a+b,0) : 0);
-
-  let html = `<div class="stat-row">
-    <div class="stat-card"><div class="stat-num">${totalAll}</div><div class="stat-label">Total incidents</div></div>
-    <div class="stat-card"><div class="stat-num">${watch ? watch.strikes : 0}</div><div class="stat-label">Weeks flagged</div></div>
-    <div class="stat-card"><div class="stat-num" style="font-size:14px">${topType ? topType[0].split(' ')[0] : '—'}</div><div class="stat-label">Most common</div></div>
-  </div>`;
-
-  if (watch && watch.strikes > 0) {
-    const pills = Object.entries(watch.carriedOffences).map(([t,c]) => `<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-    html += `<div class="section-title">Watchlist — carried offences</div>
-      <div class="carried-card"><div class="pill-row">${pills}<span class="pill strikes">×${watch.strikes} wk${watch.strikes>1?'s':''} flagged</span></div></div>`;
-  }
-
-  // Group by Term > Week > Lesson
-  const grouped = {};
-  all.forEach(i => {
-    const tk = `T${i.term}`;
-    const wk = `T${i.term}W${i.week}`;
-    const lk = `T${i.term}W${i.week}L${i.lesson}`;
-    if (!grouped[tk]) grouped[tk] = {};
-    if (!grouped[tk][wk]) grouped[tk][wk] = {};
-    if (!grouped[tk][wk][lk]) grouped[tk][wk][lk] = [];
-    grouped[tk][wk][lk].push(i);
-  });
-
-  Object.keys(grouped).sort().reverse().forEach(tk => {
-    const termNum = tk.replace('T','');
-    html += `<div class="section-title" style="margin-top:20px">Term ${termNum}</div>`;
-    Object.keys(grouped[tk]).sort().reverse().forEach(wk => {
-      const weekNum = wk.replace(/T\dW/,'');
-      const isCurrent = parseInt(termNum) === state.currentTerm && parseInt(weekNum) === state.currentWeek;
-      html += `<div class="history-block">`;
-      html += `<div class="history-block-title ${isCurrent?'current':''}">Week ${weekNum}${isCurrent?' (current)':''}</div>`;
-      Object.keys(grouped[tk][wk]).sort().forEach(lk => {
-        const lessonNum = lk.replace(/T\dW\d+L/,'');
-        const inc = grouped[tk][wk][lk];
-        html += `<div style="font-size:12px;color:var(--text3);margin:6px 0 4px;padding:0 2px">Lesson ${lessonNum} · ${inc.length} incident${inc.length>1?'s':''}</div>`;
-        inc.forEach(i => {
-          html += `<div class="history-inc-row">
-            <div class="log-dot ${behClass(i.type)}"></div>
-            <div class="history-type">${i.type}</div>
-            <div class="history-meta">${i.date}<br>${i.time}</div>
-          </div>`;
-        });
+/* ---- HISTORY ---- */
+function openStudentHistory(){
+  const name=selectedStudent;closeAllPanels();
+  const cls=state.classes.find(c=>c.id===currentClassId);
+  document.getElementById('history-student-name').textContent=name;
+  document.getElementById('history-class-name').textContent=cls?cls.name+' · '+cls.subject:'';
+  const all=state.incidents.filter(i=>i.classId===currentClassId&&i.student===name);
+  const watch=getWatch(currentClassId,name);
+  const el=document.getElementById('history-content');
+  if(!all.length&&(!watch||!watch.strikes)){el.innerHTML='<div class="empty"><strong>No history yet</strong></div>';showScreen('screen-student-history');return}
+  const tt={};all.forEach(i=>{tt[i.type]=(tt[i.type]||0)+1});
+  if(watch)Object.entries(watch.carriedOffences||{}).forEach(([t,c])=>{tt[t]=(tt[t]||0)+c});
+  const top=Object.entries(tt).sort((a,b)=>b[1]-a[1])[0];
+  const total=all.length+((watch&&watch.carriedOffences)?Object.values(watch.carriedOffences).reduce((a,b)=>a+b,0):0);
+  let html=`<div class="stat-row"><div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div><div class="stat-card"><div class="stat-num">${watch?watch.strikes:0}</div><div class="stat-label">Weeks flagged</div></div><div class="stat-card"><div class="stat-num" style="font-size:14px">${top?top[0].split(' ')[0]:'—'}</div><div class="stat-label">Most common</div></div></div>`;
+  if(watch&&watch.strikes>0){
+    const pills=Object.entries(watch.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+    html+=`<div class="section-title">Watchlist — Offence ${watch.strikes}</div>
+      <div class="carried-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div class="pill-row" style="flex:1">${pills}</div>
+          <span style="font-size:13px;font-weight:700;color:var(--orange-text);background:var(--orange-bg);border-radius:99px;padding:3px 10px">Offence ${watch.strikes}</span>
+        </div>
+        <button class="save-offence-btn" style="background:var(--orange);margin-top:0" onclick="openOffenceDetail('${currentClassId}','${name.replace(/'/g,"\\'")}','screen-student-history')">View &amp; edit offence notes</button>
+      </div>`}
+  const grouped={};all.forEach(i=>{const tk=`T${i.term}`;const wk=`${tk}W${i.week}`;const lk=`${wk}L${i.lesson}`;if(!grouped[tk])grouped[tk]={};if(!grouped[tk][wk])grouped[tk][wk]={};if(!grouped[tk][wk][lk])grouped[tk][wk][lk]=[];grouped[tk][wk][lk].push(i)});
+  Object.keys(grouped).sort().reverse().forEach(tk=>{
+    const tn=tk.replace('T','');html+=`<div class="section-title" style="margin-top:18px">Term ${tn}</div>`;
+    Object.keys(grouped[tk]).sort().reverse().forEach(wk=>{
+      const wn=wk.replace(/T\dW/,'');const isCur=parseInt(tn)===state.currentTerm&&parseInt(wn)===state.currentWeek;
+      html+=`<div class="history-block"><div class="history-block-title ${isCur?'current':''}">Week ${wn}${isCur?' (current)':''}</div>`;
+      const nk=noteKey(currentClassId,name,tn,wn);if(state.notes[nk])html+=`<div class="note-block"><div class="note-block-label">Note</div>${esc(state.notes[nk])}</div>`;
+      Object.keys(grouped[tk][wk]).sort().forEach(lk=>{
+        const ln=lk.replace(/T\dW\d+L/,'');const inc=grouped[tk][wk][lk];
+        html+=`<div style="font-size:12px;color:var(--text3);margin:6px 0 4px">Lesson ${ln} · ${inc.length} incident${inc.length>1?'s':''}</div>`;
+        inc.forEach(i=>{html+=`<div class="history-inc-row"><div class="log-dot ${behClass(i.type)}"></div><div class="history-type">${i.type}${i.isSol?' <span style="font-size:11px;opacity:.6">(entry)</span>':''}</div><div class="history-meta">${i.date}<br>${i.time}</div></div>`});
       });
-      html += `</div>`;
+      html+='</div>';
     });
   });
-
-  el.innerHTML = html;
-  showScreen('screen-student-history');
+  if(watch&&watch.strikes>0)html+=`<button class="rehab-btn-history" onclick="rehabilitateFromHistory('${currentClassId}','${name.replace(/'/g,"\\'")}')">Rehabilitate</button>`;
+  el.innerHTML=html;showScreen('screen-student-history');
 }
-
-/* SETUP */
-function addClass() {
-  const name = document.getElementById('new-class-name').value.trim();
-  const subject = document.getElementById('new-class-subject').value.trim();
-  if (!name) return;
-  state.classes.push({ id: Date.now(), name, subject, students: [] });
-  document.getElementById('new-class-name').value = '';
-  document.getElementById('new-class-subject').value = '';
-  save(); renderClassList(); updateClassSelect(); toast('Class added');
-}
-function renderClassList() {
-  const el = document.getElementById('class-list');
-  el.innerHTML = '';
-  if (!state.classes.length) { el.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:8px 0">No classes added yet.</div>'; return; }
-  state.classes.forEach(cls => {
-    const d = document.createElement('div');
-    d.className = 'setup-list-item';
-    d.innerHTML = `<div style="flex:1"><div class="setup-list-text">${esc(cls.name)}</div>
-      <div class="setup-list-sub">${esc(cls.subject)} · ${cls.students.length} students</div></div>
-      <div class="list-del" onclick="deleteClass(${cls.id})">✕</div>`;
-    el.appendChild(d);
+function rehabilitateFromHistory(cid,student){
+  showConfirm(`Reset ${student}'s strikes?`,()=>{
+    const key=wKey(cid,student);
+    if(state.watchlist[key]){state.watchlist[key].strikes=0;state.watchlist[key].typeStrikes={};state.watchlist[key].carriedOffences={}}
+    save();renderSeatingMap();toast(student+' rehabilitated');showScreen('screen-students');
   });
 }
-function deleteClass(id) {
-  if (!confirm('Delete this class and all its data?')) return;
-  state.classes = state.classes.filter(c => c.id !== id);
-  state.incidents = state.incidents.filter(i => i.classId !== id);
-  Object.keys(state.watchlist).forEach(k => { if (state.watchlist[k].classId === id) delete state.watchlist[k]; });
-  save(); renderClassList(); updateClassSelect();
+
+/* ---- SEATING SETUP ---- */
+function updateSeatingClassSelect(){
+  const sel=document.getElementById('seating-class-select');
+  sel.innerHTML=state.classes.length?state.classes.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''):'<option value="">No classes</option>';
+  seatSelectedStudent=null;seatSelectedCell=null;
+  renderSeatingSetup();
 }
-function updateClassSelect() {
-  const sel = document.getElementById('class-select');
-  sel.innerHTML = state.classes.length
-    ? state.classes.map(c => `<option value="${c.id}">${esc(c.name)} — ${esc(c.subject)}</option>`).join('')
-    : '<option value="">No classes yet</option>';
-  renderStudentList();
+function renderSeatingSetup(){
+  const cid=parseInt(document.getElementById('seating-class-select').value);
+  if(!cid)return;
+  seatSetupClassId=cid;
+  const map=getSeatMap(cid);
+  const el=document.getElementById('seating-setup-content');el.innerHTML='';
+
+  // Status hint
+  const status=document.getElementById('seating-status');
+  if(seatSelectedStudent){
+    status.style.display='block';
+    status.textContent=`"${seatSelectedStudent}" selected — tap an empty seat to place, or tap another student to swap`;
+  } else if(seatSelectedCell){
+    const[ci,ri,si]=seatSelectedCell.split('-').map(Number);
+    const name=map[ci]&&map[ci].rows[ri]&&map[ci].rows[ri][si];
+    status.style.display='block';
+    status.textContent=name?`"${name}" selected — tap another seat to swap, or tap again to remove`:'Cell selected — tap a student from the pool';
+  } else {
+    status.style.display='none';
+  }
+  map.forEach((col,ci)=>{
+    const block=document.createElement('div');block.className='seat-setup-col';
+    const hdr=document.createElement('div');hdr.className='seat-setup-col-header';
+    hdr.innerHTML=`<div class="seat-setup-col-title">Column ${ci+1}</div>
+      <button class="row-size-btn" onclick="addSeatRow(${ci})">+ Row</button>
+      <button class="row-size-btn" onclick="removeSeatRow(${ci})">− Row</button>
+      <button class="row-size-btn" onclick="toggleSeatsPerRow(${ci})">${col.rows[0]?col.rows[0].length:2}→${(col.rows[0]?col.rows[0].length:2)%4+1}</button>`;
+    block.appendChild(hdr);
+    col.rows.forEach((row,ri)=>{
+      const rowEl=document.createElement('div');rowEl.className='seat-setup-row';
+      rowEl.style.display='grid';rowEl.style.gridTemplateColumns=`repeat(${row.length},1fr)`;rowEl.style.gap='6px';
+      row.forEach((name,si)=>{
+        const cell=document.createElement('div');
+        const cellId=`${ci}-${ri}-${si}`;
+        cell.className='seat-cell'+(name?'':' empty')+(seatSelectedCell===cellId?' selected':'');
+        cell.textContent=name||'+';
+        cell.onclick=()=>handleSeatCellTap(ci,ri,si,cellId);
+        rowEl.appendChild(cell);
+      });
+      block.appendChild(rowEl);
+    });
+    el.appendChild(block);
+  });
+  // Unassigned pool
+  const pool=document.getElementById('unassigned-pool');pool.innerHTML='';
+  getUnassigned(cid).forEach(name=>{
+    const btn=document.createElement('div');btn.className='pool-student'+(seatSelectedStudent===name?' selected':'');
+    btn.textContent=name;btn.onclick=()=>handlePoolTap(name);pool.appendChild(btn);
+  });
 }
-function addStudent() {
-  const name = document.getElementById('new-student').value.trim();
-  const classId = parseInt(document.getElementById('class-select').value);
-  if (!name || !classId) return;
-  const cls = state.classes.find(c => c.id === classId);
-  if (cls && !cls.students.includes(name)) {
-    cls.students.push(name); save();
-    document.getElementById('new-student').value = '';
-    renderStudentList(); renderClassList(); toast(name + ' added');
+
+function handlePoolTap(name){
+  if(seatSelectedStudent===name){seatSelectedStudent=null}
+  else if(seatSelectedCell){
+    // Place student into selected cell
+    const[ci,ri,si]=seatSelectedCell.split('-').map(Number);
+    const map=getSeatMap(seatSetupClassId);
+    // If cell has a student, swap back to pool
+    const existing=map[ci].rows[ri][si];
+    if(existing){}// existing goes back to pool automatically since unassigned
+    map[ci].rows[ri][si]=name;
+    save();seatSelectedStudent=null;seatSelectedCell=null;renderSeatingSetup();
+  } else {seatSelectedStudent=name;seatSelectedCell=null}
+  renderSeatingSetup();
+}
+
+function handleSeatCellTap(ci,ri,si,cellId){
+  const map=getSeatMap(seatSetupClassId);
+  const name=map[ci].rows[ri][si];
+  if(seatSelectedStudent){
+    // Place selected pool student here
+    if(name){// swap: put existing back to pool (just remove from seat)
+      map[ci].rows[ri][si]=seatSelectedStudent;
+    } else {map[ci].rows[ri][si]=seatSelectedStudent}
+    save();seatSelectedStudent=null;seatSelectedCell=null;renderSeatingSetup();
+  } else if(name){
+    // Tap occupied seat: select it
+    if(seatSelectedCell===cellId){
+      // Deselect — remove student back to pool
+      map[ci].rows[ri][si]=null;save();seatSelectedCell=null;renderSeatingSetup();
+    } else if(seatSelectedCell){
+      // Swap two seats
+      const[oci,ori,osi]=seatSelectedCell.split('-').map(Number);
+      const other=map[oci].rows[ori][osi];
+      map[oci].rows[ori][osi]=name;map[ci].rows[ri][si]=other;
+      save();seatSelectedCell=null;renderSeatingSetup();
+    } else {seatSelectedCell=cellId;renderSeatingSetup()}
+  } else {
+    // Empty cell tapped
+    if(seatSelectedCell){
+      // Move student from selected cell to here
+      const[oci,ori,osi]=seatSelectedCell.split('-').map(Number);
+      map[ci].rows[ri][si]=map[oci].rows[ori][osi];map[oci].rows[ori][osi]=null;
+      save();seatSelectedCell=null;renderSeatingSetup();
+    } else {
+      // Open student picker popup
+      openStudentPicker(ci,ri,si);
+    }
   }
 }
-function renderStudentList() {
-  const el = document.getElementById('student-list');
-  const classId = parseInt(document.getElementById('class-select').value);
-  const cls = state.classes.find(c => c.id === classId);
-  el.innerHTML = '';
-  if (!cls || !cls.students.length) { el.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:8px 0">No students yet.</div>'; return; }
-  cls.students.forEach(name => {
-    const d = document.createElement('div');
-    d.className = 'setup-list-item';
-    d.innerHTML = `<div class="setup-list-text" style="flex:1">${esc(name)}</div>
-      <div class="list-del" onclick="removeStudent(${cls.id},'${name.replace(/'/g,"\\'")}')">✕</div>`;
-    el.appendChild(d);
-  });
-}
-function removeStudent(classId, name) {
-  const cls = state.classes.find(c => c.id === classId);
-  if (cls) { cls.students = cls.students.filter(s => s !== name); save(); renderStudentList(); renderClassList(); }
-}
-function switchTab(tab) {
-  document.getElementById('setup-classes').style.display = tab === 'classes' ? 'block' : 'none';
-  document.getElementById('setup-students').style.display = tab === 'students' ? 'block' : 'none';
-  document.getElementById('tab-classes').className = 'setup-tab' + (tab==='classes'?' active':'');
-  document.getElementById('tab-students').className = 'setup-tab' + (tab==='students'?' active':'');
-  if (tab === 'students') updateClassSelect();
+
+let _pickerTarget={ci:0,ri:0,si:0};
+
+function openStudentPicker(ci,ri,si){
+  _pickerTarget={ci,ri,si};
+  const unassigned=getUnassigned(seatSetupClassId);
+  document.getElementById('student-picker-search').value='';
+  renderStudentPickerList(unassigned);
+  document.getElementById('student-picker-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('student-picker-search').focus(),100);
 }
 
-document.getElementById('new-student').addEventListener('keydown', e => { if(e.key==='Enter') addStudent(); });
-document.getElementById('new-class-name').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('new-class-subject').focus(); });
-document.getElementById('new-class-subject').addEventListener('keydown', e => { if(e.key==='Enter') addClass(); });
-
-/* INIT */
-load();
-if (!state.watchlist) state.watchlist = {};
-if (!state.currentTerm) state.currentTerm = 2;
-if (!state.currentWeek) state.currentWeek = 2;
-
-if (!state.classes.length) {
-  state.classes.push({
-    id: 1000000001, name: '1HIA', subject: 'History',
-    students: [
-      'Lakshya','Enyue','Danif','Aqil','Qi Xian','Clayton','Javier',
-      'Cherbelle','Kingsley','Hongbo','Luth','Michael','Mani','Sree',
-      'Jayden','Ignatius','Lewis','Jia Xuan','Ying Xin','Caden',
-      'Dhaniyah','Scarlett','Eryna','Shafinah','Aomi'
-    ]
-  });
-  save();
+function renderStudentPickerList(students){
+  const el=document.getElementById('student-picker-list');
+  if(!students.length){
+    el.innerHTML='<div class="student-picker-empty">No unassigned students</div>';return;
+  }
+  el.innerHTML=students.map(name=>
+    `<div class="student-picker-item" onclick="pickStudent('${name.replace(/'/g,"\\'")}')">
+      ${esc(name)}
+    </div>`
+  ).join('');
 }
-renderHome();
 
-/* ---- PWA SETUP ---- */
-(function() {
-  function makeIcon(size) {
-    const c = document.createElement('canvas');
-    c.width = c.height = size;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#2A6ED4';
-    const r = size * 0.22;
-    ctx.beginPath();
-    ctx.moveTo(r, 0); ctx.lineTo(size-r, 0);
-    ctx.quadraticCurveTo(size, 0, size, r);
-    ctx.lineTo(size, size-r);
-    ctx.quadraticCurveTo(size, size, size-r, size);
-    ctx.lineTo(r, size);
-    ctx.quadraticCurveTo(0, size, 0, size-r);
-    ctx.lineTo(0, r);
-    ctx.quadraticCurveTo(0, 0, r, 0);
-    ctx.closePath();
-    ctx.fill();
-    const cols = 3, rows = 4;
-    const pad = size * 0.18;
-    const dotR = size * 0.055;
-    const cellW = (size - pad*2) / cols;
-    const cellH = (size - pad*2) / rows;
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        const x = pad + col * cellW + cellW/2;
-        const y = pad + row * cellH + cellH/2;
-        ctx.fillStyle = (row===1&&col===1) ? '#F5907E' : (row===2&&col===2) ? '#F0B060' : '#FFFFFF';
-        ctx.globalAlpha = (row===3&&col===2) ? 0.3 : 0.9;
-        ctx.beginPath(); ctx.arc(x, y, dotR, 0, Math.PI*2); ctx.fill();
+function filterStudentPicker(query){
+  const unassigned=getUnassigned(seatSetupClassId);
+  const filtered=query.trim()?unassigned.filter(n=>n.toLowerCase().includes(query.toLowerCase())):unassigned;
+  renderStudentPickerList(filtered);
+}
+
+function pickStudent(name){
+  const map=getSeatMap(seatSetupClassId);
+  const{ci,ri,si}=_pickerTarget;
+  map[ci].rows[ri][si]=name;
+  save();seatSelectedStudent=null;seatSelectedCell=null;
+  closeStudentPicker();
+  renderSeatingSetup();
+}
+
+function closeStudentPicker(){
+  document.getElementById('student-picker-overlay').classList.remove('open');
+}
+
+function autoAllocate(){
+  const cid=seatSetupClassId;if(!cid)return;
+  const unassigned=getUnassigned(cid);
+  if(!unassigned.length){toast('All students already seated');return}
+  const map=getSeatMap(cid);
+  let idx=0;
+  // Fill empty seats left to right, top to bottom, column by column
+  for(let ci=0;ci<map.length&&idx<unassigned.length;ci++){
+    for(let ri=0;ri<map[ci].rows.length&&idx<unassigned.length;ri++){
+      for(let si=0;si<map[ci].rows[ri].length&&idx<unassigned.length;si++){
+        if(!map[ci].rows[ri][si]){
+          map[ci].rows[ri][si]=unassigned[idx];idx++;
+        }
       }
     }
-    ctx.globalAlpha = 1;
-    return c.toDataURL('image/png');
+  }
+  save();seatSelectedStudent=null;seatSelectedCell=null;renderSeatingSetup();
+  toast(`${idx} student${idx>1?'s':''} placed`);
+}
+
+function clearAllSeats(){
+  const cid=seatSetupClassId;if(!cid)return;
+  showConfirm('Remove all students from seats?',()=>{
+    const map=getSeatMap(cid);
+    map.forEach(col=>col.rows.forEach(row=>{for(let i=0;i<row.length;i++)row[i]=null}));
+    save();seatSelectedStudent=null;seatSelectedCell=null;renderSeatingSetup();toast('All seats cleared');
+  });
+}
+
+function addSeatRow(ci){
+  const map=getSeatMap(seatSetupClassId);
+  if(map[ci].rows.length>=8){toast('Max 8 rows');return}
+  const seatsPerRow=map[ci].rows[0]?map[ci].rows[0].length:2;
+  map[ci].rows.push(Array(seatsPerRow).fill(null));
+  save();renderSeatingSetup();
+}
+function removeSeatRow(ci){
+  const map=getSeatMap(seatSetupClassId);
+  if(map[ci].rows.length<=1){toast('Min 1 row');return}
+  const lastRow=map[ci].rows[map[ci].rows.length-1];
+  if(lastRow.some(n=>n!==null&&n!==undefined&&n!=='')){toast('Remove students first');return}
+  map[ci].rows.pop();save();renderSeatingSetup();
+}
+function toggleSeatsPerRow(ci){
+  const map=getSeatMap(seatSetupClassId);
+  const current=map[ci].rows[0]?map[ci].rows[0].length:2;
+  const next=current%4+1;
+  map[ci].rows=map[ci].rows.map(row=>{
+    if(next>row.length)return [...row,...Array(next-row.length).fill(null)];
+    for(let i=next;i<row.length;i++){if(row[i]!==null&&row[i]!==undefined&&row[i]!==''){toast('Remove students from extra seats first');return row}}
+    return row.slice(0,next);
+  });
+  save();renderSeatingSetup();
+}
+function addSeatCol(){
+  const cid=parseInt(document.getElementById('seating-class-select').value);
+  if(!cid)return;
+  const map=getSeatMap(cid);
+  map.push({rows:Array(4).fill(null).map(()=>[null,null])});
+  save();renderSeatingSetup();
+}
+function removeSeatCol(){
+  const cid=parseInt(document.getElementById('seating-class-select').value);
+  if(!cid)return;
+  const map=getSeatMap(cid);
+  if(map.length<=1){toast('Min 1 column');return}
+  const last=map[map.length-1];
+  const hasStudents=last.rows.some(r=>r.some(n=>n!==null&&n!==undefined&&n!==''));
+  if(hasStudents){toast('Remove students from last column first');return}
+  map.pop();save();renderSeatingSetup();
+}
+
+/* ---- SETUP: CLASSES & STUDENTS ---- */
+function addClass(){
+  const name=document.getElementById('new-class-name').value.trim();
+  const subject=document.getElementById('new-class-subject').value.trim();
+  if(!name)return;
+  state.classes.push({id:Date.now(),name,subject,students:[]});
+  document.getElementById('new-class-name').value='';document.getElementById('new-class-subject').value='';
+  save();renderClassList();updateClassSelect();updateSeatingClassSelect();toast('Class added');
+}
+function renderClassList(){
+  const el=document.getElementById('class-list');el.innerHTML='';
+  if(!state.classes.length){el.innerHTML='<div style="color:var(--text3);font-size:14px;padding:8px 0">No classes yet.</div>';return}
+  state.classes.forEach(cls=>{
+    const d=document.createElement('div');d.className='setup-list-item';
+    d.innerHTML=`<div style="flex:1"><div class="setup-list-text">${esc(cls.name)}</div><div class="setup-list-sub">${esc(cls.subject)} · ${cls.students.length} students</div></div><div class="list-del" onclick="deleteClass(${cls.id})">✕</div>`;
+    el.appendChild(d);
+  });
+}
+function deleteClass(id){
+  showConfirm('Delete this class and all its data?',()=>{
+    state.classes=state.classes.filter(c=>c.id!==id);
+    state.incidents=state.incidents.filter(i=>i.classId!==id);
+    delete state.seatMap[id];
+    Object.keys(state.watchlist).forEach(k=>{if(state.watchlist[k].classId===id)delete state.watchlist[k]});
+    save();renderClassList();updateClassSelect();updateSeatingClassSelect();
+  });
+}
+function updateClassSelect(){
+  const sel=document.getElementById('class-select');
+  sel.innerHTML=state.classes.length?state.classes.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.subject)}</option>`).join(''):'<option value="">No classes</option>';
+  renderStudentList();
+}
+function addStudent(){
+  const name=document.getElementById('new-student').value.trim();
+  const cid=parseInt(document.getElementById('class-select').value);
+  if(!name||!cid)return;
+  const cls=state.classes.find(c=>c.id===cid);
+  if(cls&&!cls.students.includes(name)){cls.students.push(name);save();document.getElementById('new-student').value='';renderStudentList();renderClassList();renderSeatingSetup();toast(name+' added')}
+}
+function renderStudentList(){
+  const el=document.getElementById('student-list');
+  const cid=parseInt(document.getElementById('class-select').value);
+  const cls=state.classes.find(c=>c.id===cid);
+  el.innerHTML='';
+  if(!cls||!cls.students.length){el.innerHTML='<div style="color:var(--text3);font-size:14px;padding:8px 0">No students yet.</div>';return}
+  cls.students.forEach(name=>{
+    const d=document.createElement('div');d.className='setup-list-item';
+    d.innerHTML=`<div class="setup-list-text" style="flex:1">${esc(name)}</div><div class="list-del" onclick="removeStudent(${cid},'${name.replace(/'/g,"\\'")}')">✕</div>`;
+    el.appendChild(d);
+  });
+}
+function removeStudent(cid,name){
+  const cls=state.classes.find(c=>c.id===cid);
+  if(cls){
+    cls.students=cls.students.filter(s=>s!==name);
+    // Also remove from seatmap
+    const map=getSeatMap(cid);
+    map.forEach(col=>col.rows.forEach(row=>{for(let i=0;i<row.length;i++){if(row[i]===name)row[i]=null}}));
+    save();renderStudentList();renderClassList();renderSeatingSetup();
+  }
+}
+function switchTab(tab){
+  ['classes','students','seating','reset'].forEach(t=>{
+    const el=document.getElementById(`setup-${t}`);if(el)el.style.display=t===tab?'block':'none';
+    const btn=document.getElementById(`tab-${t}`);if(btn)btn.className='setup-tab'+(t===tab?' active':'');
+  });
+  if(tab==='students')updateClassSelect();
+  if(tab==='seating')updateSeatingClassSelect();
+  if(tab==='reset'){document.getElementById('reset-term').textContent=state.currentTerm;document.getElementById('reset-week').textContent=state.currentWeek}
+}
+function resetWeek(){
+  showConfirm(`Clear all incidents for T${state.currentTerm} W${state.currentWeek}?`,()=>{
+    state.incidents=state.incidents.filter(i=>!(i.term===state.currentTerm&&i.week===state.currentWeek));
+    Object.keys(state.solData).forEach(k=>{const d=state.solData[k];if(d.term===state.currentTerm&&d.week===state.currentWeek)delete state.solData[k]});
+    save();showScreen('screen-home');toast('This week cleared');
+  });
+}
+function resetIncidents(){
+  showConfirm('Clear ALL incidents and watchlist? Classes kept.',()=>{
+    state.incidents=[];state.watchlist={};state.solData={};state.notes={};save();showScreen('screen-home');toast('All incidents cleared');
+  });
+}
+function resetAll(){
+  showConfirm('Delete ALL data including classes? Cannot be undone.',()=>{
+    localStorage.removeItem(STORE);location.reload();
+  });
+}
+
+/* ---- SETTINGS ---- */
+function renderSettings(){
+  if(!state.settings)state.settings={threshold:3,actionOptions:[],responseOptions:[]};
+  // Threshold chips
+  [0,1,2,3].forEach(v=>{
+    const el=document.getElementById(`tc-${v}`);
+    if(el)el.className='threshold-chip'+(state.settings.threshold===v?' selected':'');
+  });
+  renderOptionsList('action');
+  renderOptionsList('response');
+}
+
+function setThreshold(val){
+  if(!state.settings)state.settings={threshold:3,actionOptions:[],responseOptions:[]};
+  state.settings.threshold=val;save();renderSettings();
+  toast(val===0?'Record only mode':'Threshold set to '+val);
+}
+
+function renderOptionsList(type){
+  const key=type==='action'?'actionOptions':'responseOptions';
+  const el=document.getElementById(`${type}-options-list`);
+  if(!el)return;
+  const opts=state.settings[key]||[];
+  if(!opts.length){el.innerHTML=`<div style="color:var(--text3);font-size:13px;padding:4px 0">No ${type} options yet.</div>`;return}
+  el.innerHTML=opts.map((o,i)=>`
+    <div class="option-item">
+      <div class="option-name">${esc(o.label)}</div>
+      <span class="option-tag ${o.sentiment}" onclick="toggleSentiment('${type}',${i})">${o.sentiment}</span>
+      <div class="list-del" onclick="removeOption('${type}',${i})">✕</div>
+    </div>`).join('');
+}
+
+function toggleSentiment(type,idx){
+  const key=type==='action'?'actionOptions':'responseOptions';
+  const opts=state.settings[key];
+  const cycle=['neutral','positive','negative'];
+  const cur=opts[idx].sentiment||'neutral';
+  opts[idx].sentiment=cycle[(cycle.indexOf(cur)+1)%3];
+  save();renderOptionsList(type);
+}
+
+function addOption(type){
+  const key=type==='action'?'actionOptions':'responseOptions';
+  const inputId=`new-${type}-option`;
+  const val=document.getElementById(inputId).value.trim();
+  if(!val)return;
+  if(!state.settings[key])state.settings[key]=[];
+  state.settings[key].push({label:val,sentiment:'neutral'});
+  document.getElementById(inputId).value='';
+  save();renderOptionsList(type);
+}
+
+function removeOption(type,idx){
+  const key=type==='action'?'actionOptions':'responseOptions';
+  state.settings[key].splice(idx,1);save();renderOptionsList(type);
+}
+
+/* ---- OFFENCE DETAIL ---- */
+function openOffenceDetail(cid,student,backScreen){
+  offenceBack=backScreen||'screen-watchlist';
+  const cidInt=parseInt(cid);
+  const cls=state.classes.find(c=>c.id===cidInt);
+  const w=state.watchlist[wKey(cidInt,student)];
+  document.getElementById('offence-student-name').textContent=student;
+  document.getElementById('offence-class-name').textContent=cls?cls.name+' · '+cls.subject:'';
+  document.getElementById('offence-back-btn').onclick=()=>showScreen(offenceBack);
+  if(!w||!w.strikes){
+    document.getElementById('offence-content').innerHTML='<div class="empty"><strong>No offences recorded</strong></div>';
+    showScreen('screen-offence');return;
+  }
+  if(!w.offenceNotes)w.offenceNotes={};
+  renderOffenceContent(cidInt,student,w);
+  showScreen('screen-offence');
+}
+
+function renderOffenceContent(cid,student,w){
+  const el=document.getElementById('offence-content');
+  const actions=state.settings.actionOptions||[];
+  const responses=state.settings.responseOptions||[];
+  let html='';
+
+  // Rehab button at top
+  html+=`<button class="rehab-btn" style="margin-bottom:14px;display:block;width:100%;text-align:center;border-radius:var(--radius-sm);padding:10px" onclick="rehabilitate('${cid}','${student.replace(/'/g,"\\'")}')">Rehabilitate student</button>`;
+
+  // Show all offences from newest to oldest
+  for(let i=w.strikes;i>=1;i--){
+    const note=w.offenceNotes[i]||{};
+    const isCurrent=(i===w.strikes);
+    // Get the types that triggered this offence
+    const offenceTypes=Object.entries(w.typeStrikes||{})
+      .filter(([,c])=>c>=i)
+      .map(([t])=>`<span class="pill ${behClass(t)}" style="font-size:11px">${t}</span>`)
+      .join('');
+    html+=`<div class="offence-card ${isCurrent?'current':''}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <div class="offence-num" style="margin-bottom:0">Offence ${i}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">${offenceTypes}</div>
+      </div>
+      <div class="offence-date">${note.date||'No date recorded'}</div>
+
+      <div class="offence-field-label">Action taken</div>
+      <div class="offence-select-row">
+        ${actions.map(a=>`<div class="offence-opt${note.action===a.label?' selected '+a.sentiment:''}" onclick="setOffenceField('${cid}','${student.replace(/'/g,"\\'")}',${i},'action','${a.label.replace(/'/g,"\\'")}')">
+          ${esc(a.label)}</div>`).join('')}
+        ${!actions.length?'<div style="color:var(--text3);font-size:13px">Add action options in Settings</div>':''}
+      </div>
+
+      <div class="offence-field-label">Student response</div>
+      <div class="offence-select-row">
+        ${responses.map(r=>`<div class="offence-opt${note.response===r.label?' selected '+r.sentiment:''}" onclick="setOffenceField('${cid}','${student.replace(/'/g,"\\'")}',${i},'response','${r.label.replace(/'/g,"\\'")}')">
+          ${esc(r.label)}</div>`).join('')}
+        ${!responses.length?'<div style="color:var(--text3);font-size:13px">Add response options in Settings</div>':''}
+      </div>
+
+      <div class="followup-toggle ${note.followedUp?'done':''}" onclick="toggleFollowUp('${cid}','${student.replace(/'/g,"\\'")}',${i})">
+        <div class="followup-label">Action followed up</div>
+        <div class="followup-status">${note.followedUp?'✓ Done':'⏳ Pending'}</div>
+      </div>
+
+      <div class="offence-field-label">Notes</div>
+      <textarea class="offence-note-area" id="onote-${i}" placeholder="Additional notes…">${esc(note.note||'')}</textarea>
+      <button class="save-offence-btn" onclick="saveOffenceNote('${cid}','${student.replace(/'/g,"\\'")}',${i})">Save</button>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+function setOffenceField(cid,student,offenceNum,field,value){
+  const key=wKey(parseInt(cid),student);
+  if(!state.watchlist[key])return;
+  if(!state.watchlist[key].offenceNotes)state.watchlist[key].offenceNotes={};
+  if(!state.watchlist[key].offenceNotes[offenceNum])state.watchlist[key].offenceNotes[offenceNum]={};
+  const note=state.watchlist[key].offenceNotes[offenceNum];
+  // Toggle off if same value
+  note[field]=(note[field]===value)?null:value;
+  if(!note.date)note.date=new Date().toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'});
+  save();
+  renderOffenceContent(parseInt(cid),student,state.watchlist[key]);
+  if(offenceBack==='screen-watchlist')renderWatchlist();
+}
+
+function toggleFollowUp(cid,student,offenceNum){
+  const key=wKey(parseInt(cid),student);
+  if(!state.watchlist[key])return;
+  if(!state.watchlist[key].offenceNotes)state.watchlist[key].offenceNotes={};
+  if(!state.watchlist[key].offenceNotes[offenceNum])state.watchlist[key].offenceNotes[offenceNum]={};
+  state.watchlist[key].offenceNotes[offenceNum].followedUp=!state.watchlist[key].offenceNotes[offenceNum].followedUp;
+  save();renderOffenceContent(parseInt(cid),student,state.watchlist[key]);
+}
+
+function saveOffenceNote(cid,student,offenceNum){
+  const key=wKey(parseInt(cid),student);
+  if(!state.watchlist[key])return;
+  if(!state.watchlist[key].offenceNotes)state.watchlist[key].offenceNotes={};
+  if(!state.watchlist[key].offenceNotes[offenceNum])state.watchlist[key].offenceNotes[offenceNum]={};
+  const val=document.getElementById(`onote-${offenceNum}`).value.trim();
+  state.watchlist[key].offenceNotes[offenceNum].note=val;
+  save();toast('Saved');
+}
+
+/* ---- CLASS REPORT ---- */
+function openClassReport(cid){
+  const cls=state.classes.find(c=>c.id===cid);
+  document.getElementById('report-class-title').textContent=cls?cls.name+' Report':'Report';
+  document.getElementById('report-class-sub').textContent=cls?cls.subject:'';
+  const el=document.getElementById('report-content');
+  const flagged=Object.values(state.watchlist).filter(w=>w.classId===cid&&w.strikes>0);
+  const responses=state.settings.responseOptions||[];
+
+  let html='';
+  if(!flagged.length){
+    html='<div class="empty"><strong>No flagged students</strong>All clear for this class.</div>';
+  } else {
+    html+=`<div class="section-title">Flagged students — ${flagged.length} total</div>`;
+    flagged.sort((a,b)=>b.strikes-a.strikes).forEach(w=>{
+      const notes=w.offenceNotes||{};
+      html+=`<div class="report-student-card">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="report-student-name" style="flex:1">${esc(w.student)}</div>
+          <span style="font-size:13px;font-weight:700;color:var(--orange-text)">Offence ${w.strikes}</span>
+          <button class="rehab-btn" style="margin-top:0" onclick="rehabilitate('${cid}','${w.student.replace(/'/g,"\\'")}')">Rehab</button>
+        </div>`;
+      // Show all offences
+      for(let i=1;i<=w.strikes;i++){
+        const note=notes[i]||{};
+        const respSent=note.response?((responses.find(r=>r.label===note.response)||{}).sentiment||'neutral'):'neutral';
+        html+=`<div class="report-offence-row" onclick="openOffenceDetail('${cid}','${w.student.replace(/'/g,"\\'")}','screen-report')" style="cursor:pointer">
+          <div class="report-offence-num">Offence ${i}</div>
+          <div class="report-action">${note.action?esc(note.action):'<span style="opacity:.5">No action</span>'}</div>
+          ${note.response?`<span class="report-response ${respSent}">${esc(note.response)}</span>`:''}
+          <span class="report-followup ${note.followedUp?'done':''}">${note.followedUp?'✓':'⏳'}</span>
+        </div>`;
+      }
+      html+='</div>';
+    });
   }
 
-  const icon192 = makeIcon(192);
-  const icon512 = makeIcon(512);
-  document.getElementById('apple-touch-icon').href = icon192;
-
-  const manifest = {
-    name: 'Class Behaviour Tracker', short_name: 'Class Tracker',
-    start_url: '.', display: 'standalone',
-    background_color: '#F5F4F0', theme_color: '#2A6ED4', orientation: 'portrait',
-    icons: [
-      { src: icon192, sizes: '192x192', type: 'image/png' },
-      { src: icon512, sizes: '512x512', type: 'image/png' }
-    ]
-  };
-  const mBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-  document.getElementById('pwa-manifest').href = URL.createObjectURL(mBlob);
-
-  const swCode = `const CACHE='ctss-v1';
-self.addEventListener('install',e=>{self.skipWaiting();});
-self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
-self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(cached=>{
-    if(cached)return cached;
-    return fetch(e.request).then(res=>{
-      if(!res||res.status!==200)return res;
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-      return res;
-    }).catch(()=>cached);
-  }));
-});`;
-
-  if ('serviceWorker' in navigator) {
-    const swBlob = new Blob([swCode], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob), {scope:'./'}).catch(()=>{});
+  // This week summary
+  const thisWeek=state.incidents.filter(i=>i.classId===cid&&i.term===state.currentTerm&&i.week===state.currentWeek&&!i.noFlag);
+  if(thisWeek.length){
+    html+=`<div class="section-title" style="margin-top:20px">This week — T${state.currentTerm} W${state.currentWeek}</div>`;
+    const byStudent={};thisWeek.forEach(i=>{if(!byStudent[i.student])byStudent[i.student]=[];byStudent[i.student].push(i)});
+    Object.entries(byStudent).sort((a,b)=>b[1].length-a[1].length).forEach(([name,inc])=>{
+      const tally={};inc.forEach(i=>{tally[i.type]=(tally[i.type]||0)+1});
+      const breakdown=Object.entries(tally).map(([t,c])=>`${t}×${c}`).join(' · ');
+      html+=`<div class="summary-row"><div style="flex:1"><div class="summary-name">${esc(name)}</div><div class="summary-sub">${breakdown}</div></div><span class="summary-count">${inc.length}</span></div>`;
+    });
   }
 
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (!isStandalone && !localStorage.getItem('pwa-dismissed')) {
-    setTimeout(() => {
-      const b = document.createElement('div');
-      b.innerHTML = `<div style="display:flex;align-items:center;gap:10px;flex:1"><div style="font-size:22px">📲</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">Add to Home Screen</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Tap <strong>Share ↑</strong> then <strong>Add to Home Screen</strong></div></div></div><button onclick="this.parentNode.remove();localStorage.setItem('pwa-dismissed','1')" style="background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px 8px">✕</button>`;
-      b.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);padding:14px;display:flex;align-items:center;gap:10px;z-index:30;font-family:var(--font);box-shadow:0 -4px 20px rgba(0,0,0,0.08)';
+  el.innerHTML=html;
+  showScreen('screen-report');
+}
+
+document.getElementById('new-action-option').addEventListener('keydown',e=>{if(e.key==='Enter')addOption('action')});
+document.getElementById('new-response-option').addEventListener('keydown',e=>{if(e.key==='Enter')addOption('response')});
+
+
+document.getElementById('new-class-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-class-subject').focus()});
+document.getElementById('new-class-subject').addEventListener('keydown',e=>{if(e.key==='Enter')addClass()});
+
+/* ---- INIT ---- */
+load();
+// Migrate from ctss_v6 if v7 is empty
+if(!state.classes.length){
+  try{const old=localStorage.getItem('ctss_v6');if(old){const p=JSON.parse(old);state={...state,...p};console.log('Migrated from v6');}}catch(e){}
+}
+if(!state.watchlist)state.watchlist={};if(!state.notes)state.notes={};if(!state.solData)state.solData={};if(!state.seatMap)state.seatMap={};
+if(!state.currentTerm)state.currentTerm=2;if(!state.currentWeek)state.currentWeek=2;
+if(!state.settings)state.settings={threshold:3,actionOptions:[{label:'Email student',sentiment:'neutral'},{label:'Reflection',sentiment:'neutral'},{label:'Parent email',sentiment:'neutral'}],responseOptions:[{label:'Dismissed',sentiment:'negative'},{label:'Reflected',sentiment:'positive'},{label:'Improved',sentiment:'positive'},{label:'Partial improvement',sentiment:'positive'}]};
+if(!state.settings.actionOptions)state.settings.actionOptions=[];
+if(!state.settings.responseOptions)state.settings.responseOptions=[];
+
+if(!state.classes.find(c=>c.name==='1HIA')){state.classes.push({id:1000000001,name:'1HIA',subject:'History',students:['Clayton','Hongbo','Aomi','Yogesh','Luth','Qi Xian','Aqil','Javier','Ignatius','Eryna','Shafinah','Danif','Michael','Cherbelle','Sree','Lewis','Caden','Ariana','Scarlette','Lakshya','Enyue','Jayden','Kingsley','Jia Xuan','Ying Xin']})}
+if(!state.classes.find(c=>c.name==='1HIE')){state.classes.push({id:1000000004,name:'1HIE',subject:'History',students:['Zayden','Van Khai','Jovi','Tharan','Talan','Luffy','Reon','Vanna','Evan','Ryan','Angelina','Zheng An','Kristopher','Kaegan','Rachel','Ian','Criselda','Arissa','Kayven','Xin Yu','Rui Kai','Kevin','Jerine','Harrison','Paige','Kate','Shawn','Siting']})}
+if(!state.classes.find(c=>c.name==='1HIR')){state.classes.push({id:1000000005,name:'1HIR',subject:'History',students:['Nataniel','Kaizhe','Ravellio','Henry','Justin','Ruey Waye','Luong','Aaiden','Zhen Bin','Jialin','Lucas Yeo','Brendan','Charmaine','Beatrix','Lukas Beh','Zi Le','Elsa','Zhi Qing','Xinglin','Li Quan','Deborah','Rosette','Iain','Zhi Yu','Alice','Zi Xuan','Shanmitha','Josella','Jayden','Zender','Aaralyn','Jia Ying','Joshua','Roopesh','Kaylea','Khai Jie','Ling En','Elma','Regina','Phoebe','Cheng Zi','Royce']})}
+if(!state.classes.find(c=>c.name==='1HIX')){state.classes.push({id:1000000006,name:'1HIX',subject:'History',students:['Yixuan','Calista','Marissa','Yaagna','Bogyu','Hilitary','Yan Ru','Isabella','Richard','Zi Yu','Joann','Aden','Kathleen','Lucas','Minlang','Wei Xin','Jenevieve','Aron','Aqil','Claire','Anders','Sachio','Mitchell','Crescentia','Wing Tin','Zih Ciao','Nayef','Chloe','Jun See','Hema','Janelle','Leroy','Samantha']})}
+if(!state.classes.find(c=>c.name==='1A3')){state.classes.push({id:1000000009,name:'1A3',subject:'CCE',students:['Kieran','Alice','Jared','Nick','Zou Mo','Lewis Ng','Jia Xuan','Isabel','Roopesh','Elsa','Ying Xin','Isabella','Kai Zhe','Yi Xuan','Mia','Sophie','Ignatious','Lewis Tan','Jiaying','Tanesha','Lucas','Eason','Ray','Kaylynn','Sree','Afiq','Ravellio','Deborah','Jia En','Jayden','Rizqi','Venkatesha','Niran','Zender','Harith','Charmaine']})}
+if(!state.classes.find(c=>c.name==='3A')){state.classes.push({id:1000000002,name:'3A',subject:'Social Studies',students:['Irfaan','Wen Hao','Syabil','Shin Yong','Elfirul','Jabar','Reyes','Kevin','Farooq','Kevin','Javier','Johnny','Vince','Winnie','Franky','Alfeus','Danish','Alysha','Qalisyah','Li Xuan','Zi Ying','Raziq','Eugenia','Pooja','Jiaxuan','Tiara','Isabelle','Clara','Kai En','Shi Hui','Benisha']})}
+if(!state.classes.find(c=>c.name==='3C')){state.classes.push({id:1000000003,name:'3C',subject:'Social Studies',students:['Jayven','Christopher','Jasper','Matthew','Jun Lin','Lucas Wu','Joshua','Dyon','Yao Hong','Brendon','Enver','Kaveen','Kayden','Javier','Yuan Ziyu','Jovial','Lucas Wee','Seth','Yu Xiang','Andric','Ocean','Jia An','Logan','Cartier','Yu Hong','Anson','Jovelle','Irfaanah','Kayla','Umara','Shu En','Janelle','Cynthia','Jane','Chloe','Quinn','Louisa','Justine','Myra','Xiang Lin','Valencia']})}
+if(!state.classes.find(c=>c.name==='3SHT')){state.classes.push({id:1000000007,name:'3SHT',subject:'History',students:['Kiriel','Aisha','Sonya','Tasnuva','Ravis','Hoang Quan','Siew Yan','Kievan','Nathan','Veanna','Tristan','Rianson','Yue Ling','Maxine','Matthew','Nadine','Adhithi','Kai Qing','Xing Xuan','Renae','Yin Xuan']})}
+if(!state.classes.find(c=>c.name==='3SHW')){state.classes.push({id:1000000008,name:'3SHW',subject:'History',students:['Henry','Haris','Traven','Ryan','Clarice','Jun Yang','Ewan','Jayden','Paven','Joseph','Jonathan','Kellynn','Teagan','Haasyir','Joshin','Andrew','Tristan','Sam','Xavier','Namo']})}
+
+state.classes.sort((a,b)=>{const an=parseInt(a.name[0]),bn=parseInt(b.name[0]);if(an!==bn)return an-bn;return a.name.localeCompare(b.name)});
+save();renderHome();
+
+/* ---- PWA ---- */
+(function(){
+  function makeIcon(size){
+    const c=document.createElement('canvas');c.width=c.height=size;
+    const ctx=c.getContext('2d');ctx.fillStyle='#2A6ED4';
+    const r=size*.22;ctx.beginPath();ctx.moveTo(r,0);ctx.lineTo(size-r,0);ctx.quadraticCurveTo(size,0,size,r);ctx.lineTo(size,size-r);ctx.quadraticCurveTo(size,size,size-r,size);ctx.lineTo(r,size);ctx.quadraticCurveTo(0,size,0,size-r);ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);ctx.closePath();ctx.fill();
+    const cols=3,rows=4,pad=size*.18,dotR=size*.055,cW=(size-pad*2)/cols,cH=(size-pad*2)/rows;
+    for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){ctx.fillStyle=(row===1&&col===1)?'#F5907E':(row===2&&col===2)?'#F0B060':'#FFFFFF';ctx.globalAlpha=(row===3&&col===2)?.3:.9;ctx.beginPath();ctx.arc(pad+col*cW+cW/2,pad+row*cH+cH/2,dotR,0,Math.PI*2);ctx.fill()}
+    ctx.globalAlpha=1;return c.toDataURL('image/png');
+  }
+  const i192=makeIcon(192),i512=makeIcon(512);
+  document.getElementById('apple-touch-icon').href=i192;
+  const m={name:'Class Behaviour Tracker',short_name:'Class Tracker',start_url:'.',display:'standalone',background_color:'#F5F4F0',theme_color:'#2A6ED4',orientation:'portrait',icons:[{src:i192,sizes:'192x192',type:'image/png'},{src:i512,sizes:'512x512',type:'image/png'}]};
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));
+  const sw=`const C='ctss-v7';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).then(()=>clients.claim()))});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))})`;
+  if('serviceWorker' in navigator)navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(!isStandalone&&!localStorage.getItem('pwa-dismissed')){
+    setTimeout(()=>{
+      const b=document.createElement('div');
+      b.innerHTML=`<div style="display:flex;align-items:center;gap:10px;flex:1"><div style="font-size:22px">📲</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">Add to Home Screen</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Tap <strong>Share ↑</strong> then <strong>Add to Home Screen</strong></div></div></div><button onclick="this.parentNode.remove();localStorage.setItem('pwa-dismissed','1')" style="background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px 8px">✕</button>`;
+      b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border2);padding:14px;display:flex;align-items:center;gap:10px;z-index:30;font-family:var(--font)';
       document.body.appendChild(b);
-    }, 2000);
+    },2000);
   }
 })();
-
 </script>
 </body>
 </html>
