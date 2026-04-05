@@ -289,7 +289,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 /* STUDENT PICKER POPUP */
 .student-picker-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:50;align-items:flex-end;justify-content:center}
 .student-picker-overlay.open{display:flex}
-.student-picker-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-height:70vh;display:flex;flex-direction:column;padding-bottom:20px}
+.student-picker-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-height:55vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0)}
 .student-picker-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--border);flex-shrink:0}
 .student-picker-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:10px}
 .student-picker-search{width:100%;padding:10px 12px;font-size:15px;font-family:var(--font);color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);outline:none}
@@ -423,8 +423,16 @@ select option{background:var(--surface);color:var(--text)}
 <div id="screen-log" class="screen">
   <div class="header">
     <button class="btn-ghost" onclick="showScreen('screen-students')">← Back</button>
-    <div class="header-title">Incident Log</div>
+    <div style="flex:1"><div class="header-title">Incident Log</div></div>
     <button class="btn-ghost btn-danger" onclick="clearClassLog()">Clear</button>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface);border-bottom:0.5px solid var(--border);flex-shrink:0">
+    <button class="btn-ghost" id="log-prev-btn" onclick="logNavWeek(-1)" style="padding:6px 12px">‹ Prev</button>
+    <div style="text-align:center">
+      <div style="font-size:14px;font-weight:600;color:var(--text)" id="log-week-label">T2 · W2</div>
+      <div style="font-size:11px;color:var(--text3)" id="log-week-hint"></div>
+    </div>
+    <button class="btn-ghost" id="log-next-btn" onclick="logNavWeek(1)" style="padding:6px 12px">Next ›</button>
   </div>
   <div class="scroll-area" id="log-content"></div>
 </div>
@@ -719,6 +727,7 @@ let currentPage=0;
 let seatSetupClassId=null,seatSelectedStudent=null,seatSelectedCell=null;
 let restroomTimers={},restroomInterval=null;
 let offenceBack='screen-watchlist';
+let logViewTerm=null,logViewWeek=null;
 
 function lessonLabel(t,w,l){return `T${t} · W${w} · L${l}`}
 function wKey(cid,s){return `${cid}|${s}`}
@@ -832,8 +841,12 @@ function doNextWeek(nextT,nextW){
       }
     });
   });
-  state.currentTerm=nextT;state.currentWeek=nextW;save();renderHome();toast(`Now T${nextT} W${nextW}`);
-  // Prompt backup after advancing week
+  state.currentTerm=nextT;state.currentWeek=nextW;
+  save();
+  // Reset log view to new current week
+  logViewTerm=nextT;logViewWeek=nextW;
+  renderHome();
+  toast(`Now T${nextT} W${nextW}`);
   setTimeout(()=>{
     showConfirm(`Advanced to T${nextT} W${nextW}. Export a backup now?`,()=>exportBackup());
   },600);
@@ -1446,34 +1459,54 @@ function renderByType(incidents){
   return html||'<div style="color:var(--text3);font-size:13px;padding:4px 0">None</div>';
 }
 
-function showLog(){
-  const incidents=state.incidents.filter(i=>i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek);
+function showLog(term,week){
+  // Default to current week
+  if(term!==undefined) logViewTerm=term;
+  else if(!logViewTerm) logViewTerm=state.currentTerm;
+  if(week!==undefined) logViewWeek=week;
+  else if(!logViewWeek) logViewWeek=state.currentWeek;
+
+  const vt=logViewTerm, vw=logViewWeek;
+  const isCurrent=(vt===state.currentTerm&&vw===state.currentWeek);
+
+  // Update nav UI
+  document.getElementById('log-week-label').textContent=`T${vt} · W${vw}`;
+  document.getElementById('log-week-hint').textContent=isCurrent?'Current week':'Past week';
+  document.getElementById('log-next-btn').style.opacity=(isCurrent)?'0.3':'1';
+  document.getElementById('log-next-btn').style.pointerEvents=(isCurrent)?'none':'auto';
+
+  const incidents=state.incidents.filter(i=>i.classId===currentClassId&&i.term===vt&&i.week===vw);
   const el=document.getElementById('log-content');let html='';
 
-  // Watchlist carry-over
-  const watchEntries=Object.values(state.watchlist).filter(w=>w.classId===currentClassId&&w.strikes>0);
-  if(watchEntries.length){
-    html+='<div class="section-title">Carried over</div>';
-    watchEntries.forEach(w=>{
-      const pills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
-      html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div><div class="pill-row">${pills}<span class="pill strikes">Offence ${w.strikes}</span></div></div>`;
-    });
+  // Watchlist carry-over (only show for current week)
+  if(isCurrent){
+    const watchEntries=Object.values(state.watchlist).filter(w=>w.classId===currentClassId&&w.strikes>0);
+    if(watchEntries.length){
+      html+='<div class="section-title">Carried over</div>';
+      watchEntries.forEach(w=>{
+        const pills=Object.entries(w.carriedOffences||{}).map(([t,c])=>`<span class="pill ${behClass(t)}">${t} ×${c}</span>`).join('');
+        html+=`<div class="carried-card"><div class="carried-name">${esc(w.student)}</div><div class="pill-row">${pills}<span class="pill strikes">Offence ${w.strikes}</span></div></div>`;
+      });
+    }
+    // Absent this lesson
+    if(currentLesson){
+      const abs=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===currentLesson.term&&s.week===currentLesson.week&&s.lesson===currentLesson.lesson);
+      if(abs.length){html+='<div class="section-title" style="margin-top:16px">Absent</div>';abs.forEach(s=>{html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — ${esc(s.reason)}`:''}</div>`})}
+    }
   }
 
-  // Absent this lesson
-  if(currentLesson){
-    const abs=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===currentLesson.term&&s.week===currentLesson.week&&s.lesson===currentLesson.lesson);
-    if(abs.length){html+='<div class="section-title" style="margin-top:16px">Absent</div>';abs.forEach(s=>{html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — ${esc(s.reason)}`:''}</div>`})}
+  // Absent for viewed week (all lessons)
+  if(!isCurrent){
+    const abs=Object.values(state.solData).filter(s=>s.classId===currentClassId&&s.term===vt&&s.week===vw);
+    if(abs.length){html+='<div class="section-title">Absent</div>';abs.forEach(s=>{html+=`<div class="absent-block">${esc(s.student)}${s.reason?` — L${s.lesson}${s.reason?' — '+esc(s.reason):''}`:''}</div>`})}
   }
 
   if(!incidents.length){
-    html+='<div class="empty" style="padding:2rem 0"><strong>All clear</strong>No incidents logged this week.</div>';
+    html+='<div class="empty" style="padding:2rem 0"><strong>All clear</strong>No incidents for this week.</div>';
   } else {
-    // ── THIS WEEK SUMMARY — grouped by offence type ──
-    html+='<div class="section-title" style="margin-top:16px">This week — by offence</div>';
+    html+=`<div class="section-title" style="margin-top:16px">T${vt} W${vw} — by offence</div>`;
     html+=renderByType(incidents);
 
-    // ── BY LESSON — each lesson grouped by offence type ──
     const byLesson={};
     incidents.forEach(i=>{
       const k=`T${i.term}W${i.week}L${i.lesson}`;
@@ -1486,16 +1519,40 @@ function showLog(){
       html+=renderByType(g.items);
     });
 
-    // Notes
-    const wn=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|`)&&k.endsWith(`T${state.currentTerm}W${state.currentWeek}`));
+    const wn=Object.entries(state.notes).filter(([k])=>k.startsWith(`${currentClassId}|`)&&k.endsWith(`T${vt}W${vw}`));
     if(wn.length){html+='<div class="section-title" style="margin-top:18px">Notes</div>';wn.forEach(([k,note])=>{const s=k.split('|')[1];html+=`<div class="note-block"><div class="note-block-label">${esc(s)}</div>${esc(note)}</div>`})}
   }
-  el.innerHTML=html;showScreen('screen-log');
+  el.innerHTML=html;
+
+  // Add swipe to navigate weeks
+  let lsx=0,lsm=false;
+  el.ontouchstart=e=>{lsx=e.touches[0].clientX;lsm=false};
+  el.ontouchmove=e=>{if(Math.abs(e.touches[0].clientX-lsx)>10)lsm=true};
+  el.ontouchend=e=>{
+    if(!lsm)return;
+    const dx=e.changedTouches[0].clientX-lsx;
+    if(dx<-50) logNavWeek(1);
+    else if(dx>50) logNavWeek(-1);
+  };
+
+  showScreen('screen-log');
 }
+
+function logNavWeek(dir){
+  // dir: -1 = prev week, +1 = next week
+  let w=logViewWeek+dir, t=logViewTerm;
+  if(w<1){t--;w=10}
+  if(w>10){t++;w=1}
+  if(t<1) return; // can't go before T1W1
+  // Can't go past current week
+  if(t>state.currentTerm||(t===state.currentTerm&&w>state.currentWeek)) return;
+  showLog(t,w);
+}
+
 function deleteIncident(id){state.incidents=state.incidents.filter(i=>i.id!==id);save();showLog();renderSeatingMap()}
 function clearClassLog(){
-  showConfirm('Clear this week\'s incidents for this class?',()=>{
-    state.incidents=state.incidents.filter(i=>!(i.classId===currentClassId&&i.term===state.currentTerm&&i.week===state.currentWeek));
+  showConfirm(`Clear incidents for T${logViewTerm} W${logViewWeek} for this class?`,()=>{
+    state.incidents=state.incidents.filter(i=>!(i.classId===currentClassId&&i.term===logViewTerm&&i.week===logViewWeek));
     save();showLog();renderSeatingMap();
   });
 }
@@ -1706,11 +1763,17 @@ let _pickerTarget={ci:0,ri:0,si:0};
 
 function openStudentPicker(ci,ri,si){
   _pickerTarget={ci,ri,si};
-  const unassigned=getUnassigned(seatSetupClassId);
+  const unassigned=getUnassigned(seatSetupClassId).sort((a,b)=>a.localeCompare(b));
   document.getElementById('student-picker-search').value='';
   renderStudentPickerList(unassigned);
   document.getElementById('student-picker-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('student-picker-search').focus(),100);
+  // Push up when keyboard appears
+  const box=document.querySelector('.student-picker-box');
+  setTimeout(()=>{
+    const inp=document.getElementById('student-picker-search');
+    inp.focus();
+    inp.scrollIntoView({block:'start'});
+  },100);
 }
 
 function renderStudentPickerList(students){
@@ -1718,7 +1781,8 @@ function renderStudentPickerList(students){
   if(!students.length){
     el.innerHTML='<div class="student-picker-empty">No unassigned students</div>';return;
   }
-  el.innerHTML=students.map(name=>
+  const sorted=[...students].sort((a,b)=>a.localeCompare(b));
+  el.innerHTML=sorted.map(name=>
     `<div class="student-picker-item" onclick="pickStudent('${name.replace(/'/g,"\\'")}')">
       ${esc(name)}
     </div>`
@@ -1727,7 +1791,9 @@ function renderStudentPickerList(students){
 
 function filterStudentPicker(query){
   const unassigned=getUnassigned(seatSetupClassId);
-  const filtered=query.trim()?unassigned.filter(n=>n.toLowerCase().includes(query.toLowerCase())):unassigned;
+  const filtered=query.trim()
+    ?unassigned.filter(n=>n.toLowerCase().includes(query.toLowerCase()))
+    :unassigned;
   renderStudentPickerList(filtered);
 }
 
