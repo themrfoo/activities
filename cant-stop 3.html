@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can't Stop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" onerror="this.remove()">
+<style>
+  :root {
+    --bg: #1a1008;
+    --surface: #241a0e;
+    --surface2: #2e2214;
+    --gold: #f0a500;
+    --gold-light: #ffc840;
+    --red: #e03030;
+    --green: #2db560;
+    --blue: #3a8fe8;
+    --yellow: #e8c43a;
+    --white-marker: #f5f0e8;
+    --text: #f0e8d8;
+    --muted: #8a7a62;
+    --bust: #e03030;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    background-image: radial-gradient(ellipse at 50% 0%, #3a2a10 0%, #1a1008 60%);
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(240,165,0,0.4);
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  #setup-screen, #game-screen {
+    width: 100%;
+    max-width: 1400px;
+  }
+
+  /* SETUP */
+  #setup-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid #3a2e1a;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .setup-card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .player-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .player-row input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid #3a2e1a;
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .player-row input:focus { border-color: var(--gold); }
+
+  .color-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+
+  .num-players {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .num-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #3a2e1a;
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .num-btn.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  @media (hover: hover) {
+    .num-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  }
+  .btn-primary:active { transform: translateY(0); background: var(--gold-light); }
+
+  /* GAME LAYOUT */
+  #game-screen {
+    display: none;
+    gap: 16px;
+    flex-direction: column;
+  }
+
+  .game-top {
+    display: grid;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* PLAYERS PANEL */
+  .players-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .player-card {
+    background: var(--surface);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .player-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(240,165,0,0.2);
+  }
+
+  .player-card.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240,165,0,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .player-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .player-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .player-name {
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+
+  .active-badge {
+    margin-left: auto;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    background: rgba(240,165,0,0.15);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .player-claims {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .claim-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* BOARD */
+  .board-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .board {
+    position: relative;
+    width: 100%;
+  }
+
+  .board-inner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .col-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .cell {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 2px solid #3a2e1a;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .cell.top-cell {
+    background: #3a2e1a;
+    border-color: var(--gold);
+    border-width: 2px;
+  }
+
+  .cell.claimed {
+    border-color: transparent !important;
+  }
+
+  .marker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    position: absolute;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.25s ease;
+  }
+
+  .marker.white {
+    background: var(--white-marker);
+    border-color: #ccc;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    z-index: 2;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,240,232,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(245,240,232,0); }
+  }
+
+  .col-label.col-active { color: var(--gold); }
+
+  /* DICE + CONTROLS */
+  .controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .status-box {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+    border: 1px solid #3a2e1a;
+  }
+
+  .status-box .turn-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .status-box .turn-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.08em;
+  }
+
+  .dice-area {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #3a2e1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .dice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .die {
+    width: 72px; height: 72px;
+    background: var(--surface2);
+    border: 2px solid #3a2e1a;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.6rem;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s;
+  }
+
+  .die.rolling {
+    animation: dieRoll 0.5s ease;
+  }
+
+  @keyframes dieRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-15deg) scale(0.9); }
+    50% { transform: rotate(10deg) scale(1.1); }
+    75% { transform: rotate(-5deg) scale(0.95); }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+
+  /* PAIR SELECTION */
+  .pairs-area {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid #3a2e1a;
+  }
+
+  .pairs-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .pair-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pair-btn {
+    background: var(--surface2);
+    border: 2px solid #3a2e1a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .pair-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: rgba(240,165,0,0.1);
+  }
+
+  @media (hover: none) {
+    .pair-btn:hover:not(:disabled) { border-color: #3a2e1a; background: var(--surface2); }
+  }
+
+  .pair-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .pair-sums {
+    display: flex;
+    gap: 8px;
+  }
+
+  .sum-chip {
+    background: rgba(240,165,0,0.15);
+    border: 1px solid rgba(240,165,0,0.3);
+    color: var(--gold-light);
+    border-radius: 6px;
+    padding: 3px 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .sum-chip.blocked {
+    background: rgba(180,60,60,0.15);
+    border-color: rgba(180,60,60,0.3);
+    color: #e08080;
+  }
+
+  .pair-dice-preview {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-roll {
+    flex: 1;
+    padding: 13px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-roll:hover:not(:disabled) { background: var(--gold-light); }
+  .btn-roll:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-stop {
+    flex: 1;
+    padding: 13px;
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-stop:hover:not(:disabled) { background: rgba(45,181,96,0.1); }
+  .btn-stop:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* MESSAGES */
+  .message-box {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid #3a2e1a;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .message-box.bust {
+    border-color: var(--bust);
+    color: #ff9090;
+    background: rgba(224,48,48,0.08);
+    animation: shake 0.4s ease;
+  }
+
+  .message-box.claimed {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: rgba(240,165,0,0.08);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* WIN OVERLAY */
+  #win-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+
+  #win-overlay.show { display: flex; }
+
+  .win-card {
+    background: var(--surface);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 0 60px rgba(240,165,0,0.3);
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .win-card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .win-card p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .win-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .confetti-row {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .game-top {
+      grid-template-columns: 1fr;
+    }
+    .cell { width: 32px; height: 32px; }
+    .marker { width: 20px; height: 20px; }
+    .board-inner { gap: 5px; }
+  }
+
+  .log-panel {
+    background: var(--surface);
+    border: 1px solid #3a2e1a;
+    border-radius: 12px;
+    padding: 14px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .log-panel::-webkit-scrollbar { width: 4px; }
+  .log-panel::-webkit-scrollbar-track { background: transparent; }
+  .log-panel::-webkit-scrollbar-thumb { background: #3a2e1a; border-radius: 2px; }
+
+  .log-entry { padding: 1px 0; }
+  .log-entry .log-player { font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>CAN'T STOP</h1>
+<p class="subtitle">Designed by Sid Sackson</p>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <h2>New Game</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">How many players?</p>
+    <div class="num-players">
+      <button class="num-btn" data-n="2">2</button>
+      <button class="num-btn" data-n="3">3</button>
+      <button class="num-btn active" data-n="4">4</button>
+    </div>
+    <div id="player-inputs"></div>
+    <button class="btn-primary" id="btn-start-game">Start Game</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen">
+  <div class="game-top">
+    <!-- Left: Players -->
+    <div class="players-panel" id="players-panel"></div>
+
+    <!-- Center: Board -->
+    <div class="board-wrap">
+      <div class="board">
+        <div class="board-inner" id="board"></div>
+      </div>
+    </div>
+
+    <!-- Right: Controls -->
+    <div class="controls-panel">
+      <div class="status-box">
+        <div class="turn-label">Current Turn</div>
+        <div class="turn-name" id="turn-name" style="color:var(--gold)">—</div>
+      </div>
+
+      <div class="dice-area">
+        <div class="dice-grid" id="dice-grid">
+          <div class="die" id="d0">?</div>
+          <div class="die" id="d1">?</div>
+          <div class="die" id="d2">?</div>
+          <div class="die" id="d3">?</div>
+        </div>
+        <div class="action-btns">
+          <button class="btn-roll" id="btn-roll">Roll</button>
+          <button class="btn-stop" id="btn-stop" disabled>Stop</button>
+        </div>
+      </div>
+
+      <div class="pairs-area" id="pairs-area" style="display:none">
+        <div class="pairs-label">Choose a pairing</div>
+        <div class="pair-options" id="pair-options"></div>
+      </div>
+
+      <div class="message-box" id="message-box">Roll to begin your turn.</div>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="log-panel" id="log-panel"></div>
+</div>
+
+<!-- Win Overlay -->
+<div id="win-overlay">
+  <div class="win-card">
+    <div class="confetti-row">🎉🏆🎉</div>
+    <h2>Winner!</h2>
+    <div class="win-name" id="win-name"></div>
+    <p>Claimed 3 columns and reached the top!</p>
+    <button class="btn-primary" id="btn-play-again">Play Again</button>
+  </div>
+</div>
+
+<script>
+// ---- CONSTANTS ----
+const COLORS = ['#e03030','#2db560','#3a8fe8','#e8c43a'];
+const COLOR_NAMES = ['Red','Green','Blue','Yellow'];
+const DEFAULT_NAMES = ['Player 1','Player 2','Player 3','Player 4'];
+// Column heights (number of spaces) for cols 2-12
+const COL_HEIGHTS = {2:3,3:5,4:7,5:9,6:11,7:13,8:11,9:9,10:7,11:5,12:3};
+const COLS = [2,3,4,5,6,7,8,9,10,11,12];
+
+// ---- STATE ----
+let numPlayers = 4;
+let players = [];
+let currentPlayerIdx = 0;
+let dice = [0,0,0,0];
+let whitePositions = {}; // col -> position (1-based), only active cols this turn
+let hasRolled = false;
+let mustChoosePair = false;
+let gameOver = false;
+let logEntries = [];
+
+// ---- SETUP ----
+function setNumPlayers(n) {
+  numPlayers = n;
+  document.querySelectorAll('.num-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === n-2);
+  });
+  renderPlayerInputs();
+}
+
+function renderPlayerInputs() {
+  const cont = document.getElementById('player-inputs');
+  cont.innerHTML = '';
+  for (let i = 0; i < numPlayers; i++) {
+    cont.innerHTML += `
+      <div class="player-row">
+        <div class="color-dot" style="background:${COLORS[i]}"></div>
+        <input type="text" id="pname-${i}" value="${DEFAULT_NAMES[i]}" placeholder="Player ${i+1} name" maxlength="16"/>
+      </div>`;
+  }
+}
+
+function startGame() {
+  players = [];
+  for (let i = 0; i < numPlayers; i++) {
+    const name = document.getElementById(`pname-${i}`).value.trim() || DEFAULT_NAMES[i];
+    players.push({
+      name,
+      color: COLORS[i],
+      colorName: COLOR_NAMES[i],
+      // positions[col] = current locked position (0 = not started)
+      positions: {},
+      claims: [], // claimed column numbers
+    });
+  }
+  currentPlayerIdx = 0;
+  gameOver = false;
+  logEntries = [];
+
+  document.getElementById('setup-screen').style.display = 'none';
+  const gs = document.getElementById('game-screen');
+  gs.style.display = 'flex';
+
+  renderBoard();
+  renderPlayersPanel();
+  startTurn();
+}
+
+function resetGame() {
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('game-screen').style.display = 'none';
+  renderPlayerInputs();
+}
+
+// ---- BOARD ----
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  COLS.forEach(col => {
+    const height = COL_HEIGHTS[col];
+    const colEl = document.createElement('div');
+    colEl.className = 'column';
+    colEl.id = `col-${col}`;
+
+    // Label
+    const lbl = document.createElement('div');
+    lbl.className = 'col-label';
+    lbl.id = `col-label-${col}`;
+    lbl.textContent = col;
+    colEl.appendChild(lbl);
+
+    // Cells bottom to top (index 1 = bottom, height = top)
+    for (let pos = 1; pos <= height; pos++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell' + (pos === height ? ' top-cell' : '');
+      cell.id = `cell-${col}-${pos}`;
+      colEl.appendChild(cell);
+    }
+
+    board.appendChild(colEl);
+  });
+}
+
+function updateBoardVisuals() {
+  // Clear all markers
+  document.querySelectorAll('.cell').forEach(c => {
+    c.innerHTML = '';
+    c.style.background = '';
+    c.className = c.className.replace(' claimed','');
+  });
+
+  // Draw claimed columns
+  players.forEach(p => {
+    p.claims.forEach(col => {
+      const height = COL_HEIGHTS[col];
+      const topCell = document.getElementById(`cell-${col}-${height}`);
+      if (topCell) {
+        topCell.classList.add('claimed');
+        topCell.style.background = p.color + '55';
+        topCell.style.borderColor = p.color;
+        // Fill whole column with color
+        for (let pos = 1; pos <= height; pos++) {
+          const c = document.getElementById(`cell-${col}-${pos}`);
+          if (c) {
+            c.style.background = p.color + '22';
+            c.style.borderColor = p.color + '66';
+          }
+        }
+      }
+    });
+  });
+
+  // Draw player markers
+  players.forEach(p => {
+    COLS.forEach(col => {
+      const pos = p.positions[col];
+      if (pos && pos > 0 && !p.claims.includes(col)) {
+        placeMarker(col, pos, p.color, false);
+      }
+    });
+  });
+
+  // Draw white markers on top
+  COLS.forEach(col => {
+    if (whitePositions[col] !== undefined) {
+      placeMarker(col, whitePositions[col], null, true);
+    }
+  });
+
+  // Highlight active white columns
+  COLS.forEach(col => {
+    const lbl = document.getElementById(`col-label-${col}`);
+    if (lbl) {
+      lbl.classList.toggle('col-active', whitePositions[col] !== undefined);
+    }
+  });
+}
+
+function placeMarker(col, pos, color, isWhite) {
+  const cell = document.getElementById(`cell-${col}-${pos}`);
+  if (!cell) return;
+  const m = document.createElement('div');
+  m.className = 'marker' + (isWhite ? ' white' : '');
+  if (!isWhite) m.style.background = color;
+  cell.appendChild(m);
+}
+
+// ---- TURN LOGIC ----
+function startTurn() {
+  whitePositions = {};
+  hasRolled = false;
+  mustChoosePair = false;
+  dice = [0,0,0,0];
+
+  document.getElementById('pairs-area').style.display = 'none';
+  document.getElementById('btn-roll').disabled = false;
+  document.getElementById('btn-stop').disabled = true;
+  setMessage('Roll to begin your turn.', '');
+
+  const p = players[currentPlayerIdx];
+  const nameEl = document.getElementById('turn-name');
+  nameEl.textContent = p.name;
+  nameEl.style.color = p.color;
+
+  updateBoardVisuals();
+  renderPlayersPanel();
+  renderDice();
+}
+
+function rollDice() {
+  if (gameOver) return;
+  const p = players[currentPlayerIdx];
+
+  // Animate dice
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`d${i}`);
+    el.classList.remove('rolling');
+    void el.offsetWidth;
+    el.classList.add('rolling');
+  }
+
+  setTimeout(() => {
+    dice = [0,0,0,0].map(() => Math.floor(Math.random()*6)+1);
+    renderDice();
+
+    const pairsData = getPairOptions();
+    const validPairs = pairsData.filter(p => p.valid);
+
+    if (validPairs.length === 0) {
+      // Bust!
+      whitePositions = {};
+      updateBoardVisuals();
+      setMessage('💥 Bust! All progress lost.', 'bust');
+      document.getElementById('pairs-area').style.display = 'none';
+      document.getElementById('btn-roll').disabled = true;
+      document.getElementById('btn-stop').disabled = true;
+      addLog(`${p.name} went bust!`);
+      setTimeout(() => nextPlayer(), 1800);
+    } else {
+      hasRolled = true;
+      document.getElementById('btn-stop').disabled = false;
+      renderPairOptions(pairsData);
+      document.getElementById('pairs-area').style.display = 'block';
+      mustChoosePair = true;
+      document.getElementById('btn-roll').disabled = true;
+      setMessage('Choose a pairing.', '');
+    }
+  }, 500);
+}
+
+function renderDice() {
+  const faces = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`d${i}`);
+    el.textContent = dice[i] > 0 ? dice[i] : '?';
+  }
+}
+
+function getPairOptions() {
+  // Three pairings of 4 dice
+  const pairings = [
+    [[0,1],[2,3]],
+    [[0,2],[1,3]],
+    [[0,3],[1,2]],
+  ];
+
+  const currentWhiteCols = Object.keys(whitePositions).map(Number);
+
+  return pairings.map(([[a,b],[c,d]]) => {
+    const s1 = dice[a] + dice[b];
+    const s2 = dice[c] + dice[d];
+    const valid = canUsePair(s1, s2, currentWhiteCols);
+    return {
+      s1, s2,
+      dice1: [a,b],
+      dice2: [c,d],
+      valid,
+      v1: canUseSum(s1, currentWhiteCols, []),
+      v2: canUseSum(s2, currentWhiteCols, []),
+    };
+  });
+}
+
+function canUseSum(sum, existingWhite, alreadyAdded) {
+  const p = players[currentPlayerIdx];
+  if (p.claims.includes(sum)) return false; // Column already claimed
+
+  // Can use if: white already in col, OR fewer than 3 whites active OR white being added this pairing
+  const whiteActive = Object.keys(whitePositions).map(Number);
+  const totalActive = new Set([...whiteActive, ...alreadyAdded]).size;
+
+  if (whitePositions[sum] !== undefined) return true; // already have white there
+  if (alreadyAdded.includes(sum)) return true;
+  if (totalActive < 3) return true;
+  return false;
+}
+
+function canUsePair(s1, s2, existingWhite) {
+  const p = players[currentPlayerIdx];
+  // Check if at least one sum is usable
+  const c1 = canUseSum(s1, existingWhite, []);
+  const c2 = canUseSum(s2, existingWhite, []);
+
+  if (s1 === s2) {
+    return c1; // only need one valid slot
+  }
+
+  return c1 || c2;
+}
+
+function renderPairOptions(pairsData) {
+  const cont = document.getElementById('pair-options');
+  cont.innerHTML = '';
+
+  // Deduplicate by sum pairs
+  const seen = new Set();
+  pairsData.forEach((pair, idx) => {
+    const key = [Math.min(pair.s1,pair.s2), Math.max(pair.s1,pair.s2)].join('-');
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    const btn = document.createElement('button');
+    btn.className = 'pair-btn';
+    btn.disabled = !pair.valid;
+
+    const chip1Class = pair.v1 ? 'sum-chip' : 'sum-chip blocked';
+    const chip2Class = (pair.s1 === pair.s2 ? pair.v1 : pair.v2) ? 'sum-chip' : 'sum-chip blocked';
+
+    const d1 = pair.dice1.map(i => dice[i]).join('+');
+    const d2 = pair.dice2.map(i => dice[i]).join('+');
+
+    let sumsHtml;
+    if (pair.s1 === pair.s2) {
+      sumsHtml = `<span class="${chip1Class}">${pair.s1} × 2</span>`;
+    } else {
+      sumsHtml = `<span class="${chip1Class}">${pair.s1}</span><span class="${chip2Class}">${pair.s2}</span>`;
+    }
+
+    btn.innerHTML = `
+      <div class="pair-sums">${sumsHtml}</div>
+      <div class="pair-dice-preview">${d1} / ${d2}</div>`;
+
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      if (!btn.disabled) choosePair(pair);
+    });
+    btn.addEventListener('click', () => choosePair(pair));
+    cont.appendChild(btn);
+  });
+}
+
+function choosePair(pair) {
+  const p = players[currentPlayerIdx];
+  const whiteActive = Object.keys(whitePositions).map(Number);
+  const totalActive = whiteActive.length;
+
+  // Apply s1
+  if (pair.s1 === pair.s2) {
+    applySum(pair.s1);
+    applySum(pair.s1); // advance twice
+  } else {
+    const c1 = canUseSum(pair.s1, whiteActive, []);
+    const c2 = canUseSum(pair.s2, whiteActive, [pair.s1]);
+    if (c1) applySum(pair.s1);
+    if (c2) applySum(pair.s2);
+    else if (!c1 && canUseSum(pair.s2, whiteActive, [])) applySum(pair.s2);
+  }
+
+  updateBoardVisuals();
+  mustChoosePair = false;
+  document.getElementById('pairs-area').style.display = 'none';
+  document.getElementById('btn-roll').disabled = false;
+
+  // Check if any white reached top
+  let claimedMsg = '';
+  COLS.forEach(col => {
+    if (whitePositions[col] !== undefined && whitePositions[col] === COL_HEIGHTS[col]) {
+      claimedMsg += `Column ${col} ready to claim! `;
+    }
+  });
+
+  if (claimedMsg) {
+    setMessage('✨ ' + claimedMsg + 'Stop to claim it!', 'claimed');
+  } else {
+    setMessage(`Advanced on column(s) ${Object.keys(whitePositions).join(', ')}. Roll again or stop.`, '');
+  }
+
+  addLog(`${p.name} advanced on ${Object.keys(whitePositions).join(', ')}`);
+}
+
+function applySum(sum) {
+  const p = players[currentPlayerIdx];
+  const height = COL_HEIGHTS[sum];
+
+  if (whitePositions[sum] !== undefined) {
+    // Advance existing white
+    whitePositions[sum] = Math.min(whitePositions[sum] + 1, height);
+  } else {
+    // Place new white
+    const lockedPos = p.positions[sum] || 0;
+    whitePositions[sum] = Math.min(lockedPos + 1, height);
+  }
+}
+
+function stopTurn() {
+  const p = players[currentPlayerIdx];
+  let newClaims = [];
+
+  // Lock in white positions
+  COLS.forEach(col => {
+    if (whitePositions[col] !== undefined) {
+      const height = COL_HEIGHTS[col];
+      p.positions[col] = whitePositions[col];
+      if (p.positions[col] >= height && !p.claims.includes(col)) {
+        p.claims.push(col);
+        newClaims.push(col);
+        // Remove other players' positions from this column
+        players.forEach((other, i) => {
+          if (i !== currentPlayerIdx) {
+            delete other.positions[col];
+          }
+        });
+        addLog(`${p.name} claimed column ${col}!`);
+      }
+    }
+  });
+
+  whitePositions = {};
+  updateBoardVisuals();
+
+  if (newClaims.length > 0) {
+    setMessage(`🏆 Claimed column${newClaims.length > 1 ? 's' : ''} ${newClaims.join(', ')}!`, 'claimed');
+  }
+
+  // Check win
+  if (p.claims.length >= 3) {
+    setTimeout(() => showWin(p), 500);
+    return;
+  }
+
+  addLog(`${p.name} stopped their turn.`);
+  setTimeout(() => nextPlayer(), 600);
+}
+
+function nextPlayer() {
+  currentPlayerIdx = (currentPlayerIdx + 1) % numPlayers;
+  startTurn();
+}
+
+function showWin(p) {
+  gameOver = true;
+  document.getElementById('win-name').textContent = p.name;
+  document.getElementById('win-name').style.color = p.color;
+  document.getElementById('win-overlay').classList.add('show');
+}
+
+// ---- UI HELPERS ----
+function setMessage(text, type) {
+  const el = document.getElementById('message-box');
+  el.textContent = text;
+  el.className = 'message-box';
+  if (type) el.classList.add(type);
+}
+
+function renderPlayersPanel() {
+  const panel = document.getElementById('players-panel');
+  panel.innerHTML = '';
+  players.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'player-card' + (i === currentPlayerIdx ? ' active' : '');
+
+    const claimsHtml = p.claims.map(c =>
+      `<span class="claim-badge" style="background:${p.color}33;color:${p.color};border:1px solid ${p.color}55">${c}</span>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="player-name-row">
+        <div class="player-dot" style="background:${p.color}"></div>
+        <span class="player-name">${p.name}</span>
+        ${i === currentPlayerIdx ? '<span class="active-badge">▶ Playing</span>' : ''}
+      </div>
+      <div class="player-claims">
+        ${p.claims.length ? claimsHtml : '<span style="color:var(--muted);font-size:0.8rem">No claims yet</span>'}
+      </div>`;
+    panel.appendChild(card);
+  });
+}
+
+function addLog(msg) {
+  logEntries.unshift(msg);
+  if (logEntries.length > 30) logEntries.pop();
+  const panel = document.getElementById('log-panel');
+  panel.innerHTML = logEntries.map(e => `<div class="log-entry">${e}</div>`).join('');
+}
+
+// ---- INIT ----
+setNumPlayers(4);
+renderPlayerInputs();
+
+// Attach all events via addEventListener (more reliable on iOS Safari)
+document.querySelectorAll('.num-btn').forEach(btn => {
+  btn.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    setNumPlayers(parseInt(this.dataset.n));
+  });
+  btn.addEventListener('click', function() {
+    setNumPlayers(parseInt(this.dataset.n));
+  });
+});
+
+document.getElementById('btn-start-game').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  startGame();
+});
+document.getElementById('btn-start-game').addEventListener('click', startGame);
+
+document.getElementById('btn-roll').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  rollDice();
+});
+document.getElementById('btn-roll').addEventListener('click', rollDice);
+
+document.getElementById('btn-stop').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  stopTurn();
+});
+document.getElementById('btn-stop').addEventListener('click', stopTurn);
+
+document.getElementById('btn-play-again').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  resetGame();
+});
+document.getElementById('btn-play-again').addEventListener('click', resetGame);
+</script>
+</body>
+</html>
